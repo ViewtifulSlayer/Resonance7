@@ -1,0 +1,19 @@
+# Agent Ignore File
+# 
+# This file specifies directories and files that AI agents should NOT modify.
+# Add paths here to protect important foundation files, configuration files,
+# or sensitive directories that should only be changed by the user.
+#
+# Examples:
+#   library/agent_foundation.json    # Protect core protocol files
+#   sessions/archived/                # Protect archived sessions
+#   *.config                         # Protect configuration files
+#
+# Rules:
+#   - Use standard glob patterns
+#   - One path or pattern per line
+#   - Comments start with #
+#   - Use ! to negate a pattern (e.g., !allowed.json)
+#
+# Agents should check this file before modifying any files or directories.
+

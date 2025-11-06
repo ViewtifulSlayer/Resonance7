@@ -1,0 +1,31 @@
+# Normalize line endings for cross-platform compatibility
+* text=auto
+
+# Explicitly declare text files
+*.md text
+*.py text
+*.json text
+*.mdc text
+*.txt text
+*.yml text
+*.yaml text
+
+# Explicitly declare binary files
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.dll binary
+*.exe binary
+
+# Ensure shell scripts use LF
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Ensure Windows scripts can use CRLF
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+

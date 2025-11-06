@@ -1,0 +1,6 @@
+# Resonance 7 Workspace Template
+# Add your project dependencies here
+
+# Example:
+# requests>=2.25.0
+# numpy>=1.20.0

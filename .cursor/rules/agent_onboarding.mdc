@@ -1,0 +1,14 @@
+---
+alwaysApply: true
+---
+
+rule "agent_onboarding" {
+  description = "Load Resonance 7 foundation on every session start"
+  then        = """
+    MANDATORY: Before processing ANY user request, complete these steps:
+
+    1. Load and apply library/agent_foundation.json (your core foundation)
+    2. Verify foundation loaded by saying "Resonance 7 Active - Foundation Loaded"
+    
+    This is REQUIRED for every session - no exceptions, no user activation needed.
+  """

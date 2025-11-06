@@ -1,0 +1,93 @@
+# Resonance 7 - Git Ignore Rules
+# Excludes user-specific content while preserving directory structure
+
+# =============================================================================
+# User Session Files
+# =============================================================================
+# Exclude actual session log files, but preserve directory structure
+sessions/current/*.md
+sessions/recent/*.md
+# Keep archived zip files structure, but exclude actual archives
+sessions/archived/*.zip
+
+# =============================================================================
+# User Projects
+# =============================================================================
+# Exclude all user project contents
+projects/*/*
+# But preserve the projects/ directory structure
+!projects/.gitkeep
+
+# =============================================================================
+# Documentation Modules
+# =============================================================================
+# Exclude documentation module content (downloaded on-demand)
+library/docs/*
+# But preserve the docs/ directory structure and README
+!library/docs/README.md
+!library/docs/.gitkeep
+
+# =============================================================================
+# IDE and Editor Files
+# =============================================================================
+# IDE-specific files (optional - users can customize)
+.cursor/settings.json
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OS and System Files
+# =============================================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# =============================================================================
+# Python
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+env/
+
+# =============================================================================
+# Node.js (if used in projects)
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# =============================================================================
+# Temporary and Log Files
+# =============================================================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+

@@ -1,0 +1,78 @@
+{
+  "core_philosophy": {
+    "human_ai_collaborative_synergy": "Human wisdom and AI intelligence complement each other - together, our combined capabilties can achieve what neither could alone",
+    "knowledge_persistence":  "The framework enables knowledge accumulation and retrieval across shared documentation libraries and regularly maintained session logs"
+  },
+  "workspace_architecture": {
+    "library/": "Shared resources and configurations", 
+    "sessions/": "Session management and logging",
+    "projects/": "Structured project workspaces with shared resource access",
+    "tools/": "Development utilities and automation scripts"
+  },
+  "essential_behavior": {
+    "ethical_standards": [
+      "Respect all API and service rate limits",
+      "NEVER create files without explicit user approval",
+      "Maintain academic-level documentation quality in both, researching information and maintaining session logs; ALWAYS include urls when referencing external resources, both in the chat window and session logs; this is critical for reproducibility and transparency"
+    ],
+    "communication": [
+      "Distinguish between information gathering (check, examine, look at) and action-taking (implement, create, do) - default to reporting findings and waiting for direction unless action is explicitly requested",
+      "Be honest about your uncertainty - say phrases like 'I'm assuming' or 'I think' when not certain of a statement's veracity",
+      "If communication issues arise, recognize that different thinking patterns may require different approaches - try alternative methods while valuing diverse perspectives as contributions to collaboration",
+      "Use specific, factual language - avoid 'breakthrough', 'revolutionary', 'amazing'",
+      "Don't promise to learn, remember, or change behavior - acknowledge limitations instead. When multiple attempts fail, stop and reassess rather than continuing to try alternatives"
+    ],
+    "development_protocols": {
+      "web_first": {
+        "description": "Before implementing custom development, first search the web or available context for an existing application or solution; rely on reputable sources and verifiable information to avoid reinventing the wheel",
+        "triggers": [
+          "write", "develop", "make", "build", "create", "generate",
+          "automation", "analysis", "processing", "tool", "script",
+          "extract", "parse", "convert", "transform", "process"
+        ],
+        "check": ["npm packages", "PyPI packages", "REST APIs", "Common libraries"],
+        "cleanup": "Delete test scripts after running them"
+      },
+      "file_safety": {
+        "description": "Use platform-specific robust file migration tools and respect .agentignore policy",
+        "triggers": ["move file", "copy file", "transfer file", "extract", "unzip", "decompress"],
+        "windows": "robocopy with /MOVE /R:5 /W:30 /TEE /LOG",
+        "linux": "rsync -av --remove-source-files --progress",
+        "archives": "Prefer 7z x with appropriate flags; otherwise, use platform-specific tools",
+        "agentignore_check": "Check .agentignore before ANY file modification - do not modify listed files/directories unless explicitly requested by user",
+        "naming_convention": "Use snake_case for directories unless it breaks tool compatibility"
+      },
+      "command_execution": {
+        "description": "PowerShell-first execution with paging prevention and fallback protocols",
+        "triggers": ["run_terminal_cmd", "execute command"],
+        "windows": {
+          "primary": "powershell.exe",
+          "fallbacks": ["cmd.exe", "git-bash.exe"],
+          "max_attempts": 3
+        },
+        "paging_prevention": {
+          "strategies": [
+            "Append | cat to commands that might page",
+            "Use -NoPager flag where available", 
+            "Set GIT_PAGER=cat environment variable",
+            "Use -n flag to limit output length"
+          ],
+          "problematic_commands": [
+            "git log", "git diff", "git show", "less", "more", "man"
+          ]
+        }
+      }
+    }
+  },
+  "_comment_session_logging": "Uncomment when tools/create_session_log.py is ready",
+  "session_logging": {
+    "creation_tool": "tools/create_session_log.py",
+    "location": "sessions/current/",
+    "metadata_rules": {
+      "created": "NEVER modify after initial creation",
+      "last_updated": "Update ONLY when: adding sections, completing work, adding files. NOT for: typos, formatting, grammar fixes",
+      "status_lifecycle": "Active (work in progress) → Handoff (ready for next agent) → Completed (finished)",
+      "format": "Use PowerShell: [Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC' -AsUTC]"
+    }
+  }
+} 

@@ -1,0 +1,12 @@
+# Shared resources (always indexed)
+!library/
+!tools/
+!sessions/
+!.cursor/
+
+# Project-specific ignores
+projects/*/node_modules/
+projects/*/dist/
+projects/*/build/
+projects/*/__pycache__/
+projects/*/.venv/
