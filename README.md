@@ -11,6 +11,16 @@ A comprehensive AI agent development framework and workspace management system d
 - **Cross-Platform Tools**: Python-based utilities that work on Windows, Linux, and macOS
 - **IDE-Agnostic**: Works with any IDE that supports Cursor rules (or can be adapted)
 
+## 📋 What's New
+
+**v1.1.0** (2025-11-09)
+- Added Cursor command system for streamlined agent interaction (`/foundation`, `/help`, `/start`, `/session`)
+- Enhanced workspace template with `.cursorignore` and `.agentignore` templates
+- Added batch file launchers for quick tool access from any directory
+- Fixed missing directories in workspace template (now tracked in Git)
+
+[View full changelog →](CHANGELOG.md)
+
 ## 🚀 Quick Start
 
 ### Prerequisites

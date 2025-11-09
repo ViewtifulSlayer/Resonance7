@@ -52,6 +52,18 @@ SHARED_RESOURCES = {
         'type': 'symlink',
         'source': 'tools',
         'description': 'Shared development tools'
+    },
+    'session_tools.bat': {
+        'type': 'symlink',
+        'source': 'session_tools.bat',
+        'description': 'Quick launcher for session management tool',
+        'is_file': True
+    },
+    'setup_workspace.bat': {
+        'type': 'symlink',
+        'source': 'setup_workspace.bat',
+        'description': 'Quick launcher for workspace setup tool',
+        'is_file': True
     }
 }
 
@@ -171,10 +183,17 @@ def create_symlinks(project_path: Path, workspace_root: Path) -> bool:
                 # Try symbolic link first (shows shortcut arrow on Windows)
                 if sys.platform == "win32":
                     import subprocess
-                    # Use mklink /D for directory symbolic links, suppress output
-                    result = subprocess.run([
-                        'mklink', '/D', str(target_path), str(source_path)
-                    ], shell=True, capture_output=True, text=True)
+                    # Check if it's a file or directory
+                    is_file = config.get('is_file', False) or source_path.is_file()
+                    mklink_flag = '' if is_file else '/D'  # No flag for files, /D for directories
+                    
+                    # Build mklink command
+                    cmd = ['mklink']
+                    if mklink_flag:
+                        cmd.append(mklink_flag)
+                    cmd.extend([str(target_path), str(source_path)])
+                    
+                    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
                     if result.returncode == 0:
                         info(f"Created symbolic link: {resource_name} -> {source_path}")
                     else:
@@ -198,12 +217,13 @@ def create_symlinks(project_path: Path, workspace_root: Path) -> bool:
                         else:
                             raise subprocess.CalledProcessError(result.returncode, 'mklink')
                     except subprocess.CalledProcessError:
-                        # Final fallback: copy directory
+                        # Final fallback: copy file or directory
                         if source_path.is_dir():
                             shutil.copytree(source_path, target_path)
+                            info(f"Copied directory: {resource_name} -> {target_path}")
                         else:
                             shutil.copy2(source_path, target_path)
-                        info(f"Copied directory: {resource_name} -> {target_path}")
+                            info(f"Copied file: {resource_name} -> {target_path}")
                 else:
                     error(f"Failed to create symlink {resource_name}")
                     error(f"Manual fix: Run 'ln -s {source_path} {target_path}'")

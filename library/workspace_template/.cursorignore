@@ -82,4 +82,3 @@ htmlcov/
 # Override parent-level ignores (if needed)
 # Use ! to negate patterns from higher-level .cursorignore files
 # Example: !special_tools/  (re-enables a directory ignored at parent level)
-

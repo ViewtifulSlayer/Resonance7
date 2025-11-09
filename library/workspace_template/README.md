@@ -1,6 +1,6 @@
 # Resonance 7 Workspace Template
 
-This template provides the standard structure for new Resonance 7 projects.
+This template provides the standard structure for new Resonance7 projects.
 
 ## Usage
 
@@ -22,8 +22,8 @@ This template provides the standard structure for new Resonance 7 projects.
 
 ## Resonance 7 Integration
 
-This template includes symlinks to shared Resonance 7 resources:
-- `library/` - Shared Resonance 7 resources (including this template)
+This template includes symlinks to shared Resonance7 resources:
+- `library/` - Shared Resonance7 resources (including this template)
 - `sessions/` - Shared session management
 - `tools/` - Shared development tools
 
@@ -31,4 +31,4 @@ The `.cursor` configuration is shared from the workspace root level.
 
 ## Location
 
-This template is stored in `library/workspace_template/` and serves as the master blueprint for all new Resonance 7 projects.
+This template is stored in `library/workspace_template/` and serves as the master blueprint for all new Resonance7 projects.
