@@ -1,0 +1,100 @@
+# Agent Ignore File
+# Files and directories that the agent should NOT modify unless explicitly requested
+# Referenced in agent_foundation.json file_safety protocol
+#
+# Note: Ignore patterns cascade from parent directories. To override a parent-level
+# ignore pattern, use the negation operator (!). For example:
+#   If D:\Development\Resonance7\.agentignore ignores "special_tools/"
+#   You can re-enable it in this project with: !special_tools/
+
+# Core project configuration (protect from accidental modification)
+.gitignore
+.cursorignore
+.agentignore
+README.md
+requirements.txt
+pyproject.toml
+setup.py
+setup.cfg
+
+# Shared Resonance 7 resources (symlinked - do not modify)
+library/
+sessions/
+tools/
+
+# Version control
+.git/
+.gitattributes
+
+# IDE configuration (usually user-specific)
+.vscode/
+.idea/
+*.code-workspace
+
+# Virtual environments (system-managed)
+.env
+.venv
+venv/
+env/
+ENV/
+
+# Build artifacts (regenerated, not edited)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+dist/
+build/
+*.egg-info/
+.eggs/
+wheels/
+*.whl
+*.egg
+
+# Test artifacts (regenerated)
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+.pytest_cache/
+
+# Logs (append-only, not edited)
+*.log
+
+# Database files (data integrity - modify only with explicit request)
+*.db
+*.sqlite
+*.sqlite3
+
+# Large data files (protect from accidental processing)
+# Uncomment and customize based on project needs:
+# *.csv
+# *.json
+# data/
+# datasets/
+# *.parquet
+# *.h5
+# *.hdf5
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Project-specific protected files
+# Add files/directories that should never be auto-modified:
+# config/production.yaml
+# secrets/
+# credentials/
+
+# Override parent-level ignores (if needed)
+# Use ! to negate patterns from higher-level .agentignore files
+# Example: !special_tools/  (re-enables a directory ignored at parent level)
+

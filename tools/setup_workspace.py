@@ -62,6 +62,8 @@ PROJECT_TEMPLATE = {
     'tests': 'Project tests',
     '.cursor': 'Project-specific Cursor config',
     '.gitignore': 'Project-specific gitignore',
+    '.cursorignore': 'Cursor IDE ignore rules',
+    '.agentignore': 'Agent file modification protection rules',
     'README.md': 'Project documentation',
     'requirements.txt': 'Project dependencies (placeholder)'
 }
@@ -268,6 +270,199 @@ Thumbs.db
         (project_path / '.gitignore').write_text(gitignore_content)
         info("Created .gitignore")
         
+        # Create .cursorignore
+        cursorignore_content = """# Cursor IDE Ignore File
+# Files and directories that Cursor should ignore when indexing and searching
+#
+# Note: Ignore patterns cascade from parent directories. To override a parent-level
+# ignore pattern, use the negation operator (!). For example:
+#   If D:\\Development\\Resonance7\\.cursorignore ignores "special_tools/"
+#   You can re-enable it in this project with: !special_tools/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.env
+.venv
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Database files (if applicable)
+*.db
+*.sqlite
+*.sqlite3
+
+# Large data files (project-specific - adjust as needed)
+# *.csv
+# *.json
+# data/
+# datasets/
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Distribution / packaging
+*.egg
+wheels/
+*.whl
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Project-specific exclusions
+# Add project-specific patterns here
+
+# Override parent-level ignores (if needed)
+# Use ! to negate patterns from higher-level .cursorignore files
+# Example: !special_tools/  (re-enables a directory ignored at parent level)
+"""
+        (project_path / '.cursorignore').write_text(cursorignore_content)
+        info("Created .cursorignore")
+        
+        # Create .agentignore
+        agentignore_content = """# Agent Ignore File
+# Files and directories that the agent should NOT modify unless explicitly requested
+# Referenced in agent_foundation.json file_safety protocol
+#
+# Note: Ignore patterns cascade from parent directories. To override a parent-level
+# ignore pattern, use the negation operator (!). For example:
+#   If D:\\Development\\Resonance7\\.agentignore ignores "special_tools/"
+#   You can re-enable it in this project with: !special_tools/
+
+# Core project configuration (protect from accidental modification)
+.gitignore
+.cursorignore
+.agentignore
+README.md
+requirements.txt
+pyproject.toml
+setup.py
+setup.cfg
+
+# Shared Resonance 7 resources (symlinked - do not modify)
+library/
+sessions/
+tools/
+
+# Version control
+.git/
+.gitattributes
+
+# IDE configuration (usually user-specific)
+.vscode/
+.idea/
+*.code-workspace
+
+# Virtual environments (system-managed)
+.env
+.venv
+venv/
+env/
+ENV/
+
+# Build artifacts (regenerated, not edited)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+dist/
+build/
+*.egg-info/
+.eggs/
+wheels/
+*.whl
+*.egg
+
+# Test artifacts (regenerated)
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+.pytest_cache/
+
+# Logs (append-only, not edited)
+*.log
+
+# Database files (data integrity - modify only with explicit request)
+*.db
+*.sqlite
+*.sqlite3
+
+# Large data files (protect from accidental processing)
+# Uncomment and customize based on project needs:
+# *.csv
+# *.json
+# data/
+# datasets/
+# *.parquet
+# *.h5
+# *.hdf5
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Project-specific protected files
+# Add files/directories that should never be auto-modified:
+# config/production.yaml
+# secrets/
+# credentials/
+
+# Override parent-level ignores (if needed)
+# Use ! to negate patterns from higher-level .agentignore files
+# Example: !special_tools/  (re-enables a directory ignored at parent level)
+"""
+        (project_path / '.agentignore').write_text(agentignore_content)
+        info("Created .agentignore")
+        
         # Create README.md
         readme_content = f"""# {project_name}
 
@@ -354,6 +549,8 @@ This template provides the standard structure for new Resonance7 projects.
 - `docs/` - Documentation  
 - `tests/` - Test files
 - `.gitignore` - Git ignore rules
+- `.cursorignore` - Cursor IDE ignore rules
+- `.agentignore` - Agent file modification protection rules
 - `README.md` - Project documentation
 - `requirements.txt` - Python dependencies
 
@@ -422,6 +619,197 @@ Thumbs.db
 *.tmp
 """
         (template_dir / '.gitignore').write_text(template_gitignore)
+        
+        # Create template .cursorignore
+        template_cursorignore = """# Cursor IDE Ignore File
+# Files and directories that Cursor should ignore when indexing and searching
+#
+# Note: Ignore patterns cascade from parent directories. To override a parent-level
+# ignore pattern, use the negation operator (!). For example:
+#   If D:\\Development\\Resonance7\\.cursorignore ignores "special_tools/"
+#   You can re-enable it in this project with: !special_tools/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.env
+.venv
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Database files (if applicable)
+*.db
+*.sqlite
+*.sqlite3
+
+# Large data files (project-specific - adjust as needed)
+# *.csv
+# *.json
+# data/
+# datasets/
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Distribution / packaging
+*.egg
+wheels/
+*.whl
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Project-specific exclusions
+# Add project-specific patterns here
+
+# Override parent-level ignores (if needed)
+# Use ! to negate patterns from higher-level .cursorignore files
+# Example: !special_tools/  (re-enables a directory ignored at parent level)
+"""
+        (template_dir / '.cursorignore').write_text(template_cursorignore)
+        
+        # Create template .agentignore
+        template_agentignore = """# Agent Ignore File
+# Files and directories that the agent should NOT modify unless explicitly requested
+# Referenced in agent_foundation.json file_safety protocol
+#
+# Note: Ignore patterns cascade from parent directories. To override a parent-level
+# ignore pattern, use the negation operator (!). For example:
+#   If D:\\Development\\Resonance7\\.agentignore ignores "special_tools/"
+#   You can re-enable it in this project with: !special_tools/
+
+# Core project configuration (protect from accidental modification)
+.gitignore
+.cursorignore
+.agentignore
+README.md
+requirements.txt
+pyproject.toml
+setup.py
+setup.cfg
+
+# Shared Resonance 7 resources (symlinked - do not modify)
+library/
+sessions/
+tools/
+
+# Version control
+.git/
+.gitattributes
+
+# IDE configuration (usually user-specific)
+.vscode/
+.idea/
+*.code-workspace
+
+# Virtual environments (system-managed)
+.env
+.venv
+venv/
+env/
+ENV/
+
+# Build artifacts (regenerated, not edited)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+dist/
+build/
+*.egg-info/
+.eggs/
+wheels/
+*.whl
+*.egg
+
+# Test artifacts (regenerated)
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+.pytest_cache/
+
+# Logs (append-only, not edited)
+*.log
+
+# Database files (data integrity - modify only with explicit request)
+*.db
+*.sqlite
+*.sqlite3
+
+# Large data files (protect from accidental processing)
+# Uncomment and customize based on project needs:
+# *.csv
+# *.json
+# data/
+# datasets/
+# *.parquet
+# *.h5
+# *.hdf5
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Project-specific protected files
+# Add files/directories that should never be auto-modified:
+# config/production.yaml
+# secrets/
+# credentials/
+
+# Override parent-level ignores (if needed)
+# Use ! to negate patterns from higher-level .agentignore files
+# Example: !special_tools/  (re-enables a directory ignored at parent level)
+"""
+        (template_dir / '.agentignore').write_text(template_agentignore)
         
         # Create template requirements.txt
         template_requirements = """# Resonance 7 Workspace Template
@@ -502,7 +890,7 @@ def setup_new_project(project_name: str, dry_run: bool = False) -> int:
     print("The project includes:")
     print("  - Complete directory structure (src/, docs/, tests/)")
     print("  - Symlinks to shared Resonance7 resources")
-    print("  - Project-specific configuration files")
+    print("  - Project-specific configuration files (.gitignore, .cursorignore, .agentignore)")
     print("  - Ready for development")
     print()
     

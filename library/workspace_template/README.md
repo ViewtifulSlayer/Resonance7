@@ -15,6 +15,8 @@ This template provides the standard structure for new Resonance 7 projects.
 - `docs/` - Documentation  
 - `tests/` - Test files
 - `.gitignore` - Git ignore rules
+- `.cursorignore` - Cursor IDE ignore rules
+- `.agentignore` - Agent file modification protection rules
 - `README.md` - Project documentation
 - `requirements.txt` - Python dependencies
 
