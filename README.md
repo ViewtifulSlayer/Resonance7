@@ -78,6 +78,8 @@ Resonance7/                         # Main workspace
 │       ├── docs/                     # Project documentation
 │       ├── tests/                    # Project tests
 │       ├── .gitignore                # Project-level git ignore
+│       ├── .cursorignore             # Project-level Cursor IDE ignore
+│       ├── .agentignore              # Project-level agent ignore
 │       └── README.md                 # Project README
 │       # Note: library/, sessions/, tools/, .cursor/ are symlinked into projects
 ├── .cursorignore                     # Root-level Cursor ignore file
@@ -157,6 +159,10 @@ library/agent_foundation.json
 # Protect archived sessions
 sessions/archived/
 ```
+
+### Cursor Ignore
+
+The `.cursorignore` file tells Cursor IDE which files and directories to ignore when indexing and searching. This improves IDE performance and reduces noise in search results. Project-level `.cursorignore` files can override parent-level patterns using the `!` negation operator.
 
 ### Git Ignore
 

@@ -160,6 +160,7 @@ This directory may contain additional development and maintenance tools as the p
 ### Available Tools
 - **`setup_workspace.py`** - Automated workspace setup for new projects
   - Create new project workspaces with proper structure and symlinks
+  - Automatically includes `.gitignore`, `.cursorignore`, and `.agentignore` files
   - Regenerate workspace template: `python tools/setup_workspace.py --template`
   - If `library/workspace_template/` is missing, regenerate it using the command above
 
