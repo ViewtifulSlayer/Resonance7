@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-11-10
+
+### Added
+- README.md for projects directory documenting project creation, structure, and best practices
+
+### Changed
+- Removed `projects/.gitkeep` as it's been replaced by README.md
+
 ## [1.1.0] - 2025-11-09
 
 ### Added
@@ -36,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session lifecycle management (current → recent → archived)
 - Cross-platform Python tooling
 
-[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ViewtifulSlayer/Resonance7/releases/tag/v1.0.0
 
