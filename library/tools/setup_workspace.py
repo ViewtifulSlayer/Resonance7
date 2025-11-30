@@ -540,8 +540,78 @@ def create_workspace_template(workspace_root: Path) -> bool:
         for dir_name in ['src', 'docs', 'tests', 'tools']:
             (template_dir / dir_name).mkdir(exist_ok=True)
         
+        # Create directory READMEs
+        src_readme = """# Source Code
+
+This directory contains the project's source code.
+
+## Structure
+
+Organize your source code as appropriate for your project:
+- Main application code
+- Modules and packages
+- Configuration files
+- Resources and assets
+
+## Best Practices
+
+- Keep source code organized by feature or module
+- Follow language-specific conventions
+- Include appropriate documentation
+- Maintain clear separation of concerns
+"""
+        (template_dir / 'src' / 'README.md').write_text(src_readme)
+        
+        tests_readme = """# Tests
+
+This directory contains test files for the project.
+
+## Structure
+
+Organize tests to mirror your source code structure:
+- Unit tests
+- Integration tests
+- Test fixtures and data
+- Test utilities
+
+## Best Practices
+
+- Keep tests organized and maintainable
+- Use descriptive test names
+- Follow testing best practices for your language/framework
+- Maintain good test coverage
+"""
+        (template_dir / 'tests' / 'README.md').write_text(tests_readme)
+        
+        tools_readme = """# Project-Specific Tools
+
+This directory contains tools and scripts specific to this project.
+
+## Purpose
+
+Project-specific utilities, scripts, and helper tools that are not part of the main source code but are used for development, maintenance, or project-specific tasks.
+
+## Universal Tools
+
+Universal Resonance7 tools are available via the `library/` symlink:
+- `library/tools/session_tools.py` - Session creation and management
+- `library/tools/setup_workspace.py` - Workspace setup utility
+- `library/tools/session_tools.bat` - Quick launcher for session management
+- `library/tools/setup_workspace.bat` - Quick launcher for workspace setup
+
+## Best Practices
+
+- Keep project-specific tools organized
+- Document tool usage and purpose
+- Use appropriate file naming conventions
+- Consider adding helper scripts for common project tasks
+"""
+        (template_dir / 'tools' / 'README.md').write_text(tools_readme)
+        
         # Create template files
         template_readme = """# Resonance 7 Workspace Template
+
+**Version: 1.2.0**
 
 This template provides the standard structure for new Resonance7 projects.
 
@@ -853,6 +923,15 @@ desktop.ini
             info("Restored ARCHITECTURE.md in template")
             delattr(create_workspace_template, '_preserved_arch')
         
+        # Restore preserved directory READMEs if they were saved
+        if hasattr(create_workspace_template, '_preserved_readmes'):
+            for dir_name, readme_content in create_workspace_template._preserved_readmes.items():
+                readme_file = template_dir / dir_name / 'README.md'
+                readme_file.parent.mkdir(parents=True, exist_ok=True)
+                readme_file.write_text(readme_content, encoding='utf-8')
+                info(f"Restored {dir_name}/README.md in template")
+            delattr(create_workspace_template, '_preserved_readmes')
+        
         info("Created workspace template")
         return True
         
@@ -952,7 +1031,7 @@ def create_workspace_template_workflow(dry_run: bool = False) -> int:
             info("Operation cancelled")
             return 1
         
-        # Preserve ARCHITECTURE.md before removing template
+        # Preserve ARCHITECTURE.md and directory READMEs before removing template
         arch_file = template_dir / 'docs' / 'ARCHITECTURE.md'
         preserved_arch = None
         if arch_file.exists():
@@ -960,6 +1039,16 @@ def create_workspace_template_workflow(dry_run: bool = False) -> int:
                 preserved_arch = arch_file.read_text(encoding='utf-8')
             except Exception:
                 pass  # If we can't read it, that's okay
+        
+        # Preserve directory READMEs
+        preserved_readmes = {}
+        for dir_name in ['src', 'tests', 'tools']:
+            readme_file = template_dir / dir_name / 'README.md'
+            if readme_file.exists():
+                try:
+                    preserved_readmes[dir_name] = readme_file.read_text(encoding='utf-8')
+                except Exception:
+                    pass
         
         # Remove existing template
         try:
@@ -972,9 +1061,11 @@ def create_workspace_template_workflow(dry_run: bool = False) -> int:
             error(f"Failed to remove existing template: {e}")
             return 1
     
-    # Pass preserved ARCHITECTURE.md to the creation function
+    # Pass preserved files to the creation function
     if preserved_arch is not None:
         create_workspace_template._preserved_arch = preserved_arch
+    if preserved_readmes:
+        create_workspace_template._preserved_readmes = preserved_readmes
     
     if not create_workspace_template(workspace_root):
         return 1

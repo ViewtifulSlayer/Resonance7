@@ -4,11 +4,14 @@
 # =============================================================================
 # User Session Files
 # =============================================================================
-# Exclude actual session log files, but preserve directory structure
+# Exclude actual session log files, but preserve directory structure and READMEs
 sessions/current/*.md
+!sessions/current/README.md
 sessions/recent/*.md
+!sessions/recent/README.md
 # Keep archived zip files structure, but exclude actual archives
 sessions/archived/*.zip
+!sessions/archived/README.md
 
 # =============================================================================
 # User Projects

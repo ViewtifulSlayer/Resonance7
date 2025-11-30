@@ -1,5 +1,7 @@
 # Resonance 7 Workspace Template
 
+**Version: 1.2.0**
+
 This template provides the standard structure for new Resonance7 projects.
 
 ## Usage
