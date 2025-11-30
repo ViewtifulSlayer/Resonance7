@@ -14,6 +14,8 @@ A comprehensive AI agent development framework and workspace management system d
 ## 📋 What's New
 
 **v1.2.0** (2025-11-21)
+- Reorganized tools structure: Universal tools moved to `library/tools/` (accessible via `library/` symlink)
+- Projects now get independent `tools/` directories (not symlinked) for project-specific tools
 - Added `ARCHITECTURE.md` template to workspace template for project architecture documentation
 - Enhanced agent foundation with improved behavior guidance and partnership model
 - Strengthened file creation protocols and knowledge persistence philosophy
@@ -49,20 +51,20 @@ A comprehensive AI agent development framework and workspace management system d
 
 3. **Verify installation:**
    - Check that `library/agent_foundation.json` exists
-   - Verify `tools/session_tools.py` is executable
-   - Test with: `python tools/session_tools.py --help`
+   - Verify `library/tools/session_tools.py` is executable
+   - Test with: `python library/tools/session_tools.py --help`
 
 ### First Steps
 
 1. **Create a new session:**
    ```bash
-   python tools/session_tools.py
+   python library/tools/session_tools.py
    ```
    Follow the interactive prompts to create your first session log.
 
 2. **Set up a new project:**
    ```bash
-   python tools/setup_workspace.py --project my-project
+   python library/tools/setup_workspace.py --project my-project
    ```
    This creates a new project workspace with shared resources symlinked.
 
@@ -75,6 +77,12 @@ Resonance7/                         # Main workspace
 │       └── agent_onboarding.mdc     # Shared Cursor rules (IDE-agnostic protocol)
 ├── library/                         # Shared Resonance 7 resources
 │   ├── docs/                        # Knowledge base modules (see docs/README.md)
+│   ├── tools/                       # Universal development tools
+│   │   ├── session_tools.py          # Script for session log management
+│   │   ├── setup_workspace.py        # Workspace setup and template management
+│   │   ├── session_tools.bat         # Quick launcher for session management
+│   │   ├── setup_workspace.bat       # Quick launcher for workspace setup
+│   │   └── README.md                 # Documentation for tools
 │   ├── agent_foundation.json         # Core Resonance 7 Agent foundation
 │   ├── session_template.md           # Session logging template
 │   ├── workspace_template/           # Project template (see workspace_template/README.md)
@@ -84,25 +92,17 @@ Resonance7/                         # Main workspace
 │   ├── recent/                       # Sessions 7+ days old
 │   ├── archived/                     # Monthly zip archives (YYYY-MM.zip)
 │   └── README.md                     # Documentation for sessions directory
-├── tools/                            # User-specific tools (not in repository)
-│   └── [user-specific tools]         # User's personal development tools
-├── library/                          # Shared Resonance 7 resources
-│   ├── tools/                        # Universal development tools
-│   │   ├── session_tools.py          # Script for session log management
-│   │   ├── setup_workspace.py        # Workspace setup and template management
-│   │   ├── session_tools.bat         # Quick launcher for session management
-│   │   ├── setup_workspace.bat       # Quick launcher for workspace setup
-│   │   └── README.md                 # Documentation for tools
 ├── projects/                         # Project-specific workspaces
 │   └── [project-name]/               # Individual user projects
 │       ├── src/                      # Project source code
 │       ├── docs/                     # Project documentation
 │       ├── tests/                    # Project tests
+│       ├── tools/                     # Project-specific tools (independent, not symlinked)
 │       ├── .gitignore                # Project-level git ignore
 │       ├── .cursorignore             # Project-level Cursor IDE ignore
 │       ├── .agentignore              # Project-level agent ignore
 │       └── README.md                 # Project README
-│       # Note: library/, sessions/, tools/, .cursor/ are symlinked into projects
+│       # Note: library/ (includes universal tools), sessions/, .cursor/ are symlinked into projects
 ├── .cursorignore                     # Root-level Cursor ignore file
 ├── .agentignore                      # Root-level agent ignore file
 ├── .gitignore                        # Root-level git ignore file
@@ -115,7 +115,7 @@ Resonance7/                         # Main workspace
 
 - **[Library Documentation](library/README.md)** - Core resources and agent foundation
 - **[Session Management](sessions/README.md)** - Session logging and lifecycle
-- **[Tools Documentation](tools/README.md)** - Available scripts and utilities
+- **[Tools Documentation](library/tools/README.md)** - Available scripts and utilities
 - **[Workspace Template](library/workspace_template/README.md)** - Project template structure
 - **[Documentation Modules](library/docs/README.md)** - Knowledge base organization
 
@@ -127,13 +127,13 @@ Sessions track your work with AI agents, maintaining context and history:
 
 ```bash
 # Interactive mode
-python tools/session_tools.py
+python library/tools/session_tools.py
 
 # Quick session creation
-python tools/session_tools.py  # Follow prompts
+python library/tools/session_tools.py  # Follow prompts
 
 # Session maintenance
-python tools/session_tools.py --prune
+python library/tools/session_tools.py --prune
 ```
 
 ### Managing Projects
@@ -142,14 +142,15 @@ Create new project workspaces with shared resources:
 
 ```bash
 # Interactive mode
-python tools/setup_workspace.py
+python library/tools/setup_workspace.py
 
 # Direct project creation
-python tools/setup_workspace.py --project my-app
+python library/tools/setup_workspace.py --project my-app
 
 # Regenerate workspace template
-python tools/setup_workspace.py --template
+python library/tools/setup_workspace.py --template
 ```
+
 
 ### Agent Foundation
 
@@ -189,6 +190,8 @@ The `.cursorignore` file tells Cursor IDE which files and directories to ignore 
 
 The `.gitignore` file excludes user-specific content (sessions, projects, documentation modules) while preserving the framework structure. Your personal work remains local while the framework is version-controlled.
 
+**Note**: Universal tools are in `library/tools/` and accessible via the `library/` symlink in projects. Projects get their own independent `tools/` directories for project-specific tools.
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -219,4 +222,4 @@ Potential CI/CD workflows for:
 
 ---
 
-**Ready to get started?** Clone the repository and run `python tools/session_tools.py` to create your first session!
+**Ready to get started?** Clone the repository and run `python library/tools/session_tools.py` to create your first session!
