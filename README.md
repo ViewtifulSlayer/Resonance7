@@ -13,7 +13,7 @@ A comprehensive AI agent development framework and workspace management system d
 
 ## 📋 What's New
 
-**v1.2.0** (2025-11-21)
+**v1.2.0** (2025-11-30)
 - Reorganized tools structure: Universal tools moved to `library/tools/` (accessible via `library/` symlink)
 - Projects now get independent `tools/` directories (not symlinked) for project-specific tools
 - Added `ARCHITECTURE.md` template to workspace template for project architecture documentation
