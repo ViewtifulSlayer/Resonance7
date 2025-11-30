@@ -20,7 +20,8 @@ setup.cfg
 # Shared Resonance 7 resources (symlinked - do not modify)
 library/
 sessions/
-tools/
+# Note: tools/ is now independent (not symlinked) - project-specific tools go here
+# Universal tools are in library/tools/ and accessible via library/ symlink
 
 # Version control
 .git/

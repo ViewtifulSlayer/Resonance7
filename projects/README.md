@@ -47,12 +47,16 @@ projects/
     ├── README.md               # Project documentation
     ├── requirements.txt        # Python dependencies
     │
-    ├── library/                # Symlink → Shared Resonance7 resources
+    ├── library/                # Symlink → Shared Resonance7 resources (includes universal tools)
     ├── sessions/               # Symlink → Shared session management
-    ├── tools/                  # Symlink → Shared development tools
+    ├── tools/                  # Independent directory → Project-specific tools (not symlinked)
     ├── .cursor/                # Symlink → Shared Cursor configuration
-    ├── session_tools.bat       # Symlink → Session management launcher
-    └── setup_workspace.bat     # Symlink → Workspace setup launcher
+    │
+    │   # Universal tools accessible via library/ symlink:
+    │   # - library/tools/session_tools.py
+    │   # - library/tools/setup_workspace.py
+    │   # - library/tools/session_tools.bat
+    │   # - library/tools/setup_workspace.bat
 ```
 
 ## Shared Resources
@@ -70,17 +74,22 @@ All projects automatically receive symlinks to shared Resonance7 resources:
 - `recent/` - Older sessions (7+ days)
 - `archived/` - Monthly session archives
 
-### `tools/` → Development Tools
-- `session_tools.py` - Session creation and management
-- `setup_workspace.py` - Workspace setup utility
+### `tools/` → Project-Specific Tools
+- **Independent directory** (not symlinked) for project-specific tools
+- Universal tools are in `library/tools/` and accessible via `library/` symlink:
+  - `library/tools/session_tools.py` - Session creation and management
+  - `library/tools/setup_workspace.py` - Workspace setup utility
 
 ### `.cursor/` → Cursor Configuration
 - Shared Cursor IDE rules and configuration
 - Agent onboarding protocols
 
 ### Batch Launchers
-- `session_tools.bat` - Quick access to session management
-- `setup_workspace.bat` - Quick access to workspace setup
+- `tools/` - Universal development tools directory (accessible via library/ symlink)
+  - `session_tools.py` - Session creation and management
+  - `setup_workspace.py` - Workspace setup utility
+  - `session_tools.bat` - Quick launcher for session management
+  - `setup_workspace.bat` - Quick launcher for workspace setup
 
 ## Project Configuration Files
 

@@ -23,6 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Split long documentation rule into separate items for better readability
   - Removed redundant `documentation_principle` from development_protocols (covered in communication rules)
   - Added `timestamp_accuracy` rule to session_logging metadata_rules - explicitly requires getting actual current time via command, prohibits rounding to quarter hours
+- Reorganized tools structure for better separation of concerns:
+  - Moved universal tools (`session_tools.py`, `setup_workspace.py`) to `library/tools/` - now accessible via `library/` symlink
+  - Moved batch launchers (`session_tools.bat`, `setup_workspace.bat`) to `library/tools/` for consistency
+  - Projects now get independent `tools/` directories (not symlinked) for project-specific tools
+  - Removed `tools/` symlink from shared resources - projects create their own `tools/` directories
+  - Root `tools/` directory remains for user-specific tools (excluded from repository via `.git/info/exclude`)
+  - Updated `setup_workspace.py` to create independent `tools/` directories in new projects
+  - Updated workspace template to include `tools/` directory structure
+  - Enhanced template regeneration to preserve `ARCHITECTURE.md` during regeneration
+  - Updated workspace template `.gitignore` with symlink notes for clarity
 - Updated LICENSE copyright to ViewtifulSlayer
 
 ### Fixed

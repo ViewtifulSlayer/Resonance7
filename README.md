@@ -84,10 +84,15 @@ Resonance7/                         # Main workspace
 │   ├── recent/                       # Sessions 7+ days old
 │   ├── archived/                     # Monthly zip archives (YYYY-MM.zip)
 │   └── README.md                     # Documentation for sessions directory
-├── tools/                            # Shared scripts and tools
-│   ├── session_tools.py              # Script for session log management
-│   ├── setup_workspace.py            # Workspace setup and template management
-│   └── README.md                     # Documentation for session tools
+├── tools/                            # User-specific tools (not in repository)
+│   └── [user-specific tools]         # User's personal development tools
+├── library/                          # Shared Resonance 7 resources
+│   ├── tools/                        # Universal development tools
+│   │   ├── session_tools.py          # Script for session log management
+│   │   ├── setup_workspace.py        # Workspace setup and template management
+│   │   ├── session_tools.bat         # Quick launcher for session management
+│   │   ├── setup_workspace.bat       # Quick launcher for workspace setup
+│   │   └── README.md                 # Documentation for tools
 ├── projects/                         # Project-specific workspaces
 │   └── [project-name]/               # Individual user projects
 │       ├── src/                      # Project source code

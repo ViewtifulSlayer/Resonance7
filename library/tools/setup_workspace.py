@@ -41,30 +41,16 @@ SHARED_RESOURCES = {
     'library': {
         'type': 'symlink', 
         'source': 'library',
-        'description': 'Shared Resonance7 resources'
+        'description': 'Shared Resonance7 resources (includes universal tools in library/tools/)'
     },
     'sessions': {
         'type': 'symlink',
         'source': 'sessions', 
         'description': 'Shared session management'
-    },
-    'tools': {
-        'type': 'symlink',
-        'source': 'tools',
-        'description': 'Shared development tools'
-    },
-    'session_tools.bat': {
-        'type': 'symlink',
-        'source': 'session_tools.bat',
-        'description': 'Quick launcher for session management tool',
-        'is_file': True
-    },
-    'setup_workspace.bat': {
-        'type': 'symlink',
-        'source': 'setup_workspace.bat',
-        'description': 'Quick launcher for workspace setup tool',
-        'is_file': True
     }
+    # Note: 'tools' is no longer symlinked - projects get their own independent tools/ directory
+    # Universal tools are now in library/tools/ and accessible via library/ symlink
+    # Batch files are in library/ and accessible via library/ symlink
 }
 
 # Project template structure
@@ -72,6 +58,7 @@ PROJECT_TEMPLATE = {
     'src': 'Project source code',
     'docs': 'Project documentation', 
     'tests': 'Project tests',
+    'tools': 'Project-specific tools (independent, not symlinked)',
     '.cursor': 'Project-specific Cursor config',
     '.gitignore': 'Project-specific gitignore',
     '.cursorignore': 'Cursor IDE ignore rules',
@@ -147,12 +134,13 @@ def create_project_structure(project_path: Path, project_name: str) -> bool:
         project_path.mkdir(parents=True, exist_ok=True)
         
         # Create subdirectories
-        for dir_name in ['src', 'docs', 'tests']:
+        for dir_name in ['src', 'docs', 'tests', 'tools']:
             (project_path / dir_name).mkdir(exist_ok=True)
             info(f"Created directory: {dir_name}/")
         
         # Note: .cursor directory is shared from root level
         info("Using shared .cursor configuration from workspace root")
+        info("Created independent tools/ directory (not symlinked - for project-specific tools)")
         
         return True
         
@@ -402,7 +390,8 @@ setup.cfg
 # Shared Resonance 7 resources (symlinked - do not modify)
 library/
 sessions/
-tools/
+# Note: tools/ is now independent (not symlinked) - project-specific tools go here
+# Universal tools are in library/tools/ and accessible via library/ symlink
 
 # Version control
 .git/
@@ -548,7 +537,7 @@ def create_workspace_template(workspace_root: Path) -> bool:
         template_dir.mkdir(parents=True, exist_ok=True)
         
         # Create template structure
-        for dir_name in ['src', 'docs', 'tests']:
+        for dir_name in ['src', 'docs', 'tests', 'tools']:
             (template_dir / dir_name).mkdir(exist_ok=True)
         
         # Create template files
@@ -568,6 +557,7 @@ This template provides the standard structure for new Resonance7 projects.
 - `src/` - Source code
 - `docs/` - Documentation  
 - `tests/` - Test files
+- `tools/` - Project-specific tools (independent, not symlinked)
 - `.gitignore` - Git ignore rules
 - `.cursorignore` - Cursor IDE ignore rules
 - `.agentignore` - Agent file modification protection rules
@@ -577,9 +567,15 @@ This template provides the standard structure for new Resonance7 projects.
 ## Resonance 7 Integration
 
 This template includes symlinks to shared Resonance7 resources:
-- `library/` - Shared Resonance7 resources (including this template)
+- `library/` - Shared Resonance7 resources (including universal tools in `library/tools/`)
 - `sessions/` - Shared session management
-- `tools/` - Shared development tools
+- `tools/` - Project-specific tools directory (independent, not symlinked)
+
+Universal tools accessible via `library/` symlink:
+- `library/tools/session_tools.py` - Session creation and management
+- `library/tools/setup_workspace.py` - Workspace setup utility
+- `library/tools/session_tools.bat` - Quick launcher for session management
+- `library/tools/setup_workspace.bat` - Quick launcher for workspace setup
 
 The `.cursor` configuration is shared from the workspace root level.
 
@@ -637,6 +633,12 @@ Thumbs.db
 # Project specific
 *.log
 *.tmp
+
+# Shared Resonance 7 resources (symlinked - do not modify)
+library/
+sessions/
+# Note: tools/ is now independent (not symlinked) - project-specific tools go here
+# Universal tools are in library/tools/ and accessible via library/ symlink
 """
         (template_dir / '.gitignore').write_text(template_gitignore)
         
@@ -751,7 +753,8 @@ setup.cfg
 # Shared Resonance 7 resources (symlinked - do not modify)
 library/
 sessions/
-tools/
+# Note: tools/ is now independent (not symlinked) - project-specific tools go here
+# Universal tools are in library/tools/ and accessible via library/ symlink
 
 # Version control
 .git/
@@ -840,6 +843,15 @@ desktop.ini
 # numpy>=1.20.0
 """
         (template_dir / 'requirements.txt').write_text(template_requirements)
+        
+        # Restore preserved ARCHITECTURE.md if it was saved
+        # (This will be set by the workflow function before calling this)
+        if hasattr(create_workspace_template, '_preserved_arch'):
+            arch_file = template_dir / 'docs' / 'ARCHITECTURE.md'
+            arch_file.parent.mkdir(parents=True, exist_ok=True)
+            arch_file.write_text(create_workspace_template._preserved_arch, encoding='utf-8')
+            info("Restored ARCHITECTURE.md in template")
+            delattr(create_workspace_template, '_preserved_arch')
         
         info("Created workspace template")
         return True
@@ -940,6 +952,15 @@ def create_workspace_template_workflow(dry_run: bool = False) -> int:
             info("Operation cancelled")
             return 1
         
+        # Preserve ARCHITECTURE.md before removing template
+        arch_file = template_dir / 'docs' / 'ARCHITECTURE.md'
+        preserved_arch = None
+        if arch_file.exists():
+            try:
+                preserved_arch = arch_file.read_text(encoding='utf-8')
+            except Exception:
+                pass  # If we can't read it, that's okay
+        
         # Remove existing template
         try:
             if template_dir.is_symlink() or template_dir.is_file():
@@ -950,6 +971,10 @@ def create_workspace_template_workflow(dry_run: bool = False) -> int:
         except Exception as e:
             error(f"Failed to remove existing template: {e}")
             return 1
+    
+    # Pass preserved ARCHITECTURE.md to the creation function
+    if preserved_arch is not None:
+        create_workspace_template._preserved_arch = preserved_arch
     
     if not create_workspace_template(workspace_root):
         return 1
