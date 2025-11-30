@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-11-21
+
+### Added
+- `ARCHITECTURE.md` template in workspace template (`library/workspace_template/docs/ARCHITECTURE.md`) - Generic architecture documentation template for future projects with sections for system architecture, data architecture, repository setup, and technical stack documentation
+
+### Changed
+- Enhanced `agent_foundation.json` with improved agent behavior guidance:
+  - Added `mutual_respect` to core_philosophy - establishes partnership model with complementary strengths
+  - Strengthened file creation prohibition - explicitly includes documentation files, analysis files, summary files with only session logs as exception
+  - Refined `knowledge_persistence` philosophy - clarified it means using existing resources, not creating new files
+  - Enhanced critical friend guidance - added specific criteria for when to challenge (safety, best practices, factual errors) vs. when to follow (preference, style, non-critical)
+  - Added confidence language - encourages agents to work confidently within capabilities while maintaining humility
+  - Added "When to challenge vs. when to follow" guidance to communication rules
+  - Split long documentation rule into separate items for better readability
+  - Removed redundant `documentation_principle` from development_protocols (covered in communication rules)
+  - Added `timestamp_accuracy` rule to session_logging metadata_rules - explicitly requires getting actual current time via command, prohibits rounding to quarter hours
+- Updated LICENSE copyright to ViewtifulSlayer
+
+### Fixed
+- Fixed typos in `agent_foundation.json`: "collobration" → "collaboration", "well-stuctured" → "well-structured"
+- Fixed JSON syntax error in communication array (nested array converted to separate string items)
+
 ## [1.1.1] - 2025-11-10
 
 ### Added
@@ -44,7 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session lifecycle management (current → recent → archived)
 - Cross-platform Python tooling
 
-[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ViewtifulSlayer/Resonance7/releases/tag/v1.0.0

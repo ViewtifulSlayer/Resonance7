@@ -13,6 +13,12 @@ A comprehensive AI agent development framework and workspace management system d
 
 ## 📋 What's New
 
+**v1.2.0** (2025-11-21)
+- Added `ARCHITECTURE.md` template to workspace template for project architecture documentation
+- Enhanced agent foundation with improved behavior guidance and partnership model
+- Strengthened file creation protocols and knowledge persistence philosophy
+- Added timestamp accuracy requirements for session logging
+
 **v1.1.0** (2025-11-09)
 - Added Cursor command system for streamlined agent interaction (`/foundation`, `/help`, `/start`, `/session`)
 - Enhanced workspace template with `.cursorignore` and `.agentignore` templates
