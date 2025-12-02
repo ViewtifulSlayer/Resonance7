@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Refactored `library/agent_foundation.json` for better clarity and universality:
+  - Moved file creation policy to prominent position at top of `essential_behavior` with "CRITICAL" designation
+  - Combined redundant critical friend statements (lines 17-18) into one comprehensive statement
+  - Removed workflow-specific elements (test script cleanup) from universal foundation
+  - Foundation now 100% universal with no agent-specific workflows
+
+### Added
+- Created `library/workspace_template/CODER_AGENT.md` - Complete Coder agent protocol:
+  - "Getting Up to Speed" workflow (8-step process)
+  - Testing protocols (before, during, after)
+  - Incremental progress principles
+  - Feature list integration
+  - Clean state requirements
+  - Test script cleanup rule (moved from foundation)
+
+### Fixed
+- Fixed missing CODER_AGENT.md protocol file (Initializer and Researcher existed, Coder was missing)
+
 ## [1.3.0] - 2025-12-01
 
 ### Added

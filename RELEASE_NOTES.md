@@ -40,6 +40,13 @@ This release introduces a comprehensive agent type system based on research from
   - Init script creation
   - Project scaffolding
 
+- **`CODER_AGENT.md`** - Complete protocol for coder agents:
+  - "Getting Up to Speed" workflow (8-step process)
+  - Testing protocols (before, during, after)
+  - Incremental progress principles
+  - Feature list integration
+  - Clean state requirements
+
 - **`RESEARCHER_AGENT.md`** - Complete protocol for researcher agents:
   - Information gathering workflow
   - Verification standards
@@ -72,12 +79,13 @@ Comprehensive documentation added to `library/docs/`:
 ## Implementation Status
 
 ### Fully Implemented
-- ✅ Agent type protocols and documentation
+- ✅ Agent type protocols and documentation (Initializer, Coder, Researcher)
 - ✅ `/agents` command (agent follows instructions manually)
 - ✅ `AGENTS.md` and `PROGRESS.md` templates
 - ✅ Knowledge base templates
 - ✅ Auto-detection logic (documented)
 - ✅ Comprehensive framework documentation
+- ✅ Foundation refactored for universality (workflow-specific elements moved to protocols)
 
 ### Documentation Only (Not Yet Implemented)
 - ⚠️ `.agent-mode` file persistence - Documented but no automated tooling

@@ -23,6 +23,8 @@ A comprehensive AI agent development framework and workspace management system d
 - Knowledge base templates for structured knowledge organization
 - Comprehensive framework documentation in `library/docs/`
 - Auto-detection of agent mode based on project state
+- Foundation refactored for universality (workflow-specific elements moved to agent protocols)
+- Complete agent protocol files for all three agent types (CODER_AGENT.md created)
 
 **v1.2.0** (2025-11-21)
 - Reorganized tools structure: Universal tools moved to `library/tools/` (accessible via `library/` symlink)
