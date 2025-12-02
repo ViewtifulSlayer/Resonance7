@@ -5,6 +5,8 @@ A comprehensive AI agent development framework and workspace management system d
 ## 🌟 Features
 
 - **Agent Foundation**: Core behavioral guidelines and protocols for AI agents
+- **Agent Type System**: Specialized agent types (Initializer, Coder, Researcher) with dedicated protocols
+- **Project-Specific Guidance**: `AGENTS.md` files for project context and workflows
 - **Session Management**: Structured logging and tracking of AI agent sessions
 - **Workspace Templates**: Pre-configured project templates with shared resources
 - **Knowledge Persistence**: Documentation libraries and session logs for knowledge accumulation
@@ -12,6 +14,15 @@ A comprehensive AI agent development framework and workspace management system d
 - **IDE-Agnostic**: Works with any IDE that supports Cursor rules (or can be adapted)
 
 ## 📋 What's New
+
+**v1.3.0** (2025-12-01) - *Unreleased - Testing Branch*
+- Agent type system with three specialized types (Initializer, Coder, Researcher)
+- `/agents` command for agent type selection and mode switching
+- `AGENTS.md` template for project-specific agent guidance (based on GitHub's agents.md pattern)
+- `PROGRESS.md` template for lightweight quick-context tracking
+- Knowledge base templates for structured knowledge organization
+- Comprehensive framework documentation in `library/docs/`
+- Auto-detection of agent mode based on project state
 
 **v1.2.0** (2025-11-21)
 - Reorganized tools structure: Universal tools moved to `library/tools/` (accessible via `library/` symlink)
@@ -114,10 +125,13 @@ Resonance7/                         # Main workspace
 ## 📚 Documentation
 
 - **[Library Documentation](library/README.md)** - Core resources and agent foundation
+- **[Framework Documentation](library/docs/INDEX.md)** - Agent onboarding, types, and activation guides
 - **[Session Management](sessions/README.md)** - Session logging and lifecycle
 - **[Tools Documentation](library/tools/README.md)** - Available scripts and utilities
 - **[Workspace Template](library/workspace_template/README.md)** - Project template structure
 - **[Documentation Modules](library/docs/README.md)** - Knowledge base organization
+- **[Release Notes](RELEASE_NOTES.md)** - Detailed release information
+- **[Changelog](CHANGELOG.md)** - Complete change history
 
 ## 🛠️ Usage
 
@@ -159,6 +173,25 @@ The core agent behavior is defined in `library/agent_foundation.json`. This file
 - Development workflows and best practices
 - Session logging requirements
 - Knowledge persistence strategies
+
+### Agent Types
+
+Resonance7 supports three specialized agent types:
+
+- **Initializer**: Sets up project environment and scaffolding (first session)
+- **Coder**: Makes incremental progress and implements features (subsequent sessions)
+- **Researcher**: Gathers information and populates knowledge bases
+
+Use the `/agents` command to select or switch agent types:
+
+```bash
+/agents              # Show current mode and options
+/agents coder        # Switch to coder mode
+/agents researcher   # Switch to researcher mode
+/agents initializer  # Switch to initializer mode
+```
+
+Each project can have an `AGENTS.md` file for project-specific guidance, separate from the framework-wide foundation.
 
 ## 🎯 Philosophy
 

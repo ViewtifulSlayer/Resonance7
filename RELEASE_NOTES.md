@@ -1,115 +1,142 @@
-# Resonance7 v1.2.0 - Tools Reorganization & Enhanced Foundation
+# Resonance7 v1.3.0 - Agent Type System & Enhanced Onboarding
 
-**Release Date:** November 30, 2025
+**Release Date:** December 1, 2025
 
-This release introduces a major reorganization of the tools structure for better separation of concerns, enhances the agent foundation with improved behavior guidance, and adds architecture documentation templates. The framework is now more modular and maintainable.
+This release introduces a comprehensive agent type system based on research from Anthropic and GitHub, adding specialized agent types, project-specific guidance, and enhanced onboarding capabilities. The framework now supports Initializer, Coder, and Researcher agent types with dedicated protocols and workflows.
 
 ## What's New
 
-### Tools Structure Reorganization
+### Agent Type System
 
-- **Universal tools moved to `library/tools/`** - Framework tools are now centralized:
-  - `session_tools.py` - Session creation and management
-  - `setup_workspace.py` - Workspace setup and template management
-  - `session_tools.bat` - Quick launcher for session management
-  - `setup_workspace.bat` - Quick launcher for workspace setup
-  - All accessible via the `library/` symlink in projects
+- **Three Specialized Agent Types**:
+  - **Initializer Agent** - Sets up project environment, creates scaffolding, establishes feature lists (based on [Anthropic's research](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents))
+  - **Coder Agent** - Makes incremental progress, implements features, maintains clean state
+  - **Researcher Agent** - Gathers information, verifies data, populates knowledge bases (extension based on best practices)
 
-- **Independent project tools directories** - Projects now get their own `tools/` directories:
-  - No longer symlinked to root `tools/`
-  - Each project can have project-specific tools and scripts
-  - Better separation between framework tools and project tools
-  - Universal tools remain accessible via `library/tools/`
+- **Agent Type Selection**:
+  - `/agents` command for interactive agent type selection
+  - `/agents [type]` for direct mode switching (initializer, coder, researcher)
+  - Auto-detection based on project state (new project → Initializer, has knowledge_base/ → Researcher, has src/ → Coder)
+  - Mode-specific protocol loading
 
-- **Migration support** - Existing projects can be migrated using the migration script (now removed after migration completion)
+### Project-Specific Agent Guidance
 
-### Architecture Documentation Template
+- **`AGENTS.md` Template** - Project-specific agent guidance file:
+  - Based on [GitHub's agents.md pattern](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/)
+  - Includes project overview, development environment, workflows, and domain knowledge
+  - Template automatically copied to new projects
+  - Distinguishes from framework-wide `agent_foundation.json`
 
-- **`ARCHITECTURE.md` template** - New template in workspace template (`library/workspace_template/docs/ARCHITECTURE.md`):
-  - Generic architecture documentation template for future projects
-  - Sections for system architecture, data architecture, repository setup, and technical stack
-  - Automatically preserved during template regeneration
-  - Helps maintain consistent architecture documentation across projects
+- **`PROGRESS.md` Template** - Lightweight quick-context tracking:
+  - Faster than parsing full session logs
+  - Updated at end of each session
+  - Provides quick state understanding for agents
 
-### Enhanced Agent Foundation
+### Agent Protocols
 
-- **Improved behavior guidance** - Enhanced `agent_foundation.json` with:
-  - **Mutual respect partnership model** - Establishes complementary strengths between human and AI
-  - **Strengthened file creation protocols** - Explicitly prohibits documentation, analysis, and summary files (session logs remain exception)
-  - **Refined knowledge persistence** - Clarified to mean using existing resources, not creating new files
-  - **Enhanced critical friend guidance** - Specific criteria for when to challenge (safety, best practices, factual errors) vs. when to follow (preference, style, non-critical)
-  - **Confidence language** - Encourages agents to work confidently within capabilities while maintaining humility
-  - **Timestamp accuracy requirements** - Explicitly requires getting actual current time via command, prohibits rounding to quarter hours
+- **`INITIALIZER_AGENT.md`** - Complete protocol for initializer agents:
+  - Environment setup workflow
+  - Feature list creation
+  - Init script creation
+  - Project scaffolding
 
-### Workspace Template Completeness
+- **`RESEARCHER_AGENT.md`** - Complete protocol for researcher agents:
+  - Information gathering workflow
+  - Verification standards
+  - Knowledge base organization
+  - Source attribution requirements
 
-- **Complete template structure** - Workspace template now includes full directory structure with READMEs:
-  - `src/README.md` - Source code directory documentation
-  - `tests/README.md` - Test directory documentation
-  - `tools/README.md` - Project-specific tools documentation
-  - All directories preserved in repository (no regeneration needed)
-  - Template regeneration preserves all READMEs and `ARCHITECTURE.md`
+### Knowledge Base Templates
 
-### Session Directory Documentation
+- **`knowledge_base_template.json`** - Template for structured knowledge bases:
+  - Metadata structure
+  - Content organization patterns
+  - Based on XMBMGMT's excellent knowledge base structure
 
-- **README files in session directories** - Added documentation to preserve empty directories:
-  - `sessions/current/README.md` - Active sessions documentation
-  - `sessions/recent/README.md` - Recent sessions documentation
-  - `sessions/archived/README.md` - Archived sessions documentation (already existed)
-  - Directories now tracked in Git with functional documentation (better than `.gitkeep` files)
+- **`KNOWLEDGE_BASE_INDEX_TEMPLATE.md`** - Template for knowledge base navigation:
+  - Quick reference guides
+  - File relationship documentation
+  - "I want to..." workflows
+
+### Framework Documentation
+
+Comprehensive documentation added to `library/docs/`:
+
+- **`AGENT_ONBOARDING_ANALYSIS.md`** - Complete analysis of Anthropic & GitHub patterns
+- **`AGENT_ONBOARDING_SUMMARY.md`** - Quick reference guide
+- **`AGENT_TYPES_PROVENANCE.md`** - What came from articles vs. extensions, with supporting best practices
+- **`AGENT_TYPE_ACTIVATION_OPTIONS.md`** - Analysis of 6 different activation approaches
+- **`AGENT_ACTIVATION_IMPLEMENTATION.md`** - Implementation guide for `/agents` command
+- **`INDEX.md`** - Navigation guide for all framework documentation
+
+## Implementation Status
+
+### Fully Implemented
+- ✅ Agent type protocols and documentation
+- ✅ `/agents` command (agent follows instructions manually)
+- ✅ `AGENTS.md` and `PROGRESS.md` templates
+- ✅ Knowledge base templates
+- ✅ Auto-detection logic (documented)
+- ✅ Comprehensive framework documentation
+
+### Documentation Only (Not Yet Implemented)
+- ⚠️ `.agent-mode` file persistence - Documented but no automated tooling
+- ⚠️ Session start mode loading - Would require Python scripts/session hooks
+- ⚠️ Automatic file creation - Currently manual (agent follows instructions)
+
+**Note**: The agent type system works via agents following documented protocols. There's no automated tooling yet - agents read the documentation and follow the instructions manually. This is intentional for Phase 1; automated persistence can be added in Phase 2 if needed.
+
+## Key Features
+
+### Based on Research
+
+- **Anthropic's Findings**: Initializer vs. Coder distinction, feature lists, progress tracking, incremental development
+- **GitHub's Pattern**: `agents.md` as project-specific guidance (used in 2500+ repositories)
+- **Best Practices**: Knowledge engineering, information architecture, agent specialization
+
+### Extensions
+
+- **Researcher Agent Type**: Extension based on knowledge engineering best practices and the need for systematic knowledge base population
+- **Knowledge Base Templates**: Based on XMBMGMT's excellent knowledge base structure
+- **Verification Protocols**: Source quality hierarchy and verification standards
 
 ## Changes
 
-- **Updated LICENSE copyright** - Changed to ViewtifulSlayer
-- **Updated `.gitignore`** - Fixed patterns to preserve README files in session directories
-- **Enhanced `setup_workspace.py`** - Now preserves directory READMEs and `ARCHITECTURE.md` during template regeneration
-- **Updated workspace template** - Version marked as 1.2.0 in template README
-
-## Fixes
-
-- **Fixed typos in `agent_foundation.json`**:
-  - "collobration" → "collaboration"
-  - "well-stuctured" → "well-structured"
-- **Fixed JSON syntax error** - Nested array in communication rules converted to separate string items
+- Enhanced workspace template with agent guidance files
+- Updated command system with `/agents` command
+- Added comprehensive framework documentation
+- Created agent protocol files for each agent type
 
 ## Getting Started
 
-If you're upgrading from v1.1.x:
+### For New Projects
 
-1. **Pull the latest changes:**
-   ```bash
-   git pull origin main
-   ```
+1. **Create project**: `python library/tools/setup_workspace.py --project my-project`
+2. **Customize `AGENTS.md`**: Add project-specific guidance
+3. **Select agent type**: Use `/agents [type]` or let auto-detection choose
+4. **Start working**: Agent follows appropriate protocols
 
-2. **Update tool paths** - Universal tools are now in `library/tools/`:
-   ```bash
-   # Old (still works via symlink, but direct path is clearer)
-   python tools/session_tools.py
-   
-   # New (recommended)
-   python library/tools/session_tools.py
-   ```
+### For Existing Projects
 
-3. **Migrate existing projects** (if needed):
-   - Existing projects with symlinked `tools/` directories should be migrated
-   - Migration script was available but has been removed after completion
-   - Manual migration: Remove symlink, create independent `tools/` directory
-   - Copy project-specific files from root `tools/` to project `tools/` as needed
+1. **Add `AGENTS.md`**: Copy from template and customize
+2. **Add `PROGRESS.md`**: Create for quick context tracking
+3. **Use `/agents` command**: Select appropriate agent type for your work
 
-4. **Use the new architecture template**:
-   - New projects include `ARCHITECTURE.md` template in `docs/`
-   - Customize it for your project's architecture documentation needs
+### Agent Type Selection
 
-If you're new to Resonance7, see the [v1.0.0 release notes](https://github.com/ViewtifulSlayer/Resonance7/releases/tag/v1.0.0) for initial setup instructions.
+```
+/agents                    # Show current mode and options
+/agents initializer        # Switch to initializer mode
+/agents coder              # Switch to coder mode
+/agents researcher         # Switch to researcher mode
+```
 
 ## Documentation
 
-- **[README.md](README.md)** - Complete framework documentation
-- **[CHANGELOG.md](CHANGELOG.md)** - Full changelog history
-- **[Library Documentation](library/README.md)** - Core resources and agent foundation
-- **[Session Management](sessions/README.md)** - Session logging and lifecycle
-- **[Tools Documentation](library/tools/README.md)** - Available scripts and utilities
-- **[Workspace Template](library/workspace_template/README.md)** - Project template structure
+- **[Framework Documentation Index](library/docs/INDEX.md)** - Navigation guide
+- **[Agent Onboarding Analysis](library/docs/AGENT_ONBOARDING_ANALYSIS.md)** - Complete analysis
+- **[Agent Protocols](library/workspace_template/)** - Initializer, Researcher, and project guidance templates
+- **[Commands](.cursor/commands/agents.md)** - Agent type selection command
 
 ## Requirements
 
@@ -117,10 +144,14 @@ If you're new to Resonance7, see the [v1.0.0 release notes](https://github.com/V
 - Git
 - A compatible IDE (Cursor recommended, but any IDE can be adapted)
 
+## Testing
+
+This release is being tested as a branch diverging from main. The agent type system and `AGENTS.md` features are ready for testing. Feedback will guide Phase 2 enhancements (automated persistence, session hooks, etc.).
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Full Changelog:** [v1.1.1...v1.2.0](https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...v1.2.0)
+**Full Changelog:** [v1.2.0...v1.3.0](https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...v1.3.0)

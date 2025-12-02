@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-12-01
+
+### Added
+- Agent type system with three specialized agent types:
+  - **Initializer Agent** - Environment setup and project scaffolding (based on Anthropic research)
+  - **Coder Agent** - Incremental feature development and implementation
+  - **Researcher Agent** - Information gathering and knowledge base population
+- `/agents` command for agent type selection and mode switching
+- Project-specific agent guidance system:
+  - `AGENTS.md` template in workspace template for project-specific agent guidance
+  - `PROGRESS.md` template for lightweight quick-context tracking
+  - Agent protocols: `INITIALIZER_AGENT.md` and `RESEARCHER_AGENT.md`
+- Knowledge base templates:
+  - `knowledge_base_template.json` - Template for structured knowledge bases
+  - `KNOWLEDGE_BASE_INDEX_TEMPLATE.md` - Template for knowledge base navigation
+- Framework documentation in `library/docs/`:
+  - `AGENT_ONBOARDING_ANALYSIS.md` - Comprehensive analysis of Anthropic & GitHub patterns
+  - `AGENT_ONBOARDING_SUMMARY.md` - Quick reference guide
+  - `AGENT_TYPES_PROVENANCE.md` - Documentation of sources and best practices
+  - `AGENT_TYPE_ACTIVATION_OPTIONS.md` - Analysis of activation approaches
+  - `AGENT_ACTIVATION_IMPLEMENTATION.md` - Implementation guide
+  - `INDEX.md` - Navigation guide for framework documentation
+- Auto-detection of agent mode based on project state (new project → Initializer, has knowledge_base/ → Researcher, has src/ → Coder)
+
+### Changed
+- Enhanced workspace template with agent guidance files:
+  - `AGENTS.md` template includes agent type information and "Getting Up to Speed" workflow
+  - `PROGRESS.md` template for quick context tracking
+  - `.agent-mode.example` template (documentation only - persistence not yet implemented)
+- Updated command system with agent type selection capability
+
+### Documentation
+- Added comprehensive documentation of agent onboarding patterns from Anthropic and GitHub articles
+- Documented what features came from articles vs. extensions
+- Created implementation guides for agent type activation
+- Added provenance documentation with supporting best practices
+
+### Notes
+- Agent mode persistence (`.agent-mode` file) is documented but not yet implemented - currently session-specific
+- `/agents` command works via agent following instructions manually (no automated tooling yet)
+- All agent type protocols are documentation/guidelines, not automated systems
+
 ## [1.2.0] - 2025-11-21
 
 ### Added
@@ -76,7 +118,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session lifecycle management (current → recent → archived)
 - Cross-platform Python tooling
 
-[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.0.0...v1.1.0
