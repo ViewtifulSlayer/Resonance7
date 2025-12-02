@@ -2,6 +2,18 @@
 
 This directory is intended for knowledge base and context modules that provide agents with reference documentation, examples, and domain-specific information.
 
+## Framework Documentation
+
+**Single Source of Truth**: **[AGENT_SYSTEM.md](AGENT_SYSTEM.md)** - Complete reference for agent types, onboarding, and activation
+
+This file consolidates all agent system information into one searchable document:
+- Agent types (Initializer, Coder, Researcher)
+- Project-specific guidance (AGENTS.md pattern)
+- Agent activation (/agents command)
+- Provenance (what came from articles vs. extensions)
+- Implementation status
+- Quick reference
+
 ## Purpose
 
 The `docs/` directory serves as a shared knowledge repository accessible to all projects via symlinks. This allows agents to access relevant documentation and examples without duplicating content across projects.
