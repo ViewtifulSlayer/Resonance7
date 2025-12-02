@@ -26,8 +26,9 @@ projects/*/*
 # =============================================================================
 # Exclude documentation module content (downloaded on-demand)
 library/docs/*
-# But preserve the docs/ directory structure and README
+# But preserve the docs/ directory structure and framework documentation
 !library/docs/README.md
+!library/docs/AGENT_SYSTEM.md
 !library/docs/.gitkeep
 
 # =============================================================================
