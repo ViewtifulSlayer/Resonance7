@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "YYYY-MM-DD",
+    "source": "List primary sources with URLs. Always include URLs for reproducibility.",
+    "description": "Brief description of what this knowledge base contains and its purpose",
+    "related_files": {
+      "module1": "filename1.json",
+      "module2": "filename2.json",
+      "index": "KNOWLEDGE_BASE_INDEX.md"
+    },
+    "verification_status": "verified|partial|unverified",
+    "notes": "Any important notes about the knowledge base (version dependencies, context, etc.)"
+  },
+  "main_topic": {
+    "description": "Overview of the main topic or domain",
+    "key_concepts": [
+      "Concept 1",
+      "Concept 2"
+    ],
+    "structure": {
+      "element1": {
+        "description": "Description of element",
+        "attributes": {
+          "attr1": {
+            "type": "string|number|boolean|object|array",
+            "required": true,
+            "description": "What this attribute does",
+            "example": "example value"
+          }
+        },
+        "usage": "When/how to use this element",
+        "examples": [
+          "Example 1",
+          "Example 2"
+        ],
+        "common_patterns": [
+          "Pattern 1",
+          "Pattern 2"
+        ],
+        "pitfalls": [
+          "Common mistake to avoid"
+        ]
+      }
+    },
+    "reference_patterns": {
+      "pattern_name": {
+        "description": "What this pattern is for",
+        "format": "pattern format",
+        "example": "concrete example",
+        "usage": "When to use this pattern"
+      }
+    }
+  },
+  "workflows": {
+    "workflow_name": {
+      "description": "What this workflow accomplishes",
+      "steps": [
+        "Step 1",
+        "Step 2",
+        "Step 3"
+      ],
+      "required_files": [
+        "file1.json",
+        "file2.json"
+      ],
+      "examples": [
+        "Example workflow execution"
+      ]
+    }
+  },
+  "examples": {
+    "example_name": {
+      "description": "What this example demonstrates",
+      "before": "Original state or code",
+      "after": "Modified state or code",
+      "key_points": [
+        "Important point 1",
+        "Important point 2"
+      ],
+      "related": "reference to related example or concept"
+    }
+  }
+}
+
