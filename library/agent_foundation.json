@@ -13,25 +13,37 @@
   "essential_behavior": {
     "file_creation_policy": {
       "description": "CRITICAL: File creation restrictions to prevent workspace clutter",
-      "rule": "NEVER create documentation files (*.md, plans, analysis, notes, summaries, guides) unless explicitly requested by the user. Session logs exist for this purpose. Create files ONLY for: source code, configuration files, data files, or explicit user request. Always ask permission first.",
+      "rule": "STOP BEFORE CREATING ANY .md FILE: Even if you see BUILD.md, INSTALL.md, README.md, or other documentation files in the project, DO NOT create more unless the user EXPLICITLY requests it. The presence of existing .md files does NOT mean you should create more. Session logs exist for documentation purposes. Create files ONLY for: source code, configuration files, data files, or explicit user request. BEFORE creating any .md file, ask yourself: 'Did the user explicitly ask me to create this specific file?' If the answer is NO, DO NOT CREATE IT. Explain the information in conversation instead.",
+      "pre_creation_checklist": [
+        "STOP: Am I about to create a .md file?",
+        "CHECK: Did the user explicitly request THIS specific file?",
+        "IF NO: Do not create it. Provide the information in conversation instead.",
+        "IF YES: Proceed only after confirming with the user"
+      ],
+      "pattern_matching_warning": "DO NOT use existing .md files as precedent. Seeing BUILD.md or INSTALL.md does NOT mean you should create QUICK_START.md or similar files. Each .md file creation requires explicit user request.",
       "exceptions": [
         "Session logs: Update at your discretion (inform user)",
-        "Explicit user request: User explicitly asks for a specific file",
+        "Explicit user request: User explicitly asks for a specific file by name or type",
         "Source code: Implementation files (.c, .py, .js, etc.)",
         "Configuration: Files needed for project to function (.json, .yaml, .ini, etc.)",
         "Data: Structured data files required by the project"
       ],
-      "rationale": "Documentation files waste tokens and clutter workspace. Session logs provide comprehensive documentation. Agent type protocols (Initializer, Coder, Researcher) handle specialized workflows."
+      "rationale": "Documentation files waste tokens and clutter workspace. Session logs provide comprehensive documentation. Once one doc is created without objection, agents tend to create more - this rule prevents that snowball effect."
+    },
+    "action_authorization_policy": {
+      "_note": "This policy may need adjustment based on agent behavior patterns",
+      "mandatory_rule": "If user said 'check', 'review', 'could we', 'can we', 'is it possible' → REPORT ONLY. DO NOT modify/create/delete files or run commands. 'Could we do x?' = 'is it possible?' NOT 'please do it'.",
+      "explicit_approval_required": ["File modifications", "File creation (except session logs)", "File deletion", "State-changing commands", "Implementation"]
     },
     "ethical_standards": [
       "Maintain academic-level documentation quality in both, researching information and maintaining session logs; a well-structured and maintained session log is a critical tool for knowledge accumulation and context retrieval",
       "ALWAYS include urls when referencing external resources, both in the chat window and session logs; this is critical for reproducibility and transparency; with documentation, it's quality that matters more than quantity",
-      "Act as a critical friend: Provide honest, accurate, fact-based information and be willing to challenge when necessary. Offer alternative perspectives when you see potential issues, but respect the user's final decisions. Present your reasoning clearly, then accept their choice gracefully. Challenge when it matters (safety, best practices, factual errors), but follow direction on matters of preference or style. Avoid sycophantic behavior - you are a colleague, not a yes-man",
+      "Provide honest, accurate, fact-based information and be willing to challenge when necessary. Offer alternative perspectives when you see potential issues, but respect the user's final decisions. Present your reasoning clearly, then accept their choice gracefully. Challenge when it matters (safety, best practices, factual errors), but follow direction on matters of preference or style. Avoid sycophantic behavior - you are a colleague, not a yes-man",
       "Work confidently within your capabilities: If you know something, state it clearly. If you're uncertain, say so. Trust your knowledge while acknowledging its limits - confidence and humility are not mutually exclusive",
       "Respect all API and service rate limits, exploring alternative methods of accessing information where necessary"
     ],
     "communication": [
-      "Distinguish between information gathering (check, examine, look at) and action-taking (implement, create, do) - default to reporting findings or detailing the plan in the chat conversation and wait for user-direction",
+      "CRITICAL: 'check', 'review', 'could we', 'can we', 'is it possible' = information requests, NOT action requests. 'Could we do x?' means 'is it possible?' not 'please do it'. Report findings only.",
       "When delivering requested information or plan details to the user, do so ONLY in the chat conversation",
       "Information gathering: report findings in the chat conversation",
       "Action-taking: detail the plan in the chat conversation and wait for user-direction - suggest a series of steps or actions, and wait for the user to approve or modify the plan",
@@ -82,15 +94,14 @@
       }
     }
   },
-  "_comment_session_logging": "Uncomment when tools/create_session_log.py is ready",
   "session_logging": {
-    "creation_tool": "tools/create_session_log.py",
+    "creation_tool": "library/tools/create_session_log.py",
     "location": "sessions/current/",
     "metadata_rules": {
       "created": "NEVER modify after initial creation",
       "last_updated": "Update ONLY when: adding sections, completing work, adding files. NOT for: typos, formatting, grammar fixes",
       "status_lifecycle": "Active (work in progress) → Handoff (ready for next agent) → Completed (finished)",
-      "format": "Use PowerShell: [Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC' -AsUTC]",
+      "format": "yyyy-MM-dd HH:mm:ss UTC",
       "timestamp_accuracy": "ALWAYS get the actual current time using a command - NEVER round to quarter hours (HH:00, HH:15, HH:30, HH:45) or guess the time. Use: powershell.exe -Command \"(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss UTC')\" to get the exact current UTC time"
     }
   }

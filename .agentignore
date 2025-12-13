@@ -1,19 +1,142 @@
-# Agent Ignore File
-# 
-# This file specifies directories and files that AI agents should NOT modify.
-# Add paths here to protect important foundation files, configuration files,
-# or sensitive directories that should only be changed by the user.
-#
-# Examples:
-#   library/agent_foundation.json    # Protect core protocol files
-#   sessions/archived/                # Protect archived sessions
-#   *.config                         # Protect configuration files
-#
-# Rules:
-#   - Use standard glob patterns
-#   - One path or pattern per line
-#   - Comments start with #
-#   - Use ! to negate a pattern (e.g., !allowed.json)
-#
-# Agents should check this file before modifying any files or directories.
+# Resonance 7 - Agent Ignore Rules
+# Protects critical files and directories from automatic agent modification
+# Note: Agents should check this file before modifying any files or directories
+# Referenced in agent_foundation.json file_safety protocol
 
+# =============================================================================
+# Core Foundation Files
+# =============================================================================
+# Protect core protocol and configuration files (modify only with explicit user request)
+library/agent_foundation.json
+agents/agent_foundation.json
+.cursor/rules/agent_onboarding.mdc
+.cursor/commands/foundation.md
+
+# =============================================================================
+# Configuration Files
+# =============================================================================
+# Protect ignore and configuration files (prevent accidental modification)
+.gitignore
+.cursorignore
+.agentignore
+.gitattributes
+.agent-mode
+
+# =============================================================================
+# Shared Resonance 7 Resources
+# =============================================================================
+# Protect shared resources (symlinked or shared across projects)
+library/
+sessions/
+# Note: These are shared resources - modifications affect all projects
+# Use project-specific directories for project work
+
+# =============================================================================
+# Version Control
+# =============================================================================
+# Protect version control system files
+.git/
+.gitattributes
+
+# =============================================================================
+# Knowledge Base Databases
+# =============================================================================
+# Protect knowledge base databases (data integrity - modify only with explicit request)
+# Note: Databases are accessible for reading via MCP server, but should not be modified
+library/resources/wikis/**/*.db
+library/resources/wikis/**/*.sqlite
+library/resources/wikis/**/*.sqlite3
+*.db
+*.sqlite
+*.sqlite3
+
+# =============================================================================
+# IDE and Editor Configuration
+# =============================================================================
+# Protect IDE-specific configuration (usually user-specific)
+.cursor/settings.json
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OS and System Files
+# =============================================================================
+# Protect OS-specific files (not needed for agent modification)
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# =============================================================================
+# Build Artifacts
+# =============================================================================
+# Protect build outputs (regenerated, not edited)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+dist/
+build/
+*.egg-info/
+.eggs/
+wheels/
+*.whl
+*.egg
+
+# =============================================================================
+# Virtual Environments
+# =============================================================================
+# Protect virtual environments (system-managed)
+.env
+.venv/
+venv/
+env/
+ENV/
+
+# =============================================================================
+# Test Artifacts
+# =============================================================================
+# Protect test outputs (regenerated, not edited)
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+.ipynb_checkpoints/
+
+# =============================================================================
+# Log Files
+# =============================================================================
+# Protect log files (append-only, not edited)
+*.log
+
+# =============================================================================
+# Temporary Files
+# =============================================================================
+# Protect temporary files (system-managed)
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# =============================================================================
+# Project-Specific Protected Files
+# =============================================================================
+# Add project-specific files/directories that should never be auto-modified
+# Example patterns (uncomment and customize as needed):
+# projects/*/secrets/
+# projects/*/credentials/
+# projects/*/config/production.yaml
+# projects/*/private/
+
+# =============================================================================
+# Override Parent-Level Ignores
+# =============================================================================
+# Use ! to negate patterns from higher-level .agentignore files
+# Example: !special_tools/  (re-enables a directory ignored at parent level)
+# Note: This section is typically used in project-level .agentignore files

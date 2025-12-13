@@ -1,31 +1,110 @@
-# Normalize line endings for cross-platform compatibility
+# Resonance 7 - Git Attributes Rules
+# Defines how Git handles line endings and file types for cross-platform compatibility
+# Ensures consistent behavior across Windows, Linux, and macOS
+
+# =============================================================================
+# Default Text Handling
+# =============================================================================
+# Auto-detect text files and normalize line endings
 * text=auto
 
-# Explicitly declare text files
+# =============================================================================
+# Text Files
+# =============================================================================
+# Explicitly declare text file types (normalize line endings)
 *.md text
 *.py text
-*.json text
+*.json text eol=lf
 *.mdc text
 *.txt text
 *.yml text
 *.yaml text
+*.xml text
+*.html text
+*.css text
+*.js text
+*.ts text
+*.jsx text
+*.tsx text
+*.sql text
+*.sh text eol=lf
+*.bash text eol=lf
 
-# Explicitly declare binary files
+# =============================================================================
+# Windows Scripts
+# =============================================================================
+# Windows scripts should use CRLF line endings
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+
+# =============================================================================
+# Configuration Files
+# =============================================================================
+# Configuration files should use LF for consistency
+*.ini text eol=lf
+*.conf text eol=lf
+*.config text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+
+# =============================================================================
+# Binary Files
+# =============================================================================
+# Explicitly declare binary file types (no line ending conversion)
 *.zip binary
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.gif binary
+*.ico binary
+*.svg binary
 *.pdf binary
 *.dll binary
 *.exe binary
+*.so binary
+*.dylib binary
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+*.bin binary
 
-# Ensure shell scripts use LF
-*.sh text eol=lf
-*.bash text eol=lf
+# =============================================================================
+# Archive Files
+# =============================================================================
+# Archive and compressed files are binary
+*.tar binary
+*.gz binary
+*.bz2 binary
+*.xz binary
+*.7z binary
+*.rar binary
 
-# Ensure Windows scripts can use CRLF
-*.bat text eol=crlf
-*.ps1 text eol=crlf
-*.cmd text eol=crlf
-*.json text eol=lf
+# =============================================================================
+# Media Files
+# =============================================================================
+# Media files are binary
+*.mp3 binary
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.wav binary
+*.flac binary
+*.ogg binary
+
+# =============================================================================
+# Font Files
+# =============================================================================
+# Font files are binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+
+# =============================================================================
+# Project-Specific Overrides
+# =============================================================================
+# Add project-specific file type attributes here if needed
+# Example: To force a specific line ending for a file type:
+# *.custom text eol=lf

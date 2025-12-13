@@ -19,17 +19,25 @@ sessions/archived/*.zip
 # Exclude all user project contents
 projects/*/*
 # But preserve the projects/ directory structure
-!projects/.gitkeep
+!projects/README.md
 
 # =============================================================================
 # Documentation Modules
 # =============================================================================
 # Exclude documentation module content (downloaded on-demand)
-library/docs/*
-# But preserve the docs/ directory structure and framework documentation
-!library/docs/README.md
-!library/docs/AGENT_SYSTEM.md
-!library/docs/.gitkeep
+library/resources/docs/*
+# But preserve the docs/ directory structure
+!library/resources/docs/README.md
+# Preserve the resources/ directory README
+!library/resources/README.md
+
+# =============================================================================
+# Knowledge Base Databases
+# =============================================================================
+# Exclude wiki knowledge base databases and indexes (large files, user-specific)
+library/resources/wikis/*
+# But preserve the wikis/ directory structure
+!library/resources/wikis/README.md
 
 # =============================================================================
 # IDE and Editor Files
@@ -37,6 +45,7 @@ library/docs/*
 # IDE-specific files (optional - users can customize)
 .cursor/settings.json
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo

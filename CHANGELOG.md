@@ -7,66 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-12-13
+
 ### Changed
-- Refactored `library/agent_foundation.json` for better clarity and universality:
-  - Moved file creation policy to prominent position at top of `essential_behavior` with "CRITICAL" designation
-  - Combined redundant critical friend statements (lines 17-18) into one comprehensive statement
-  - Removed workflow-specific elements (test script cleanup) from universal foundation
-  - Foundation now 100% universal with no agent-specific workflows
+- Renamed `library/tools/setup_project.py` to `library/tools/project_setup.py` for better naming consistency
+- Reorganized documentation structure:
+  - Moved `library/docs/` to `library/resources/docs/` for better resource grouping
+  - Updated all references to documentation modules to reflect new location
+- Updated project template generation:
+  - Template generation now acts as failsafe only (template tracked in git)
+  - Function checks if template exists before generating
+- Updated command files:
+  - Fixed session template path in `.cursor/commands/session.md` to point to `library/templates/documentation_templates/session_template.md`
+- Enhanced ignore file patterns:
+  - Updated `.cursorignore` to properly handle `library/resources/docs/` and `library/resources/wikis/`
+  - Updated `.gitignore` to exclude knowledge base databases while preserving index files
+  - Refined patterns to allow markdown index files for discoverability
+  - Added exception for `library/resources/README.md` to allow tracking of resources directory README
+- Refined agent foundation:
+  - Consolidated timestamp format specification (removed redundancy between format and timestamp_accuracy fields)
+  - Updated session logging tool reference to correct path
 
 ### Added
-- Created `library/workspace_template/CODER_AGENT.md` - Complete Coder agent protocol:
-  - "Getting Up to Speed" workflow (8-step process)
-  - Testing protocols (before, during, after)
-  - Incremental progress principles
-  - Feature list integration
-  - Clean state requirements
-  - Test script cleanup rule (moved from foundation)
+- Knowledge base database support:
+  - Added `library/resources/wikis/` directory for knowledge base databases
+  - Created `library/resources/wikis/README.md` with database access documentation
+  - Added MCP SQLite Server integration documentation
+  - Created `knowledge_base_index.md` template for knowledge base navigation
+- Resource organization:
+  - Created `library/resources/README.md` as index for shared resources
+  - Organized templates into `library/templates/documentation_templates/` and `library/templates/project_template/`
+  - Renamed README templates to lowercase (`readme_project.md`, `readme_library.md`, `readme_minimal.md`)
+- Minimal READMEs for empty documentation subdirectories (`dev_tools/`, `frameworks/`, `languages/`, `hardware/`)
+- Enhanced agent foundation:
+  - Added `action_authorization_policy` to distinguish information requests ("check", "review", "could we") from action requests
+  - Policy prevents agents from taking unauthorized actions on information-gathering requests
 
 ### Fixed
-- Fixed missing CODER_AGENT.md protocol file (Initializer and Researcher existed, Coder was missing)
-
-## [1.3.0] - 2025-12-01
-
-### Added
-- Agent type system with three specialized agent types:
-  - **Initializer Agent** - Environment setup and project scaffolding (based on Anthropic research)
-  - **Coder Agent** - Incremental feature development and implementation
-  - **Researcher Agent** - Information gathering and knowledge base population
-- `/agents` command for agent type selection and mode switching
-- Project-specific agent guidance system:
-  - `AGENTS.md` template in workspace template for project-specific agent guidance
-  - `PROGRESS.md` template for lightweight quick-context tracking
-  - Agent protocols: `INITIALIZER_AGENT.md` and `RESEARCHER_AGENT.md`
-- Knowledge base templates:
-  - `knowledge_base_template.json` - Template for structured knowledge bases
-  - `KNOWLEDGE_BASE_INDEX_TEMPLATE.md` - Template for knowledge base navigation
-- Framework documentation in `library/docs/`:
-  - `AGENT_ONBOARDING_ANALYSIS.md` - Comprehensive analysis of Anthropic & GitHub patterns
-  - `AGENT_ONBOARDING_SUMMARY.md` - Quick reference guide
-  - `AGENT_TYPES_PROVENANCE.md` - Documentation of sources and best practices
-  - `AGENT_TYPE_ACTIVATION_OPTIONS.md` - Analysis of activation approaches
-  - `AGENT_ACTIVATION_IMPLEMENTATION.md` - Implementation guide
-  - `INDEX.md` - Navigation guide for framework documentation
-- Auto-detection of agent mode based on project state (new project → Initializer, has knowledge_base/ → Researcher, has src/ → Coder)
-
-### Changed
-- Enhanced workspace template with agent guidance files:
-  - `AGENTS.md` template includes agent type information and "Getting Up to Speed" workflow
-  - `PROGRESS.md` template for quick context tracking
-  - `.agent-mode.example` template (documentation only - persistence not yet implemented)
-- Updated command system with agent type selection capability
-
-### Documentation
-- Added comprehensive documentation of agent onboarding patterns from Anthropic and GitHub articles
-- Documented what features came from articles vs. extensions
-- Created implementation guides for agent type activation
-- Added provenance documentation with supporting best practices
-
-### Notes
-- Agent mode persistence (`.agent-mode` file) is documented but not yet implemented - currently session-specific
-- `/agents` command works via agent following instructions manually (no automated tooling yet)
-- All agent type protocols are documentation/guidelines, not automated systems
+- Fixed template path references in `session_tools.py` to point to correct template location
+- Fixed project setup tool to properly reference `project_template` directory
+- Fixed all path references to use correct documentation and template locations
+- Fixed `.gitignore` to properly exclude knowledge base database files (`.db`, `.sqlite`, `.sqlite3`) from being tracked
+- Fixed `.gitignore` to allow `library/resources/README.md` to be tracked (added exception rule)
 
 ## [1.2.0] - 2025-11-21
 

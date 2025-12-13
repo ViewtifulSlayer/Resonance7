@@ -13,7 +13,6 @@ Be ready to explain:
 - How symlinks work in projects
 - Available tools and their usage
 - Session management system
-- Batch files (.bat) and quick launchers
 - Installer scripts (when implemented)
 - Ignore files (.gitignore, .cursorignore, .agentignore)
 - Project creation and setup
@@ -42,8 +41,7 @@ Be ready to explain:
 
 **Tools:**
 - `session_tools.py` - Session management and logging
-- `setup_workspace.py` - Project workspace creation
-- Batch files (.bat) - Quick launchers for tools
+- `project_setup.py` - Project workspace creation
 - How to run tools from any project directory
 
 **Session Management:**
@@ -60,7 +58,7 @@ Be ready to explain:
 - Using `!` to override parent-level ignores
 
 **Project Setup:**
-- Creating new projects with `setup_workspace.py`
+- Creating new projects with `project_setup.py`
 - What gets created automatically
 - Shared resource symlinking
 - Configuration file generation

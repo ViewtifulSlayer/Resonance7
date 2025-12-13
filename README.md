@@ -5,8 +5,6 @@ A comprehensive AI agent development framework and workspace management system d
 ## 🌟 Features
 
 - **Agent Foundation**: Core behavioral guidelines and protocols for AI agents
-- **Agent Type System**: Specialized agent types (Initializer, Coder, Researcher) with dedicated protocols
-- **Project-Specific Guidance**: `AGENTS.md` files for project context and workflows
 - **Session Management**: Structured logging and tracking of AI agent sessions
 - **Workspace Templates**: Pre-configured project templates with shared resources
 - **Knowledge Persistence**: Documentation libraries and session logs for knowledge accumulation
@@ -15,21 +13,18 @@ A comprehensive AI agent development framework and workspace management system d
 
 ## 📋 What's New
 
-**v1.3.0** (2025-12-01) - *Unreleased - Testing Branch*
-- Agent type system with three specialized types (Initializer, Coder, Researcher)
-- `/agents` command for agent type selection and mode switching
-- `AGENTS.md` template for project-specific agent guidance (based on GitHub's agents.md pattern)
-- `PROGRESS.md` template for lightweight quick-context tracking
-- Knowledge base templates for structured knowledge organization
-- Comprehensive framework documentation in `library/docs/`
-- Auto-detection of agent mode based on project state
-- Foundation refactored for universality (workflow-specific elements moved to agent protocols)
-- Complete agent protocol files for all three agent types (CODER_AGENT.md created)
+**v1.3.0** (2025-12-13) - *Unreleased - Testing Branch*
+- Enhanced agent foundation with improved behavior guidance and partnership model
+- Reorganized documentation: Moved `library/docs/` to `library/resources/docs/` for better resource grouping
+- Added knowledge base database support with MCP SQLite Server integration
+- Updated project setup tool: Renamed `setup_project.py` to `project_setup.py`
+- Improved template organization: Templates now in `library/templates/` with proper structure
+- Enhanced `.cursorignore` and `.gitignore` patterns for better resource management
+- Updated command system: Fixed template path references in `/session` command
 
 **v1.2.0** (2025-11-21)
 - Reorganized tools structure: Universal tools moved to `library/tools/` (accessible via `library/` symlink)
 - Projects now get independent `tools/` directories (not symlinked) for project-specific tools
-- Added `ARCHITECTURE.md` template to workspace template for project architecture documentation
 - Enhanced agent foundation with improved behavior guidance and partnership model
 - Strengthened file creation protocols and knowledge persistence philosophy
 - Added timestamp accuracy requirements for session logging
@@ -37,7 +32,6 @@ A comprehensive AI agent development framework and workspace management system d
 **v1.1.0** (2025-11-09)
 - Added Cursor command system for streamlined agent interaction (`/foundation`, `/help`, `/start`, `/session`)
 - Enhanced workspace template with `.cursorignore` and `.agentignore` templates
-- Added batch file launchers for quick tool access from any directory
 - Fixed missing directories in workspace template (now tracked in Git)
 
 [View full changelog →](CHANGELOG.md)
@@ -77,7 +71,7 @@ A comprehensive AI agent development framework and workspace management system d
 
 2. **Set up a new project:**
    ```bash
-   python library/tools/setup_workspace.py --project my-project
+   python library/tools/project_setup.py --project my-project
    ```
    This creates a new project workspace with shared resources symlinked.
 
@@ -89,16 +83,17 @@ Resonance7/                         # Main workspace
 │   └── rules/  
 │       └── agent_onboarding.mdc     # Shared Cursor rules (IDE-agnostic protocol)
 ├── library/                         # Shared Resonance 7 resources
-│   ├── docs/                        # Knowledge base modules (see docs/README.md)
+│   ├── resources/                   # Shared resources
+│   │   ├── docs/                    # Documentation modules (see resources/docs/README.md)
+│   │   └── wikis/                   # Knowledge base databases and indexes
+│   ├── templates/                   # Project and documentation templates
+│   │   ├── project_template/        # Project workspace template
+│   │   └── documentation_templates/ # Documentation file templates
 │   ├── tools/                       # Universal development tools
 │   │   ├── session_tools.py          # Script for session log management
-│   │   ├── setup_workspace.py        # Workspace setup and template management
-│   │   ├── session_tools.bat         # Quick launcher for session management
-│   │   ├── setup_workspace.bat       # Quick launcher for workspace setup
+│   │   ├── project_setup.py         # Project setup and template management
 │   │   └── README.md                 # Documentation for tools
 │   ├── agent_foundation.json         # Core Resonance 7 Agent foundation
-│   ├── session_template.md           # Session logging template
-│   ├── workspace_template/           # Project template (see workspace_template/README.md)
 │   └── README.md                     # Documentation for library directory
 ├── sessions/                         # Shared session management
 │   ├── current/                      # Current sessions (last 7 days)
@@ -127,11 +122,11 @@ Resonance7/                         # Main workspace
 ## 📚 Documentation
 
 - **[Library Documentation](library/README.md)** - Core resources and agent foundation
-- **[Framework Documentation](library/docs/INDEX.md)** - Agent onboarding, types, and activation guides
 - **[Session Management](sessions/README.md)** - Session logging and lifecycle
 - **[Tools Documentation](library/tools/README.md)** - Available scripts and utilities
-- **[Workspace Template](library/workspace_template/README.md)** - Project template structure
-- **[Documentation Modules](library/docs/README.md)** - Knowledge base organization
+- **[Project Template](library/templates/project_template/README.md)** - Project template structure
+- **[Documentation Modules](library/resources/docs/README.md)** - Knowledge base organization
+- **[Knowledge Bases](library/resources/wikis/README.md)** - Database access and knowledge bases
 - **[Release Notes](RELEASE_NOTES.md)** - Detailed release information
 - **[Changelog](CHANGELOG.md)** - Complete change history
 
@@ -158,42 +153,23 @@ Create new project workspaces with shared resources:
 
 ```bash
 # Interactive mode
-python library/tools/setup_workspace.py
+python library/tools/project_setup.py
 
 # Direct project creation
-python library/tools/setup_workspace.py --project my-app
+python library/tools/project_setup.py --project my-app
 
-# Regenerate workspace template
-python library/tools/setup_workspace.py --template
+# Regenerate project template
+python library/tools/project_setup.py --template
 ```
 
 
 ### Agent Foundation
 
-The core agent behavior is defined in `library/agent_foundation.json`. This file establishes:
+The core agent behavior is defined in `library/agent_foundation.json`, which provides universal protocols for all agents working in Resonance7 projects. This file establishes:
 - Ethical standards and communication protocols
 - Development workflows and best practices
 - Session logging requirements
 - Knowledge persistence strategies
-
-### Agent Types
-
-Resonance7 supports three specialized agent types:
-
-- **Initializer**: Sets up project environment and scaffolding (first session)
-- **Coder**: Makes incremental progress and implements features (subsequent sessions)
-- **Researcher**: Gathers information and populates knowledge bases
-
-Use the `/agents` command to select or switch agent types:
-
-```bash
-/agents              # Show current mode and options
-/agents coder        # Switch to coder mode
-/agents researcher   # Switch to researcher mode
-/agents initializer  # Switch to initializer mode
-```
-
-Each project can have an `AGENTS.md` file for project-specific guidance, separate from the framework-wide foundation.
 
 ## 🎯 Philosophy
 
@@ -253,7 +229,8 @@ Potential CI/CD workflows for:
 
 - Session logs are stored in `sessions/current/` (automatically archived after 7 days)
 - Project workspaces symlink shared resources for consistency
-- Documentation modules can be downloaded on-demand in `library/docs/`
+- Documentation modules are available in `library/resources/docs/`
+- Knowledge base databases are accessible via MCP SQLite Server (see `library/resources/wikis/README.md`)
 
 ---
 

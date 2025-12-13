@@ -12,17 +12,17 @@ This directory serves as the workspace for your development projects. Projects c
 
 ## Creating a New Project
 
-Use the `setup_workspace.py` tool to create new projects:
+Use the `project_setup.py` tool to create new projects:
 
 ```bash
 # Interactive mode (recommended)
-python tools/setup_workspace.py
+python library/tools/project_setup.py
 
 # Direct project creation
-python tools/setup_workspace.py --project my-project-name
+python library/tools/project_setup.py --project my-project-name
 
 # Preview changes without creating
-python tools/setup_workspace.py --project my-project-name --dry-run
+python library/tools/project_setup.py --project my-project-name --dry-run
 ```
 
 The tool will:
@@ -39,12 +39,10 @@ Each project follows this standard structure:
 projects/
 └── [project-name]/
     ├── src/                    # Project source code
-    ├── docs/                   # Project documentation
     ├── tests/                  # Project test files
-    ├── .gitignore              # Project-specific git ignore rules
-    ├── .cursorignore           # Project-specific Cursor IDE ignore rules
-    ├── .agentignore            # Project-specific agent file protection rules
+    ├── tools/                  # Project-specific tools (independent, not symlinked)
     ├── README.md               # Project documentation
+    ├── README.md               # Project documentation (includes integrated development log)
     ├── requirements.txt        # Python dependencies
     │
     ├── library/                # Symlink → Shared Resonance7 resources (includes universal tools)
@@ -54,9 +52,7 @@ projects/
     │
     │   # Universal tools accessible via library/ symlink:
     │   # - library/tools/session_tools.py
-    │   # - library/tools/setup_workspace.py
-    │   # - library/tools/session_tools.bat
-    │   # - library/tools/setup_workspace.bat
+    │   # - library/tools/project_setup.py
 ```
 
 ## Shared Resources
@@ -66,7 +62,7 @@ All projects automatically receive symlinks to shared Resonance7 resources:
 ### `library/` → Shared Resonance7 Resources
 - `agent_foundation.json` - Core agent behavior and protocols
 - `session_template.md` - Session logging template
-- `workspace_template/` - Project template blueprint
+- `templates/project_template/` - Project template blueprint
 - `docs/` - Knowledge base modules (on-demand)
 
 ### `sessions/` → Session Management
@@ -78,31 +74,23 @@ All projects automatically receive symlinks to shared Resonance7 resources:
 - **Independent directory** (not symlinked) for project-specific tools
 - Universal tools are in `library/tools/` and accessible via `library/` symlink:
   - `library/tools/session_tools.py` - Session creation and management
-  - `library/tools/setup_workspace.py` - Workspace setup utility
+  - `library/tools/project_setup.py` - Project setup utility
 
 ### `.cursor/` → Cursor Configuration
 - Shared Cursor IDE rules and configuration
 - Agent onboarding protocols
 
-### Batch Launchers
+### Universal Tools
 - `tools/` - Universal development tools directory (accessible via library/ symlink)
   - `session_tools.py` - Session creation and management
-  - `setup_workspace.py` - Workspace setup utility
-  - `session_tools.bat` - Quick launcher for session management
-  - `setup_workspace.bat` - Quick launcher for workspace setup
+  - `project_setup.py` - Project setup utility
 
 ## Project Configuration Files
 
-Each project includes three ignore/protection files:
+**Note**: Configuration files (`.gitignore`, `.cursorignore`, `.agentignore`) are handled at the workspace root level. Add project-specific versions only if needed (e.g., when a project has its own Git repository or needs project-specific indexing rules).
 
-### `.gitignore`
-Project-specific Git ignore rules. Excludes build artifacts, virtual environments, IDE files, and other project-specific patterns.
-
-### `.cursorignore`
-Tells Cursor IDE which files to ignore when indexing and searching. Can override parent-level patterns using the `!` negation operator.
-
-### `.agentignore`
-Protects files from automatic agent modification. Referenced by the `file_safety` protocol in `agent_foundation.json`. Can override parent-level patterns using the `!` negation operator.
+### `README.md`
+Project documentation with integrated development log. The README includes standard sections (Features, Getting Started, Usage) plus a Development Log section that tracks work across all sessions. Updated after each session to maintain context. Mirrors the session log structure while providing a consolidated project view.
 
 ## Project Isolation
 
@@ -167,7 +155,7 @@ Projects benefit from Resonance7's framework features:
 ## Working with Projects
 
 ### Starting Development
-1. Create a new project: `python tools/setup_workspace.py --project my-project`
+1. Create a new project: `python library/tools/project_setup.py --project my-project`
 2. Navigate to the project: `cd projects/my-project`
 3. Set up virtual environment: `python -m venv .venv`
 4. Activate virtual environment: `source .venv/bin/activate` (Linux/macOS) or `.venv\Scripts\activate` (Windows)
@@ -177,8 +165,8 @@ Projects benefit from Resonance7's framework features:
 ### Accessing Shared Resources
 From any project directory:
 - Access agent foundation: `library/agent_foundation.json`
-- Create sessions: `python tools/session_tools.py` or `session_tools.bat`
-- Use workspace tools: `python tools/setup_workspace.py` or `setup_workspace.bat`
+- Create sessions: `python library/tools/session_tools.py` or `library/tools/launchers/session_tools.bat`
+- Use workspace tools: `python library/tools/project_setup.py`
 - Reference session logs: `sessions/current/`
 
 ### Project Maintenance
@@ -193,12 +181,12 @@ From any project directory:
 If symlinks don't work on your platform:
 - **Windows**: The tool will attempt directory junctions as a fallback
 - **Linux/macOS**: Ensure you have permission to create symlinks
-- **Manual fix**: See `tools/setup_workspace.py` for symlink creation logic
+- **Manual fix**: See `library/tools/project_setup.py` for symlink creation logic
 
 ### Missing Shared Resources
 If shared resources are missing:
 - Verify you're in a Resonance7 workspace (look for `.cursor/rules/agent_onboarding.mdc`)
-- Recreate symlinks: `python tools/setup_workspace.py --project [project-name]` (will prompt about existing project)
+- Recreate symlinks: `python library/tools/project_setup.py --project [project-name]` (will prompt about existing project)
 
 ### Project Already Exists
 If a project with the same name exists:
@@ -210,7 +198,7 @@ If a project with the same name exists:
 - **[Library Documentation](../library/README.md)** - Shared Resonance7 resources
 - **[Session Management](../sessions/README.md)** - Session logging and lifecycle
 - **[Tools Documentation](../tools/README.md)** - Available scripts and utilities
-- **[Workspace Template](../library/workspace_template/README.md)** - Project template structure
+- **[Project Template](../library/templates/project_template/README.md)** - Project template structure
 - **[Root README](../README.md)** - Framework overview and quick start
 
 ## Purpose in Resonance7 Architecture

@@ -1,12 +1,133 @@
-# Shared resources (always indexed)
-!library/
-!tools/
-!sessions/
-!.cursor/
+# Resonance 7 - Cursor IDE Ignore Rules
+# Excludes build artifacts and large files from indexing while preserving source code access
+# Note: These patterns affect Cursor's codebase indexing, not file accessibility
+# Files remain accessible even if excluded from indexing
 
-# Project-specific ignores
+# =============================================================================
+# Project Build Artifacts
+# =============================================================================
+# Exclude build outputs and compiled files from all projects
+# Note: Source files (.py, .c, .h, .md, etc.) remain indexed
 projects/*/node_modules/
 projects/*/dist/
 projects/*/build/
 projects/*/__pycache__/
 projects/*/.venv/
+projects/*/venv/
+projects/*/env/
+projects/*/ENV/
+projects/*/*.egg-info/
+projects/*/wheels/
+projects/*/.pytest_cache/
+projects/*/htmlcov/
+projects/*/.tox/
+projects/*/.hypothesis/
+projects/*/.ipynb_checkpoints/
+projects/*/.coverage
+projects/*/*.pyc
+projects/*/*.pyo
+projects/*/*.pyd
+projects/*/*.so
+projects/*/*.egg
+projects/*/*.whl
+projects/*/*.log
+projects/*/*.tmp
+projects/*/*.temp
+
+# =============================================================================
+# Documentation Modules
+# =============================================================================
+# Exclude downloaded documentation modules (reduce index size, downloaded on-demand)
+library/resources/docs/*
+# But preserve the docs/ directory structure
+!library/resources/docs/README.md
+
+# =============================================================================
+# IDE and Editor Files
+# =============================================================================
+# Exclude IDE-specific configuration files (reduce index noise)
+.cursor/settings.json
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OS and System Files
+# =============================================================================
+# Exclude OS-specific files (not needed for code indexing)
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# =============================================================================
+# Python Build Artifacts
+# =============================================================================
+# Exclude Python build outputs (root-level, not in projects/)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+env/
+
+# =============================================================================
+# Node.js Build Artifacts
+# =============================================================================
+# Exclude Node.js dependencies and build outputs (root-level)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# =============================================================================
+# Temporary and Log Files
+# =============================================================================
+# Exclude temporary files and logs (not needed for indexing)
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# =============================================================================
+# Large Data Files
+# =============================================================================
+# Exclude large database files from indexing (reduce index size)
+# Note: Knowledge base databases are accessible but not indexed
+*.db
+*.sqlite
+*.sqlite3
+# Exception: Allow knowledge base databases in library (if needed for agent access)
+# Uncomment if you want knowledge bases indexed:
+# !library/**/*_knowledge_base.db
+# !library/**/*.sqlite
+# !library/**/*.sqlite3
+
+# =============================================================================
+# Project-Specific Overrides
+# =============================================================================
+# Add project-specific patterns here if needed
+# Example: To exclude a specific project directory from indexing:
+# projects/SpecificProject/large_data/
