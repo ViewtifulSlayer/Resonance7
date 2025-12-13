@@ -13,14 +13,12 @@ A comprehensive AI agent development framework and workspace management system d
 
 ## 📋 What's New
 
-**v1.3.0** (2025-12-13) - *Unreleased - Testing Branch*
-- Enhanced agent foundation with improved behavior guidance and partnership model
-- Reorganized documentation: Moved `library/docs/` to `library/resources/docs/` for better resource grouping
+**v1.3.0** (2025-12-13)
+- Enhanced agent foundation with action authorization policy
+- Reorganized workspace structure (documentation and templates)
 - Added knowledge base database support with MCP SQLite Server integration
-- Updated project setup tool: Renamed `setup_project.py` to `project_setup.py`
-- Improved template organization: Templates now in `library/templates/` with proper structure
-- Enhanced `.cursorignore` and `.gitignore` patterns for better resource management
-- Updated command system: Fixed template path references in `/session` command
+- Improved template management and path references
+- Fixed `.gitignore` patterns for better resource management
 
 **v1.2.0** (2025-11-21)
 - Reorganized tools structure: Universal tools moved to `library/tools/` (accessible via `library/` symlink)
