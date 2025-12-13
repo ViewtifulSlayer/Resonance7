@@ -51,7 +51,7 @@ Extract from current conversation:
 
 ## Session File Structure
 
-Follow the template from `library/session_template.md`:
+Follow the template from `library/templates/documentation_templates/session_template.md`:
 - YAML frontmatter (metadata)
 - Summary section
 - Key Decisions & Rationale

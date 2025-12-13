@@ -17,7 +17,6 @@ Check for:
 - Workspace structure (library/, sessions/, tools/, projects/)
 - Existing sessions (if any)
 - Existing projects (if any)
-- Batch files availability
 - Shared resource symlinks (in current project if applicable)
 
 ## Onboarding Checklist
@@ -26,8 +25,8 @@ Check for:
 - ✓ Python 3.7+ installed ([Download if needed](https://www.python.org/downloads/))
 - ⬜ Workspace cloned/downloaded
 - ⬜ Agent foundation loaded (done automatically)
-- ⬜ Create first session: `session_tools.bat` or `python tools/session_tools.py`
-- ⬜ Create first project: `setup_workspace.bat --project my-project`
+- ⬜ Create first session: `python library/tools/session_tools.py`
+- ⬜ Create first project: `python library/tools/project_setup.py --project my-project`
 - ⬜ Explore available commands: `/help` for explanations
 
 **For Returning Users:**
@@ -52,9 +51,9 @@ Based on workspace state, suggest:
 
 ## Quick Access
 
-- `session_tools.bat` - Session management (from project directories)
-- `setup_workspace.bat` - Create new projects (from workspace root)
-- Or use Python scripts directly: `python tools/session_tools.py`
+- `library/tools/session_tools.py` - Session management
+- `library/tools/project_setup.py` - Create new projects
+- Or use Python scripts directly: `python library/tools/session_tools.py`
 
 ## When to Use
 

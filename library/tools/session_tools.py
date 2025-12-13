@@ -1854,7 +1854,7 @@ Examples:
   %(prog)s --prune            # Go directly to pruning menu
   %(prog)s --help             # Show this help message
 
-For more information, see: library/session_template.md
+For more information, see: library/templates/documentation_templates/session_template.md
         '''
     )
     
