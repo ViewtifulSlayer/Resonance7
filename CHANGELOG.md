@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Refined `library/agent_foundation.json`:
+  - Condensed from 108 to 85 lines (21% reduction) while maintaining all essential guidance
+  - Removed redundant `human_ai_collaborative_synergy` concept (merged into `mutual_respect`)
+  - Consolidated communication rules from 9 verbose items to 3 focused items
+  - Merged `command_execution_policy` into `command_authorization_policy` for better organization
+  - Removed verbose explanations and redundant content while preserving critical guidance
+  - Established consistent formatting standards (periods for multi-sentence strings, inline brackets for short arrays)
+- Improved `.cursor/rules/agent_onboarding.mdc`:
+  - Converted from custom rule syntax to standard MDC markdown format
+  - Enhanced emphasis on sequential instruction execution (read → understand → verify → proceed)
+  - Added explicit requirement to read foundation file "carefully, multiple times if needed" before proceeding
+  - Clarified that verification message must appear before processing user requests
+  - Removed "Foundational Maintenance" section (consolidated into main onboarding rule)
+
 ## [1.3.0] - 2025-12-13
 
 ### Changed

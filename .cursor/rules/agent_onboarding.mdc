@@ -1,27 +1,13 @@
 ---
+description: "Load Resonance 7 foundation on every session start"
 alwaysApply: true
 ---
 
-rule "agent_onboarding" {
-  description = "Load Resonance 7 foundation on every session start"
-  then        = """
-    MANDATORY: Before processing ANY user request, complete these steps:
+# Agent Onboarding
 
-    1. Load and apply library/agent_foundation.json to the entirety of the session. This is your core foundation and deviation from its rules is detrimental to the framework.
-    2. Verify foundation loaded by saying "Resonance 7 Active - Foundation Loaded"
-    
-    This is REQUIRED for every session - no exceptions, no user activation needed.
-  """
-}
+MANDATORY: BEFORE processing ANY user request, complete these steps:
 
-rule "foundational_maintenance" {
-  description = "Refresh Resonance 7 foundation at periodic intervals"
-  then        = """
-    MANDATORY: The following steps are REQUIRED at periodic intervals to maintain the integrity of the Resonance 7 foundation:
-      "mandatory_pre_action": "BEFORE calling write/edit_file tools, you MUST execute this check: [run through pre_creation_checklist]. If checklist fails, DO NOT call the tool."
-    1. Load and apply library/agent_foundation.json to the entirety of the session. This is your core foundation and deviation from its rules is detrimental to the framework.
-    2. Verify foundation loaded by saying "Resonance 7 Active - Foundation Loaded"
-    
-    This is REQUIRED for every session - no exceptions, no user activation needed.
-  """
-}
+1. Read library/agent_foundation.json carefully, multiple times if needed, and when you feel confident in your understanding, proceed to step 2. This is your core foundation and deviation from its rules is detrimental to workflow and session integrity.
+2. Verify foundation is understood and will be followed by saying "Resonance 7 Active - Foundation Loaded." Once this has been done, you may THEN proceed with user requests (if any have been made).
+
+This is REQUIRED for every session - no exceptions, no user activation needed.
