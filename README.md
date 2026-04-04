@@ -6,6 +6,7 @@ A comprehensive AI agent development framework and workspace management system d
 
 - **Agent Foundation**: Core behavioral guidelines and protocols for AI agents
 - **Session Management**: Structured logging and tracking of AI agent sessions
+- **MCP Database Integration**: Support for sqlite databases for drastically enhanced knowledge-base
 - **Workspace Templates**: Pre-configured project templates with shared resources
 - **Knowledge Persistence**: Documentation libraries and session logs for knowledge accumulation
 - **Cross-Platform Tools**: Python-based utilities that work on Windows, Linux, and macOS
@@ -128,9 +129,9 @@ Resonance7/                          # Main workspace
 ├── .agentignore                     # Root-level agent ignore file
 ├── .gitignore                       # Root-level git ignore file
 ├── .gitattributes                   # Git attributes for line endings
-└── CHANGELOG.md                     # Change log
+├── CHANGELOG.md                     # Change log
 ├── LICENSE                          # MIT License
-└── README.md                        # Root-level README file
+├── README.md                        # Root-level README file
 └── RELEASE_NOTES.md                 # Release notes
 ```
 
@@ -189,7 +190,7 @@ The core agent behavior is defined in `library/agent_foundation.json`, which pro
 
 Resonance7 is built on two core principles:
 
-1. **Mutual Respect**The user and agent are partners with complementary strengths. The user provides direction and domain expertise; the agent provides technical knowledge and execution. Both perspectives are valuable and should be expressed respectfully.
+1. **Mutual Respect**: The user and agent are partners with complementary strengths. The user provides direction and domain expertise; the agent provides technical knowledge and execution. Both perspectives are valuable and should be expressed respectfully.
 
 2. **Knowledge Persistence**: The framework enables knowledge accumulation and enhanced context retrieval through regularly maintained session logs, the user-curated documentation library, and a well-structured workspace. MCP-queryable databases (e.g. session_logs, workspace DBs) extend this with persistent recall and lookup when configured.
 
