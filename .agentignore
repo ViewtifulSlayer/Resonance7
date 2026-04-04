@@ -8,7 +8,6 @@
 # =============================================================================
 # Protect core protocol and configuration files (modify only with explicit user request)
 library/agent_foundation.json
-agents/agent_foundation.json
 .cursor/rules/agent_onboarding.mdc
 .cursor/commands/foundation.md
 
@@ -16,11 +15,10 @@ agents/agent_foundation.json
 # Configuration Files
 # =============================================================================
 # Protect ignore and configuration files (prevent accidental modification)
-.gitignore
-.cursorignore
 .agentignore
+.cursorignore
 .gitattributes
-.agent-mode
+.gitignore
 
 # =============================================================================
 # Shared Resonance 7 Resources
@@ -36,7 +34,6 @@ sessions/
 # =============================================================================
 # Protect version control system files
 .git/
-.gitattributes
 
 # =============================================================================
 # Knowledge Base Databases

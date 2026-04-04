@@ -23,8 +23,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Default database path (can be overridden via environment variable)
-const DEFAULT_DB_PATH = process.env.KNOWLEDGE_BASE_DB_PATH || 
-  join(__dirname, "../../../resources/wikis/psdevwiki_ps3/psdevwiki_ps3_knowledge_base.db");
+const DEFAULT_DB_PATH =
+  process.env.KNOWLEDGE_BASE_DB_PATH ||
+  join(__dirname, "../../../resources/databases/db/session_logs.db");
+
+/** Minimal alias support for the public framework (full monorepo server has more). */
+function resolveDatabasePath(input) {
+  if (input === undefined || input === null || input === "" || input === "default") {
+    return DEFAULT_DB_PATH;
+  }
+  const key = String(input).trim();
+  if (key === "session_logs") {
+    return (
+      process.env.SESSION_LOGS_DB_PATH ||
+      join(__dirname, "../../../resources/databases/db/session_logs.db")
+    );
+  }
+  return key;
+}
 
 let dbConnection = null;
 
@@ -52,11 +68,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             query: {
               type: "string",
-              description: "SQL query to execute (SELECT, INSERT, UPDATE, DELETE, etc.)",
+              description: "SQL query to execute (SELECT only; database is opened read-only)",
             },
             database_path: {
               type: "string",
-              description: "Optional: Path to SQLite database file. If not provided, uses default knowledge base.",
+              description:
+                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
             },
           },
           required: ["query"],
@@ -70,7 +87,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             database_path: {
               type: "string",
-              description: "Optional: Path to SQLite database file. If not provided, uses default knowledge base.",
+              description:
+                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
             },
           },
         },
@@ -87,7 +105,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             database_path: {
               type: "string",
-              description: "Optional: Path to SQLite database file. If not provided, uses default knowledge base.",
+              description:
+                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
             },
           },
           required: ["table_name"],
@@ -101,7 +120,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             database_path: {
               type: "string",
-              description: "Optional: Path to SQLite database file. If not provided, uses default knowledge base.",
+              description:
+                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
             },
           },
         },
@@ -115,7 +135,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   try {
-    const dbPath = args.database_path || DEFAULT_DB_PATH;
+    const dbPath = resolveDatabasePath(args.database_path);
 
     // Verify database exists
     if (!existsSync(dbPath)) {

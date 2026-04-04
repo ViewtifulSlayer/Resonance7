@@ -22,12 +22,12 @@ Check for:
 ## Onboarding Checklist
 
 **For First-Time Users:**
-- ✓ Python 3.7+ installed ([Download if needed](https://www.python.org/downloads/))
-- ⬜ Workspace cloned/downloaded
-- ⬜ Agent foundation loaded (done automatically)
-- ⬜ Create first session: `python library/tools/session_tools.py`
-- ⬜ Create first project: `python library/tools/project_setup.py --project my-project`
-- ⬜ Explore available commands: `/help` for explanations
+- [x] Python 3.7+ installed ([Download if needed](https://www.python.org/downloads/))
+- [ ] Workspace cloned/downloaded
+- [ ] Agent foundation loaded (done automatically)
+- [ ] Create first session: `python library/tools/session_tools.py`
+- [ ] Create first project: `python library/tools/project_tools.py --project my-project`
+- [ ] Explore available commands: `/help` for explanations
 
 **For Returning Users:**
 - Verify workspace structure is intact
@@ -38,10 +38,10 @@ Check for:
 ## Next Steps Guidance
 
 Based on workspace state, suggest:
-- **No sessions yet?** → Create your first session to start tracking work
-- **No projects yet?** → Create a project workspace to begin development
-- **Has sessions/projects?** → Continue existing work or start new tasks
-- **Questions?** → Use `/help` to learn about specific topics
+- **No sessions yet?** -> Create your first session to start tracking work
+- **No projects yet?** -> Create a project workspace to begin development
+- **Has sessions/projects?** -> Continue existing work or start new tasks
+- **Questions?** -> Use `/help` to learn about specific topics
 
 ## Available Commands
 
@@ -52,7 +52,7 @@ Based on workspace state, suggest:
 ## Quick Access
 
 - `library/tools/session_tools.py` - Session management
-- `library/tools/project_setup.py` - Create new projects
+- `library/tools/project_tools.py` - Create new projects
 - Or use Python scripts directly: `python library/tools/session_tools.py`
 
 ## When to Use

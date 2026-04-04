@@ -35,12 +35,38 @@ projects/*/*.tmp
 projects/*/*.temp
 
 # =============================================================================
-# Documentation Modules
+# Projects (excluded from root indexing; open a project folder for full indexing)
 # =============================================================================
-# Exclude downloaded documentation modules (reduce index size, downloaded on-demand)
-library/resources/docs/*
+# Exclude user projects (reduce index size, downloaded on-demand)
+projects/*
+# But preserve the projects/ directory structure
+!projects/INDEX.md
+!projects/README.md
+
+# =============================================================================
+# Resource Modules
+# =============================================================================
+# Exclude downloaded modules (reduce index size, downloaded on-demand)
+!library/resources/*
 # But preserve the docs/ directory structure
-!library/resources/docs/README.md
+!library/resources/README.md
+!library/resources/*/README.md
+!library/resources/*/*/README.md
+!library/resources/*/*/*/README.md
+
+# =============================================================================
+# Tool Modules
+# =============================================================================
+# Exclude downloaded modules (reduce index size, downloaded on-demand)
+library/tools/*
+# But preserve the tools/ directory structure
+!library/tools/README.md
+!library/tools/*/README.md
+!library/tools/*/*/README.md
+!library/tools/*/*/*/README.md
+!library/tools/mcp_sqlite_server/
+!library/tools/project_tools.py
+!library/tools/session_tools.py
 
 # =============================================================================
 # IDE and Editor Files
@@ -116,7 +142,7 @@ yarn-error.log*
 # =============================================================================
 # Exclude large database files from indexing (reduce index size)
 # Note: Knowledge base databases are accessible but not indexed
-*.db
+!*.db
 *.sqlite
 *.sqlite3
 # Exception: Allow knowledge base databases in library (if needed for agent access)

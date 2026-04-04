@@ -41,7 +41,7 @@ Be ready to explain:
 
 **Tools:**
 - `session_tools.py` - Session management and logging
-- `project_setup.py` - Project workspace creation
+- `project_tools.py` - Project workspace creation
 - How to run tools from any project directory
 
 **Session Management:**
@@ -58,7 +58,7 @@ Be ready to explain:
 - Using `!` to override parent-level ignores
 
 **Project Setup:**
-- Creating new projects with `project_setup.py`
+- Creating new projects with `project_tools.py`
 - What gets created automatically
 - Shared resource symlinking
 - Configuration file generation
@@ -69,4 +69,3 @@ Be ready to explain:
 - When explaining workspace concepts
 - When users need clarification on tools or features
 - When onboarding new users to the framework
-

@@ -7,20 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- (Planned) Session log date recognition – improve when agents continue an existing session vs. start a new one from calendar context
+
+## [2.0.0] - 2026-04-04
+
+### Breaking changes
+- **Project symlinks (`project_tools.py`)**: New projects receive **`library/`** and **`sessions/`** symlinks only. **`.cursor/` is not symlinked** into `projects/<name>/` (avoids duplicated Cursor rules and MCP configuration). Use the workspace root in Cursor for shared `.cursor/`, or maintain a minimal local `.cursor/` if you open a single project folder. Older project folders may still have a legacy `.cursor` link; remove it manually if you see duplicate IDE behavior.
+
+### Added
+- **`sessions/INDEX.md`** – Human-readable session index template (`session_logs.db`, ingest script, example topic groups).
+- **Session log ingest** – `library/resources/databases/scripts/session_logs/ingest_session_logs.py` ingests `sessions/current/`, `sessions/recent/`, and optionally archived zips into **`session_logs.db`** for MCP-queryable recall (FTS).
+- **`session_logs` reference database** – Ingest creates the DB and schema on first run when missing.
+- **`library/resources/databases/workspace_mcp_servers.md`** – MCP server quick reference; SQLite alias and config pointers.
+- **MCP SQLite server** – Default database path targets `session_logs.db` under `library/resources/databases/db/`; **`session_logs`** alias for explicit resolution (see server README and env vars).
+
 ### Changed
-- Refined `library/agent_foundation.json`:
-  - Condensed from 108 to 85 lines (21% reduction) while maintaining all essential guidance
-  - Removed redundant `human_ai_collaborative_synergy` concept (merged into `mutual_respect`)
-  - Consolidated communication rules from 9 verbose items to 3 focused items
-  - Merged `command_execution_policy` into `command_authorization_policy` for better organization
-  - Removed verbose explanations and redundant content while preserving critical guidance
-  - Established consistent formatting standards (periods for multi-sentence strings, inline brackets for short arrays)
-- Improved `.cursor/rules/agent_onboarding.mdc`:
-  - Converted from custom rule syntax to standard MDC markdown format
-  - Enhanced emphasis on sequential instruction execution (read → understand → verify → proceed)
-  - Added explicit requirement to read foundation file "carefully, multiple times if needed" before proceeding
-  - Clarified that verification message must appear before processing user requests
-  - Removed "Foundational Maintenance" section (consolidated into main onboarding rule)
+- Renamed **`library/tools/project_setup.py`** → **`library/tools/project_tools.py`** (commands, documentation, ignore allow-lists).
+- **`.cursor/commands`** – `foundation`, `start`, and `session` aligned with onboarding: mandatory step order, verification phrase, GitHub-style task checklists, ASCII arrows where tooling prefers plain ASCII; session `last_updated` only on substantive edits; ingest only when the user asks.
+- **`.cursor/skills`** – `database-specialist`, `mcp-sqlite`, and `markdown-punctuation` generalized (placeholders, `Resonance7-<server>` naming examples, ASCII-friendly punctuation guidance).
+- **`library/agent_foundation.json`** – Condensed while preserving guidance; `intent_vs_command_detection` under command authorization; `knowledge_persistence` notes MCP-queryable databases; `session_log_database` and pointer to `workspace_mcp_servers.md`.
+- **`.cursor/rules/agent_onboarding.mdc`** – Standard MDC format; sequential read → verify → proceed; redundant "Foundational Maintenance" folded into the main rule.
+- **`.gitignore`** – `library/resources/databases/db/*.db` so generated MCP databases are not committed.
+- **Documentation** – `library/README.md`, project template READMEs, and framework README project tree describe symlink layout (library + sessions only) and root `.cursor/` behavior.
+- **`library/resources/databases/`** docs – README and scripts README center `session_logs` as the reference MCP database.
 
 ## [1.3.0] - 2025-12-13
 
@@ -136,7 +146,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session lifecycle management (current → recent → archived)
 - Cross-platform Python tooling
 
-[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.0...v1.1.1

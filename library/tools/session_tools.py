@@ -5,6 +5,10 @@ session_tools.py - Resonance 7 Session Management Tool
 Creates session log files and manages session maintenance.
 Part of the Resonance7 framework.
 
+When using /session: prefer updating the most recent session in sessions/current/
+if the agent has already contributed to it; create a new session only when none
+exists or the user explicitly starts a new one (not solely because UTC date changed).
+
 Usage:
     python session_tools.py                   # Interactive mode
     python session_tools.py --help           # Show help
@@ -20,6 +24,7 @@ import re
 import sys
 import argparse
 import shutil
+import subprocess
 import zipfile
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -435,13 +440,13 @@ def generate_template_body(session_id, topic):
         str: Complete template body with placeholders
     
     Logic:
-        Hardcoded template from session_template.md (lines 41-104)
+        Hardcoded template (kept in sync with library/templates/documentation_templates/session_template.md)
         Replaces YYYYMMDD-NN with actual session ID
         Replaces [Topic/Project] with actual topic
     
     Note:
         This is the complete template structure that agents fill in.
-        Kept in sync with library/session_template.md
+        Kept in sync with library/templates/documentation_templates/session_template.md
     """
     template = f"""# Session {session_id}: {topic}
 
@@ -600,14 +605,15 @@ def show_session_type_menu():
     Display menu for choosing session type.
     
     Returns:
-        int: User's choice (1, 2, 3, 4, or 5)
+        int: User's choice (1-6)
     
     Menu options:
         1. New session (interactive)
         2. Auto create (all defaults)
         3. Continue existing session
         4. Prune sessions
-        5. Cancel
+        5. Ingest session logs to database
+        6. Cancel
     """
     print("-" * 64)
     print("  SESSION TYPE")
@@ -619,14 +625,15 @@ def show_session_type_menu():
     print("2. Auto create (all defaults)")
     print("3. Continue existing session")
     print("4. Prune sessions")
-    print("5. Cancel")
+    print("5. Ingest session logs to database")
+    print("6. Cancel")
     print()
     
     while True:
-        choice = input("Choice [1-5]: ").strip()
-        if choice in ['1', '2', '3', '4', '5']:
+        choice = input("Choice [1-6]: ").strip()
+        if choice in ['1', '2', '3', '4', '5', '6']:
             return int(choice)
-        print("Invalid choice. Please enter 1, 2, 3, 4, or 5.")
+        print("Invalid choice. Please enter 1, 2, 3, 4, 5, or 6.")
 
 
 def prompt_with_default(prompt_text, default_value=None, allow_empty=False):
@@ -1827,7 +1834,74 @@ def prune_sessions_workflow(sessions_dir, dry_run=False):
         return 1
 
 # =============================================================================
-# STEP 8: CLI ARGUMENTS & MAIN ENTRY POINT
+# STEP 8: SESSION LOG INGEST
+# =============================================================================
+
+def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> int:
+    """
+    Run the session log ingest script to update session_logs.db.
+    Relays script stdout via log() and stderr via error() to match pruning format.
+
+    Args:
+        workspace_root: Workspace root (e.g. sessions_dir.parent.parent)
+        no_archives: If True, pass --no-archives to the ingest script
+
+    Returns:
+        int: 0 on success, 1 on failure (script missing or non-zero exit)
+    """
+    ingest_script = (
+        workspace_root
+        / "library"
+        / "resources"
+        / "databases"
+        / "scripts"
+        / "session_logs"
+        / "ingest_session_logs.py"
+    )
+    if not ingest_script.exists():
+        error(f"Ingest script not found: {ingest_script}")
+        return 1
+    args = [sys.executable, str(ingest_script)]
+    if no_archives:
+        args.append("--no-archives")
+    result = subprocess.run(
+        args,
+        cwd=str(workspace_root),
+        capture_output=True,
+        text=True,
+    )
+    for line in (result.stdout or "").splitlines():
+        line = line.strip()
+        if line:
+            log(line)
+    for line in (result.stderr or "").splitlines():
+        line = line.strip()
+        if line:
+            error(line)
+    if result.returncode != 0:
+        error("Session log ingest failed")
+        return 1
+    return 0
+
+
+def ingest_session_logs_workflow(sessions_dir: Path, no_archives: bool = False) -> int:
+    """
+    Run the session log ingest to update session_logs.db for queryable recall.
+    Uses section header and log/success format to match session pruning.
+    """
+    show_section_header("Session Log Ingest")
+    scope = "current/, recent/ (archives skipped)" if no_archives else "current/, recent/, archived/"
+    log(f"Updating session_logs.db from {scope}...")
+    print()
+    workspace_root = sessions_dir.parent.parent
+    code = run_session_log_ingest(workspace_root, no_archives=no_archives)
+    if code == 0:
+        success("Session log ingest completed.")
+    return code
+
+
+# =============================================================================
+# STEP 9: CLI ARGUMENTS & MAIN ENTRY POINT
 # =============================================================================
 
 def parse_arguments():
@@ -1842,6 +1916,7 @@ def parse_arguments():
         --dry-run: Preview actions without making changes
         --version: Show version number
         --prune: Go directly to pruning menu
+        --ingest: Run session log ingest to update session_logs.db
     """
     parser = argparse.ArgumentParser(
         prog='Session Tools',
@@ -1852,6 +1927,7 @@ Examples:
   %(prog)s                    # Interactive mode - session management menu
   %(prog)s --dry-run          # Test run without making changes
   %(prog)s --prune            # Go directly to pruning menu
+  %(prog)s --ingest           # Update session_logs.db from current/recent/archived
   %(prog)s --help             # Show this help message
 
 For more information, see: library/templates/documentation_templates/session_template.md
@@ -1868,6 +1944,18 @@ For more information, see: library/templates/documentation_templates/session_tem
         '--prune',
         action='store_true',
         help='Go directly to session pruning menu'
+    )
+    
+    parser.add_argument(
+        '--ingest',
+        action='store_true',
+        help='Run session log ingest to update session_logs.db (current, recent, archived)'
+    )
+    
+    parser.add_argument(
+        '--ingest-no-archives',
+        action='store_true',
+        help='With --ingest: skip archived zip files'
     )
     
     parser.add_argument(
@@ -1923,6 +2011,12 @@ def main():
         if args.prune:
             return prune_sessions_workflow(sessions_dir, dry_run=args.dry_run)
         
+        # Handle direct ingest
+        if args.ingest:
+            return ingest_session_logs_workflow(
+                sessions_dir, no_archives=args.ingest_no_archives
+            )
+        
         # Show menu
         choice = show_session_type_menu()
         
@@ -1943,8 +2037,12 @@ def main():
             # Prune sessions
             return prune_sessions_workflow(sessions_dir, dry_run=args.dry_run)
             
+        elif choice == 5:
+            # Ingest session logs to database
+            return ingest_session_logs_workflow(sessions_dir, no_archives=False)
+            
         else:
-            # Cancel
+            # Cancel (6)
             print("\nGoodbye!")
             return 0
     

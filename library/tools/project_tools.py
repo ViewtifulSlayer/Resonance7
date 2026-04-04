@@ -33,24 +33,19 @@ class Colors:
 
 # Shared resources that should be available in all workspaces
 SHARED_RESOURCES = {
-    '.cursor': {
-        'type': 'symlink',
-        'source': '.cursor',
-        'description': 'Shared Cursor configuration'
-    },
     'library': {
-        'type': 'symlink', 
+        'type': 'symlink',
         'source': 'library',
         'description': 'Shared Resonance7 resources (includes universal tools in library/tools/)'
     },
     'sessions': {
         'type': 'symlink',
-        'source': 'sessions', 
+        'source': 'sessions',
         'description': 'Shared session management'
     }
-    # Note: 'tools' is no longer symlinked - projects get their own independent tools/ directory
-    # Universal tools are now in library/tools/ and accessible via library/ symlink
-    # Batch files are in library/ and accessible via library/ symlink
+    # Note: '.cursor' is intentionally NOT symlinked into projects (duplicate rules/MCP/config).
+    # Open the workspace root in Cursor, or add a minimal local .cursor/ if you open a project folder alone.
+    # Note: 'tools' is not symlinked - projects get their own tools/; universal tools live under library/tools/
 }
 
 # Project template structure
@@ -59,7 +54,6 @@ PROJECT_TEMPLATE = {
     'docs': 'Project documentation', 
     'tests': 'Project tests',
     'tools': 'Project-specific tools (independent, not symlinked)',
-    '.cursor': 'Project-specific Cursor config',
     '.gitignore': 'Project-specific gitignore',
     '.cursorignore': 'Cursor IDE ignore rules',
     '.agentignore': 'Agent file modification protection rules',
@@ -138,8 +132,7 @@ def create_project_structure(project_path: Path, project_name: str) -> bool:
             (project_path / dir_name).mkdir(exist_ok=True)
             info(f"Created directory: {dir_name}/")
         
-        # Note: .cursor directory is shared from root level
-        info("Using shared .cursor configuration from workspace root")
+        info("Cursor config: use workspace root .cursor/ (not linked into this project)")
         info("Created independent tools/ directory (not symlinked - for project-specific tools)")
         
         return True
@@ -301,9 +294,10 @@ def create_project_files(project_path: Path, project_name: str) -> bool:
 ├── requirements.txt        # Python dependencies
 │
 ├── library/                # Symlink → Shared Resonance7 resources
-├── sessions/               # Symlink → Shared session management
-└── .cursor/                # Symlink → Shared Cursor configuration
+└── sessions/               # Symlink → Shared session management
 ```
+
+Cursor rules, skills, and MCP config live under the **workspace root** `.cursor/` only (not symlinked here) so nested projects do not duplicate IDE configuration.
 
 ---
 
@@ -463,8 +457,7 @@ This directory contains tools and scripts specific to this project. Universal Re
         (project_path / 'tools' / 'README.md').write_text(tools_readme)
         info("Created tools/README.md")
         
-        # Note: .cursor settings are inherited from workspace root
-        info("Using shared .cursor settings from workspace root")
+        info("Cursor: workspace root .cursor/ is authoritative (not symlinked into project)")
         
         return True
         
@@ -595,9 +588,10 @@ This directory contains project-specific documentation.
 ├── requirements.txt        # Python dependencies
 │
 ├── library/                # Symlink → Shared Resonance7 resources
-├── sessions/               # Symlink → Shared session management
-└── .cursor/                # Symlink → Shared Cursor configuration
+└── sessions/               # Symlink → Shared session management
 ```
+
+Cursor rules, skills, and MCP config live under the **workspace root** `.cursor/` only (not symlinked here) so nested projects do not duplicate IDE configuration.
 
 ---
 
@@ -911,10 +905,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python project_setup.py                    # Interactive mode
-  python project_setup.py --project my-app  # Create project directly
-  python project_setup.py --template        # Create template only
-  python project_setup.py --dry-run         # Preview changes
+  python project_tools.py                    # Interactive mode
+  python project_tools.py --project my-app  # Create project directly
+  python project_tools.py --template        # Create template only
+  python project_tools.py --dry-run         # Preview changes
         """
     )
     

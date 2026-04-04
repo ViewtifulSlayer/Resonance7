@@ -1,7 +1,7 @@
 {
   "core_philosophy": {
     "mutual_respect": "The user and agent are partners with complementary strengths. The user provides direction and domain expertise; the agent provides technical knowledge and execution. Both perspectives are valuable and should be expressed respectfully.",
-    "knowledge_persistence":  "The framework enables knowledge accumulation and enhanced context retrieval through regularly maintained session logs, the user-curated documentation library, and a well-structured workspace"
+    "knowledge_persistence": "The framework enables knowledge accumulation and enhanced context retrieval through regularly maintained session logs, the user-curated documentation library, and a well-structured workspace. MCP-queryable databases (e.g. session_logs, workspace DBs) extend this with persistent recall and lookup when configured."
   },
   "workspace_architecture": {
     "library/": "Shared resources and configurations", 
@@ -21,7 +21,14 @@
     },
     "command_authorization_policy": {
       "description": "CRITICAL: Command execution restrictions to prevent accidental or unauthorized actions",
-      "rule": "Do not misinterpret the user's questions as commands. If the user asks a question, default to the assumption that it is an informational request; not a command. If the user asks a question that could be interpreted as a command, ask for clarification before proceeding."
+      "rule": "Do not misinterpret the user's questions as commands. If the user asks a question, default to the assumption that it is an informational request; not a command. If the user asks a question that could be interpreted as a command, ask for clarification before proceeding.",
+      "intent_vs_command_detection": {
+        "description": "Distinguish between statements of intent and direct commands",
+        "rule": "When the user states an intent ('I want to...', 'I need to...', 'My goal is...'), default to planning/discussion mode unless they explicitly request execution. Recognize pause signals like 'when you're ready', 'let me know when', 'proceed with next steps' as indicators to stop and plan. Only proceed with implementation after explicit confirmation or a clear execution command.",
+        "intent_phrases": ["I want to", "I need to", "My goal is", "I'm trying to", "I'd like to"],
+        "pause_signals": ["when you're ready", "let me know when", "proceed with next steps", "when ready"],
+        "execution_phrases": ["write", "create", "build", "make", "do it", "go ahead", "proceed"]
+      }
     },
     "ethical_standards": [
       "Maintain academic-level documentation quality in both, researching information and maintaining session logs; a well-structured and maintained session log is a critical tool for knowledge accumulation and context retrieval",
@@ -57,6 +64,11 @@
           "fallbacks": ["cmd.exe", "git-bash.exe"],
           "max_attempts": 3
         },
+        "path_reliability_notes_windows": [
+          "Prefer PowerShell for filesystem enumeration and path-sensitive operations: Get-ChildItem -LiteralPath <path> -Force [-Recurse].",
+          "If cmd.exe path listing fails due to quoting/escaping (e.g. 'dir /s /b \"D:\\path with spaces\"'), switch to PowerShell -LiteralPath instead of retrying the same cmd.exe pattern.",
+          "When comparing file trees between two roots, emit fully-qualified paths (FullName) then normalize by stripping the root prefix before diffing."
+        ],
         "paging_prevention": {
           "strategies": [
             "Append | cat to commands that might page",
@@ -74,6 +86,7 @@
   "session_logging": {
     "creation_tool": "library/tools/session_tools.py",
     "location": "sessions/current/",
+    "session_log_database": "Ingested session logs are queryable via MCP (database_path: session_logs) for recall across sessions. Never run ingest without explicit user permission. MCP servers and usage: library/resources/databases/workspace_mcp_servers.md when present.",
     "metadata_rules": {
       "created": "NEVER modify after initial creation",
       "last_updated": "Update ONLY when: adding sections, completing work, adding files. NOT for: typos, formatting, grammar fixes",

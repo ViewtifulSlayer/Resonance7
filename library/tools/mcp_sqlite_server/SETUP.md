@@ -27,7 +27,7 @@ This installs:
    
    Click "Add New MCP Server" or edit the MCP settings JSON directly.
 
-   **Copy this configuration** (update paths if your workspace is different):
+   **Copy this configuration** (Cursor expands `${workspaceFolder}` to the opened workspace root):
 
    ```json
    {
@@ -35,20 +35,18 @@ This installs:
        "resonance7-sqlite": {
          "command": "node",
          "args": [
-           "d:\\Development\\Resonance7\\library\\tools\\mcp_sqlite_server\\src\\server.js"
+           "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
          ],
-         "env": {
-           "KNOWLEDGE_BASE_DB_PATH": "d:\\Development\\Resonance7\\library\\resources\\wikis\\psdevwiki_ps3\\psdevwiki_ps3_knowledge_base.db"
-         }
+         "env": {}
        }
      }
    }
    ```
 
-   **Important**: 
-   - Use **absolute paths** (not relative)
-   - Use **double backslashes** (`\\`) in Windows paths
-   - Update paths to match your actual workspace location
+   **Important**:
+   - On Windows, if `node` is not on PATH for Cursor, set `"command"` to the **full path** to `node.exe` (see the mcp-sqlite skill).
+   - Optional: set `KNOWLEDGE_BASE_DB_PATH` or `SESSION_LOGS_DB_PATH` to override the default `library/resources/databases/db/session_logs.db`.
+   - If `${workspaceFolder}` is not expanded in your Cursor version, replace it with your workspace root using **escaped backslashes** on Windows (e.g. `C:\\Users\\you\\Resonance7\\library\\tools\\...`).
 
 4. **Restart Cursor:**
    - Close and reopen Cursor for MCP server to connect

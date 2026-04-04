@@ -11,7 +11,3 @@ Each wiki knowledge base is stored in its own subdirectory with:
 ## Access
 
 Use the MCP SQLite Server for direct database access. See `library/tools/mcp_sqlite_server/README.md` for setup instructions.
-
-## Current Knowledge Bases
-
-- **`psdevwiki_ps3/`** - PS3 Developer Wiki knowledge base

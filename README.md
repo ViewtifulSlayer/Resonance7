@@ -13,6 +13,13 @@ A comprehensive AI agent development framework and workspace management system d
 
 ## 📋 What's New
 
+**v2.0.0** (2026-04-04)
+- **Session MCP** - Ingest session markdown into **`session_logs.db`** for FTS search; optional **`sessions/INDEX.md`** template
+- **Breaking** - New projects symlink **`library/`** and **`sessions/`** only; **`.cursor/`** stays at workspace root (no symlink into `projects/<name>/`)
+- **Onboarding** - Stricter foundation load order, intent-vs-command guidance in `agent_foundation.json`, MDC onboarding rule
+- **`project_tools.py`** - Renamed from `project_setup.py`; commands and docs updated
+- **MCP SQLite server** - Defaults to `session_logs.db`; **`session_logs`** alias (see `library/resources/databases/workspace_mcp_servers.md`)
+
 **v1.3.0** (2025-12-13)
 - Enhanced agent foundation with action authorization policy
 - Reorganized workspace structure (documentation and templates)
@@ -69,52 +76,62 @@ A comprehensive AI agent development framework and workspace management system d
 
 2. **Set up a new project:**
    ```bash
-   python library/tools/project_setup.py --project my-project
+   python library/tools/project_tools.py --project my-project
    ```
    This creates a new project workspace with shared resources symlinked.
 
 ## 📁 Directory Structure
 
 ```
-Resonance7/                         # Main workspace
-├── .cursor/                         # Shared Cursor configuration
-│   └── rules/  
-│       └── agent_onboarding.mdc     # Shared Cursor rules (IDE-agnostic protocol)
+Resonance7/                          # Main workspace
+├── .cursor/                         # Cursor configuration
+│   ├── commands/                    # Cursor commands
+│   ├── rules/                       # Shared Cursor rules
+│   │   └── agent_onboarding.mdc     # Shared Onboarding rule (IDE-agnostic protocol)
+│   ├── skills/                      # Cursor skills
+│   └── mcp.json                     # Cursor MCP configuration
 ├── library/                         # Shared Resonance 7 resources
 │   ├── resources/                   # Shared resources
-│   │   ├── docs/                    # Documentation modules (see resources/docs/README.md)
-│   │   └── wikis/                   # Knowledge base databases and indexes
+│   │   ├── db/                      # SQLite databases (downloaded/built on-demand)
+│   │   ├── docs/                    # Documentation modules (downloaded on-demand)
+│   │   └── wikis/                   # Knowledge base indexes extracted from wikis
 │   ├── templates/                   # Project and documentation templates
-│   │   ├── project_template/        # Project workspace template
-│   │   └── documentation_templates/ # Documentation file templates
+│   │   ├── documentation_templates/ # Documentation file templates
+│   │   └── project_template/        # Project workspace template
 │   ├── tools/                       # Universal development tools
-│   │   ├── session_tools.py          # Script for session log management
-│   │   ├── project_setup.py         # Project setup and template management
-│   │   └── README.md                 # Documentation for tools
-│   ├── agent_foundation.json         # Core Resonance 7 Agent foundation
-│   └── README.md                     # Documentation for library directory
-├── sessions/                         # Shared session management
-│   ├── current/                      # Current sessions (last 7 days)
-│   ├── recent/                       # Sessions 7+ days old
-│   ├── archived/                     # Monthly zip archives (YYYY-MM.zip)
-│   └── README.md                     # Documentation for sessions directory
-├── projects/                         # Project-specific workspaces
-│   └── [project-name]/               # Individual user projects
-│       ├── src/                      # Project source code
-│       ├── docs/                     # Project documentation
-│       ├── tests/                    # Project tests
-│       ├── tools/                     # Project-specific tools (independent, not symlinked)
-│       ├── .gitignore                # Project-level git ignore
-│       ├── .cursorignore             # Project-level Cursor IDE ignore
-│       ├── .agentignore              # Project-level agent ignore
-│       └── README.md                 # Project README
-│       # Note: library/ (includes universal tools), sessions/, .cursor/ are symlinked into projects
-├── .cursorignore                     # Root-level Cursor ignore file
-├── .agentignore                      # Root-level agent ignore file
-├── .gitignore                        # Root-level git ignore file
-├── .gitattributes                    # Git attributes for line endings
-├── LICENSE                           # MIT License
-└── README.md                         # Root-level README file
+│   │   ├── mcp_sqlite_server/       # MCP SQLite Server for database access
+│   │   ├── session_tools.py         # Script for session log management
+│   │   └── project_tools.py         # Project setup and template management
+│   ├── agent_foundation.json        # Core Resonance 7 Agent foundation
+│   └── README.md                    # Documentation for library directory
+├── sessions/                        # Shared session management
+│   ├── current/                     # Current sessions (last 7 days)
+│   ├── recent/                      # Sessions 7+ days old
+│   ├── archived/                    # Monthly zip archives (YYYY-MM.zip)
+│   ├── INDEX.md                     # Topic-based index of sessions
+│   └── README.md                    # Documentation for sessions directory
+├── projects/                        # Project-specific workspaces
+│    └─ [project-name]/
+│       ├── docs/                    # Project-specific resources
+│       ├── library/                 # Symlink → Shared Resonance7 resources (includes universal tools)
+│       ├── sessions/                # Symlink → Shared session management
+│       ├── src/                     # Project source code
+│       ├── tests/                   # Project test files
+│       ├── tools/                   # Project-specific tools (independent, not symlinked)
+│       ├── .agentignore             # Project-level agent ignore
+│       ├── .cursorignore            # Project-level Cursor IDE ignore
+│       ├── .gitignore               # Project-level git ignore
+│       ├── README.md                # Project documentation
+│       └── requirements.txt         # Python dependencies
+│           # Note: library/ and sessions/ are symlinked into projects; .cursor/ stays at workspace root only
+├── .cursorignore                    # Root-level Cursor ignore file
+├── .agentignore                     # Root-level agent ignore file
+├── .gitignore                       # Root-level git ignore file
+├── .gitattributes                   # Git attributes for line endings
+└── CHANGELOG.md                     # Change log
+├── LICENSE                          # MIT License
+└── README.md                        # Root-level README file
+└── RELEASE_NOTES.md                 # Release notes
 ```
 
 ## 📚 Documentation
@@ -151,15 +168,14 @@ Create new project workspaces with shared resources:
 
 ```bash
 # Interactive mode
-python library/tools/project_setup.py
+python library/tools/project_tools.py
 
 # Direct project creation
-python library/tools/project_setup.py --project my-app
+python library/tools/project_tools.py --project my-app
 
 # Regenerate project template
-python library/tools/project_setup.py --template
+python library/tools/project_tools.py --template
 ```
-
 
 ### Agent Foundation
 
@@ -173,9 +189,9 @@ The core agent behavior is defined in `library/agent_foundation.json`, which pro
 
 Resonance7 is built on two core principles:
 
-1. **Human-AI Collaborative Synergy**: Human wisdom and AI intelligence complement each other—together, our combined capabilities achieve what neither could alone.
+1. **Mutual Respect**The user and agent are partners with complementary strengths. The user provides direction and domain expertise; the agent provides technical knowledge and execution. Both perspectives are valuable and should be expressed respectfully.
 
-2. **Knowledge Persistence**: The framework enables knowledge accumulation and retrieval across shared documentation libraries and regularly maintained session logs.
+2. **Knowledge Persistence**: The framework enables knowledge accumulation and enhanced context retrieval through regularly maintained session logs, the user-curated documentation library, and a well-structured workspace. MCP-queryable databases (e.g. session_logs, workspace DBs) extend this with persistent recall and lookup when configured.
 
 ## 🔧 Configuration
 
@@ -226,9 +242,9 @@ Potential CI/CD workflows for:
 ## 📖 Additional Resources
 
 - Session logs are stored in `sessions/current/` (automatically archived after 7 days)
-- Project workspaces symlink shared resources for consistency
+- Project workspaces symlink **`library/`** and **`sessions/`** to the workspace root for consistency (`.cursor/` is not symlinked into projects)
 - Documentation modules are available in `library/resources/docs/`
-- Knowledge base databases are accessible via MCP SQLite Server (see `library/resources/wikis/README.md`)
+- Knowledge base databases are accessible via MCP SQLite Server (see `library\tools\mcp_sqlite_server\README.md`)
 
 ---
 

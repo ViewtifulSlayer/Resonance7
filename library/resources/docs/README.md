@@ -9,11 +9,10 @@ The `docs/` directory serves as a shared knowledge repository accessible to all 
 ## Architecture
 
 Documentation modules are organized by category:
-- **`languages/`** - Programming language documentation and examples
+- **`dev_tools/`** - Development tool documentation
 - **`frameworks/`** - Framework and library documentation
 - **`hardware/`** - Hardware documentation and service manuals
-- **`tools/`** - Development tool documentation
-- **`subjects/`** - Domain-specific knowledge modules
+- **`languages/`** - Programming language documentation and examples
 
 ## Usage Model
 

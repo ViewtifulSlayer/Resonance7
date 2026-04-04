@@ -57,9 +57,10 @@
 ├── requirements.txt        # Python dependencies
 │
 ├── library/                # Symlink → Shared Resonance7 resources
-├── sessions/               # Symlink → Shared session management
-└── .cursor/                # Symlink → Shared Cursor configuration
+└── sessions/               # Symlink → Shared session management
 ```
+
+Cursor rules, skills, and MCP config live under the **workspace root** `.cursor/` only (not symlinked here) so nested projects do not duplicate IDE configuration.
 
 ---
 

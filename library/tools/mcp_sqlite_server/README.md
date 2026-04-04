@@ -49,17 +49,15 @@ In Cursor's MCP settings, add:
     "resonance7-sqlite": {
       "command": "node",
       "args": [
-        "d:\\Development\\Resonance7\\library\\tools\\mcp_sqlite_server\\src\\server.js"
+        "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
       ],
-      "env": {
-        "KNOWLEDGE_BASE_DB_PATH": "d:\\Development\\Resonance7\\library\\resources\\wikis\\psdevwiki_ps3\\psdevwiki_ps3_knowledge_base.db"
-      }
+      "env": {}
     }
   }
 }
 ```
 
-**Important**: Update the paths to match your actual workspace location.
+**Important**: See `SETUP.md` for Windows `node` path, `${workspaceFolder}` fallbacks, and optional `KNOWLEDGE_BASE_DB_PATH` / `SESSION_LOGS_DB_PATH` overrides.
 
 ## Available Tools
 
@@ -71,12 +69,13 @@ Execute a SQL query against the knowledge base database.
 
 **Parameters:**
 - `query` (required): SQL query string
-- `database_path` (optional): Path to database file (defaults to configured knowledge base)
+- `database_path` (optional): Absolute path to a `.db` file, or the alias `session_logs` (defaults to `library/resources/databases/db/session_logs.db`)
 
 **Example:**
 ```
 Use execute_query tool with:
-- query: SELECT title FROM pages WHERE title LIKE 'XMBML%' LIMIT 10
+- database_path: session_logs
+- query: SELECT session_id, title FROM sessions ORDER BY ingested_at DESC LIMIT 10
 ```
 
 ### 2. `get_tables`
@@ -103,10 +102,11 @@ Get database statistics (size, table count, etc.).
 
 ## Usage Examples
 
-### Query for specific pages:
+### Query session metadata:
 ```
 Use execute_query tool with:
-- query: SELECT title, namespace FROM pages WHERE title LIKE 'SC Communication%' LIMIT 5
+- database_path: session_logs
+- query: SELECT session_id, title, status FROM sessions LIMIT 10
 ```
 
 ### Get all tables:
@@ -208,7 +208,7 @@ If MCP server isn't configured, you can use the SQLite command-line tool directl
 
 ```bash
 # Run a query
-sqlite3 -header -column library/resources/wikis/psdevwiki_ps3/psdevwiki_ps3_knowledge_base.db "SELECT title FROM pages LIMIT 10;"
+sqlite3 -header -column library/resources/databases/db/session_logs.db "SELECT session_id, title FROM sessions LIMIT 10;"
 ```
 
 **Note**: Terminal output capture can be unreliable in Cursor. The MCP server is recommended to avoid these issues.

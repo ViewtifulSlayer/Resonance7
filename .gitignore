@@ -2,42 +2,48 @@
 # Excludes user-specific content while preserving directory structure
 
 # =============================================================================
-# User Session Files
+# Sessions
 # =============================================================================
 # Exclude actual session log files, but preserve directory structure and READMEs
-sessions/current/*.md
-!sessions/current/README.md
-sessions/recent/*.md
-!sessions/recent/README.md
-# Keep archived zip files structure, but exclude actual archives
-sessions/archived/*.zip
-!sessions/archived/README.md
+sessions/archived/*
+sessions/current/*
+sessions/recent/*
+!sessions/README.md
+!sessions/*/README.md
 
 # =============================================================================
-# User Projects
+# Projects
 # =============================================================================
-# Exclude all user project contents
-projects/*/*
+# Exclude user projects (downloaded on-demand)
+projects/*
 # But preserve the projects/ directory structure
+!projects/INDEX.md
 !projects/README.md
 
 # =============================================================================
-# Documentation Modules
+# Resource Modules
 # =============================================================================
-# Exclude documentation module content (downloaded on-demand)
-library/resources/docs/*
-# But preserve the docs/ directory structure
-!library/resources/docs/README.md
-# Preserve the resources/ directory README
+# Exclude downloaded modules (downloaded on-demand)
+library/resources/*
+# But preserve the resources/ directory structure
 !library/resources/README.md
+!library/resources/*/README.md
+!library/resources/*/*/README.md
+!library/resources/*/*/*/README.md
 
 # =============================================================================
-# Knowledge Base Databases
+# Tool Modules
 # =============================================================================
-# Exclude wiki knowledge base databases and indexes (large files, user-specific)
-library/resources/wikis/*
-# But preserve the wikis/ directory structure
-!library/resources/wikis/README.md
+# Exclude downloaded modules (downloaded on-demand)
+library/tools/*
+# But preserve the tools/ directory structure and core tools
+!library/tools/README.md
+!library/tools/*/README.md
+!library/tools/*/*/README.md
+!library/tools/*/*/*/README.md
+!library/tools/mcp_sqlite_server/
+!library/tools/project_tools.py
+!library/tools/session_tools.py
 
 # =============================================================================
 # IDE and Editor Files

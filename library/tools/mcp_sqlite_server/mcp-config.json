@@ -3,11 +3,9 @@
     "resonance7-sqlite": {
       "command": "node",
       "args": [
-        "d:\\Development\\Resonance7\\library\\tools\\mcp_sqlite_server\\src\\server.js"
+        "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
       ],
-      "env": {
-        "KNOWLEDGE_BASE_DB_PATH": "d:\\Development\\Resonance7\\library\\resources\\wikis\\psdevwiki_ps3\\psdevwiki_ps3_knowledge_base.db"
-      }
+      "env": {}
     }
   }
 }

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "example-server": {
+      "command": "<full path to executable e.g. node.exe or python>",
+      "args": ["<path to server script or entrypoint>"],
+      "env": {}
+    }
+  }
+}
