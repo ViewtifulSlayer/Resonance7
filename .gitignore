@@ -1,74 +1,86 @@
+# =============================================================================
 # Resonance 7 - Git Ignore Rules
-# Excludes user-specific content while preserving directory structure
-
 # =============================================================================
-# Sessions
-# =============================================================================
-# Exclude actual session log files, but preserve directory structure and READMEs
-sessions/archived/*
-sessions/current/*
-sessions/recent/*
-!sessions/README.md
-!sessions/*/README.md
-
-# =============================================================================
-# Projects
-# =============================================================================
-# Exclude user projects (downloaded on-demand)
-projects/*
-# But preserve the projects/ directory structure
-!projects/INDEX.md
-!projects/README.md
+# Excludes high-churn content while preserving skeleton docs and core tools.
 
 # =============================================================================
 # Resource Modules
 # =============================================================================
-# Exclude downloaded modules (downloaded on-demand)
-library/resources/*
-# But preserve the resources/ directory structure
-!library/resources/README.md
-!library/resources/*/README.md
-!library/resources/*/*/README.md
-!library/resources/*/*/*/README.md
+# Exclude library resources by default, but keep README breadcrumbs tracked.
+
+library/resources/**
+!library/resources/**/
+!library/resources/**/README.md
+
 
 # =============================================================================
 # Tool Modules
 # =============================================================================
-# Exclude downloaded modules (downloaded on-demand)
-library/tools/*
-# But preserve the tools/ directory structure and core tools
-!library/tools/README.md
-!library/tools/*/README.md
-!library/tools/*/*/README.md
-!library/tools/*/*/*/README.md
-!library/tools/mcp_sqlite_server/
+# Exclude library tools by default, but keep README breadcrumbs and core tools.
+
+library/tools/**
+!library/tools/**/
+!library/tools/**/README.md
+!library/tools/mcp_sqlite_server/**
 !library/tools/project_tools.py
 !library/tools/session_tools.py
+
+
+# =============================================================================
+# Sessions
+# =============================================================================
+# Exclude session payloads, keep docs tracked.
+
+sessions/archived/**
+sessions/current/**
+sessions/recent/**
+!sessions/README.md
+!sessions/**/README.md
+
+
+# =============================================================================
+# Project Overrides
+# =============================================================================
+# Keep hub repo lean; track project breadcrumb docs only.
+
+projects/**
+!projects/**/
+!projects/INDEX.md
+!projects/README.md
+!projects/**/README.md
+
+# To include a specific project in hub tracking, add explicit allow rules, e.g.
+# !projects/specific_project/
+# !projects/specific_project/**
+
 
 # =============================================================================
 # IDE and Editor Files
 # =============================================================================
-# IDE-specific files (optional - users can customize)
+
 .cursor/settings.json
-.vscode/
-!.vscode/
+.vscode/*
 !.vscode/extensions.json
 .idea/
 *.swp
 *.swo
 *~
 
+
 # =============================================================================
 # OS and System Files
 # =============================================================================
+
 .DS_Store
 Thumbs.db
 desktop.ini
 *.lnk
 
+
 # =============================================================================
 # Python
 # =============================================================================
+
 __pycache__/
 *.py[cod]
 *$py.class
@@ -94,17 +106,21 @@ venv/
 ENV/
 env/
 
+
 # =============================================================================
 # Node.js (if used in projects)
 # =============================================================================
+
 node_modules/
 npm-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+
 # =============================================================================
 # Temporary and Log Files
 # =============================================================================
+
 *.log
 *.tmp
 *.temp
