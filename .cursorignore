@@ -1,77 +1,51 @@
+# =============================================================================
 # Resonance 7 - Cursor IDE Ignore Rules
-# Excludes build artifacts and large files from indexing while preserving source code access
-# Note: These patterns affect Cursor's codebase indexing, not file accessibility
-# Files remain accessible even if excluded from indexing
+# =============================================================================
+# Excludes build artifacts and large files from indexing while preserving
+# path discoverability through README breadcrumbs.
+# Note: These patterns affect indexing behavior, not file existence/access.
 
 # =============================================================================
-# Project Build Artifacts
+# Resource Module Overrides
 # =============================================================================
-# Exclude build outputs and compiled files from all projects
-# Note: Source files (.py, .c, .h, .md, etc.) remain indexed
-projects/*/node_modules/
-projects/*/dist/
-projects/*/build/
-projects/*/__pycache__/
-projects/*/.venv/
-projects/*/venv/
-projects/*/env/
-projects/*/ENV/
-projects/*/*.egg-info/
-projects/*/wheels/
-projects/*/.pytest_cache/
-projects/*/htmlcov/
-projects/*/.tox/
-projects/*/.hypothesis/
-projects/*/.ipynb_checkpoints/
-projects/*/.coverage
-projects/*/*.pyc
-projects/*/*.pyo
-projects/*/*.pyd
-projects/*/*.so
-projects/*/*.egg
-projects/*/*.whl
-projects/*/*.log
-projects/*/*.tmp
-projects/*/*.temp
+# Exclude library resources by default, but keep README breadcrumbs indexed.
+
+library/resources/**
+!library/resources/**/
+!library/resources/**/README.md
+
 
 # =============================================================================
-# Projects (excluded from root indexing; open a project folder for full indexing)
+# Tool Module Overrides
 # =============================================================================
-# Exclude user projects (reduce index size, downloaded on-demand)
-projects/*
-# But preserve the projects/ directory structure
+# Exclude library tools by default, but keep README breadcrumbs indexed.
+
+library/tools/**
+!library/tools/**/
+!library/tools/**/README.md
+
+
+# =============================================================================
+# Project Overrides
+# =============================================================================
+# Exclude inactive projects from indexing.
+
+projects/inactive/**
+
+# Keep project tree discoverable through README breadcrumbs.
+
+projects/**
+!projects/**/
 !projects/INDEX.md
 !projects/README.md
+!projects/**/README.md
 
-# =============================================================================
-# Resource Modules
-# =============================================================================
-# Exclude downloaded modules (reduce index size, downloaded on-demand)
-!library/resources/*
-# But preserve the docs/ directory structure
-!library/resources/README.md
-!library/resources/*/README.md
-!library/resources/*/*/README.md
-!library/resources/*/*/*/README.md
-
-# =============================================================================
-# Tool Modules
-# =============================================================================
-# Exclude downloaded modules (reduce index size, downloaded on-demand)
-library/tools/*
-# But preserve the tools/ directory structure
-!library/tools/README.md
-!library/tools/*/README.md
-!library/tools/*/*/README.md
-!library/tools/*/*/*/README.md
-!library/tools/mcp_sqlite_server/
-!library/tools/project_tools.py
-!library/tools/session_tools.py
 
 # =============================================================================
 # IDE and Editor Files
 # =============================================================================
-# Exclude IDE-specific configuration files (reduce index noise)
+# Exclude IDE-specific configuration files (reduce index noise).
+
 .cursor/settings.json
 .vscode/
 !.vscode/extensions.json
@@ -80,19 +54,23 @@ library/tools/*
 *.swo
 *~
 
+
 # =============================================================================
 # OS and System Files
 # =============================================================================
-# Exclude OS-specific files (not needed for code indexing)
+# Exclude OS-specific files (not needed for code indexing).
+
 .DS_Store
 Thumbs.db
 desktop.ini
 *.lnk
 
+
 # =============================================================================
 # Python Build Artifacts
 # =============================================================================
-# Exclude Python build outputs (root-level, not in projects/)
+# Exclude Python build outputs.
+
 __pycache__/
 *.py[cod]
 *$py.class
@@ -118,42 +96,70 @@ venv/
 ENV/
 env/
 
+
 # =============================================================================
 # Node.js Build Artifacts
 # =============================================================================
-# Exclude Node.js dependencies and build outputs (root-level)
+# Exclude Node.js dependencies and build outputs.
+
 node_modules/
 npm-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+
 # =============================================================================
 # Temporary and Log Files
 # =============================================================================
-# Exclude temporary files and logs (not needed for indexing)
+# Exclude temporary files and logs.
+
 *.log
 *.tmp
 *.temp
 *.bak
 *.backup
 
+
+# =============================================================================
+# Cross-Project Build Artifacts
+# =============================================================================
+# Exclude build/cache outputs anywhere in the workspace.
+
+**/node_modules/
+**/dist/
+**/build/
+**/__pycache__/
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
+**/*.egg-info/
+**/wheels/
+**/.pytest_cache/
+**/htmlcov/
+**/.tox/
+**/.hypothesis/
+**/.ipynb_checkpoints/
+**/.coverage
+**/*.py[cod]
+**/*.pyd
+**/*.so
+**/*.egg
+**/*.whl
+
+
 # =============================================================================
 # Large Data Files
 # =============================================================================
-# Exclude large database files from indexing (reduce index size)
-# Note: Knowledge base databases are accessible but not indexed
-!*.db
-*.sqlite
-*.sqlite3
-# Exception: Allow knowledge base databases in library (if needed for agent access)
-# Uncomment if you want knowledge bases indexed:
+# Optionally exclude large database files from indexing.
+# Uncomment if needed.
+
+# *.db
+# *.sqlite
+# *.sqlite3
+
+# Uncomment if you want selected knowledge bases indexed:
+
 # !library/**/*_knowledge_base.db
 # !library/**/*.sqlite
 # !library/**/*.sqlite3
-
-# =============================================================================
-# Project-Specific Overrides
-# =============================================================================
-# Add project-specific patterns here if needed
-# Example: To exclude a specific project directory from indexing:
-# projects/SpecificProject/large_data/
