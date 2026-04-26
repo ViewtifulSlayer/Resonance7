@@ -62,3 +62,38 @@ Based on workspace state, suggest:
 - Verifying workspace is properly configured
 - Getting oriented in a new workspace
 
+## MCP Setup Check (SQLite)
+
+During `/start`, verify MCP config is usable for this workspace.
+
+### Check `.cursor/mcp.json`
+
+1. Confirm file exists at `.cursor/mcp.json`
+2. Confirm server entry exists (example key: `Resonance7-sqlite`)
+3. Validate required fields:
+   - `command`
+   - `args[0]`
+   - `env.DEFAULT_DB_PATH` (optional only if your server supports no default)
+
+### Placeholder Detection
+
+If any value contains placeholders (examples: `<ABSOLUTE_PATH_TO_NODE_EXE>`, `<ABSOLUTE_PATH_TO_WORKSPACE>`), pause and ask the user to replace them with real paths.
+
+Minimum substitutions:
+- `command` -> absolute path to `node.exe`
+- `args[0]` -> absolute path to `library/tools/mcp_sqlite_server/src/server.js`
+- `env.DEFAULT_DB_PATH` -> absolute path to `library/resources/databases/db/session_logs.db`
+
+### Path Validation (Windows)
+
+Run checks:
+- `Test-Path -LiteralPath "<command path>"`
+- `Test-Path -LiteralPath "<args[0] path>"`
+- `Test-Path -LiteralPath "<DEFAULT_DB_PATH path>"`
+
+If any are `False`, report exactly which path failed and ask user to fix it.
+
+### Final Step
+
+After edits to MCP config, remind user:
+- Reload Cursor window so MCP servers restart.
