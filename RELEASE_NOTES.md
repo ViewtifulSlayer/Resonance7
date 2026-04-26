@@ -1,3 +1,43 @@
+# Resonance7 v2.1.0 - MCP setup automation and local config
+
+**Release date:** 2026-04-26
+
+This release stops tracking **`.cursor/mcp.json`**, adds **`library/tools/setup_mcp_sqlite.py`** (absolute paths, **`npm install`**, optional audit) so each machine uses a consistent Node and native build for the MCP server, and expands **`/start`** so the SQLite MCP setup check is run, not only described. Ignore files, git attributes, **`README`**, and **`LICENSE`** have minor updates.
+
+## Migration (from 2.0.0)
+
+- If you relied on a committed **`.cursor/mcp.json`**, it is no longer in the repo. Run `python library/tools/setup_mcp_sqlite.py` from the workspace root, then reload the Cursor window. Alternatively, copy `library/templates/configuration_templates/mcp.json.example` to `.cursor/mcp.json`, set absolute paths to your Node binary, `mcp_sqlite_server/src/server.js`, and `session_logs.db`, then run `npm install` in `library/tools/mcp_sqlite_server` with the same Node, and reload Cursor.
+
+## What is new
+
+### SQLite MCP and setup
+
+- **`library/tools/setup_mcp_sqlite.py`** - One entry point: write **`.cursor/mcp.json`**, install npm deps in **`library/tools/mcp_sqlite_server`**, optional **`npm audit fix`**, and clear errors when Node is missing or versions mismatch.
+- **Example template** - **`library/templates/configuration_templates/mcp.json.example`** replaces the old **`library/templates/example-mcp.json`** (removed) for hand-edits.
+- **Lockfile** - Updated **`package-lock.json`** in **`mcp_sqlite_server`**; **`SETUP.md`** notes aligned with the script.
+
+### Onboarding and commands
+
+- **`/start`** (**.cursor/commands/start.md**) - Documents the full MCP check: script vs. manual, placeholder detection, path validation, dependency install, **reload Cursor** after changes.
+- **`.cursor/rules/agent_onboarding.mdc`** - Clarifies when agents load **`agent_foundation.json`** and how that fits **`/start`**.
+
+### Repository hygiene
+
+- **`.gitignore`**, **`.agentignore`**, **`.cursorignore`**, **`.gitattributes`** - Tuned for local MCP config, tool paths, and cross-platform diffs; **`README.md`** and **`LICENSE`** - minor text updates.
+
+## Requirements
+
+- Python 3.7+
+- Git
+- **Node 18+** (for SQLite MCP) - use the same install for both **`mcp.json`** **`command`** and **`npm install`** in **`library/tools/mcp_sqlite_server`**
+- Cursor (recommended) or another IDE with equivalent rules support
+
+## Full changelog
+
+[Compare v2.0.0...v2.1.0](https://github.com/ViewtifulSlayer/Resonance7/compare/v2.0.0...v2.1.0) - see [CHANGELOG.md](CHANGELOG.md).
+
+---
+
 # Resonance7 v2.0.0 - Session MCP, ingest, and project layout
 
 **Release date:** 2026-04-04

@@ -14,6 +14,12 @@ A comprehensive AI agent development framework and workspace management system d
 
 ## 📋 What's New
 
+**v2.1.0** (2026-04-26)
+- **`setup_mcp_sqlite.py`** - Writes a local **`.cursor/mcp.json`**, runs **`npm install`** in **`library/tools/mcp_sqlite_server`**; use the same Node for both (avoids `better-sqlite3` / **NODE_MODULE_VERSION** mismatches)
+- **MCP config not in Git** - **`.cursor/mcp.json`** is gitignored; run the setup script after clone or use **`library/templates/configuration_templates/mcp.json.example`**
+- **`/start`** - Expanded to require the SQLite MCP path/deps check (not only a description)
+- **Ignore/attributes** - Tuned **`.gitignore`**, **`.agentignore`**, **`.cursorignore`**, **`.gitattributes`**
+
 **v2.0.0** (2026-04-04)
 - **Session MCP** - Ingest session markdown into **`session_logs.db`** for FTS search; optional **`sessions/INDEX.md`** template
 - **Breaking** - New projects symlink **`library/`** and **`sessions/`** only; **`.cursor/`** stays at workspace root (no symlink into `projects/<name>/`)
@@ -49,6 +55,7 @@ A comprehensive AI agent development framework and workspace management system d
 - Python 3.7 or higher
 - Git
 - A compatible IDE (Cursor recommended, but any IDE can be adapted)
+- **Node.js 18+** (optional) - only if you use the **Cursor SQLite MCP** server in **`library/tools/mcp_sqlite_server`**; use one Node install for both **`mcp.json`** and **`npm install`**
 
 ### Installation
 
@@ -62,10 +69,17 @@ A comprehensive AI agent development framework and workspace management system d
    - If using Cursor, the `.cursor/rules/agent_onboarding.mdc` will be automatically loaded
    - For other IDEs, copy the agent foundation rules to your IDE's configuration
 
-3. **Verify installation:**
+3. **SQLite MCP (optional, Cursor):** To query **`session_logs.db`** and related SQLite DBs from the MCP server, from the repo root run:
+   ```bash
+   python library/tools/setup_mcp_sqlite.py
+   ```
+   Then **reload the Cursor window** so MCP picks up **`.cursor/mcp.json`**. To hand-edit instead, start from **`library/templates/configuration_templates/mcp.json.example`**, run **`npm install`** in **`library/tools/mcp_sqlite_server`**, and reload.
+
+4. **Verify installation:**
    - Check that `library/agent_foundation.json` exists
    - Verify `library/tools/session_tools.py` is executable
    - Test with: `python library/tools/session_tools.py --help`
+   - If you use MCP: confirm **`library/tools/mcp_sqlite_server/node_modules`** exists (created by the setup script or **`npm install`**)
 
 ### First Steps
 
@@ -90,7 +104,7 @@ Resonance7/                          # Main workspace
 │   ├── rules/                       # Shared Cursor rules
 │   │   └── agent_onboarding.mdc     # Shared Onboarding rule (IDE-agnostic protocol)
 │   ├── skills/                      # Cursor skills
-│   └── mcp.json                     # Cursor MCP configuration
+│   └── mcp.json                     # Local Cursor MCP (gitignored; generate via setup_mcp_sqlite.py)
 ├── library/                         # Shared Resonance 7 resources
 │   ├── resources/                   # Shared resources
 │   │   ├── db/                      # SQLite databases (downloaded/built on-demand)
@@ -218,6 +232,10 @@ The `.gitignore` file excludes user-specific content (sessions, projects, docume
 
 **Note**: Universal tools are in `library/tools/` and accessible via the `library/` symlink in projects. Projects get their own independent `tools/` directories for project-specific tools.
 
+### Cursor SQLite MCP
+
+**`.cursor/mcp.json`** is not committed. After clone or on a new machine, run **`python library/tools/setup_mcp_sqlite.py`** from the workspace root, then reload Cursor. The script writes absolute paths to your Node binary and the MCP server entrypoint, sets **`DEFAULT_DB_PATH`** for **`session_logs.db`**, and installs npm dependencies under **`library/tools/mcp_sqlite_server`**. See **`library/tools/mcp_sqlite_server/README.md`** and **`library/tools/mcp_sqlite_server/SETUP.md`** for details.
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -245,7 +263,7 @@ Potential CI/CD workflows for:
 - Session logs are stored in `sessions/current/` (automatically archived after 7 days)
 - Project workspaces symlink **`library/`** and **`sessions/`** to the workspace root for consistency (`.cursor/` is not symlinked into projects)
 - Documentation modules are available in `library/resources/docs/`
-- Knowledge base databases are accessible via MCP SQLite Server (see `library\tools\mcp_sqlite_server\README.md`)
+- Knowledge base databases are accessible via MCP SQLite Server (see `library/tools/mcp_sqlite_server/README.md`)
 
 ---
 

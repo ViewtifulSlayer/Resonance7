@@ -8,7 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- (Planned) Session log date recognition – improve when agents continue an existing session vs. start a new one from calendar context
+- (Planned) Session log date recognition - improve when agents continue an existing session vs. start a new one from calendar context
+
+## [2.1.0] - 2026-04-26
+
+### Added
+- **`library/tools/setup_mcp_sqlite.py`** - Writes a machine-local **`.cursor/mcp.json`** with absolute paths, runs **`npm install`** (and **`npm audit fix`**, optional skip) in **`library/tools/mcp_sqlite_server`** so Node and `better-sqlite3` match; prints Node/npm guidance if Node is missing.
+- **`library/templates/configuration_templates/mcp.json.example`** - Committed template shape for hand-editing if you do not use the setup script; documents **`DEFAULT_DB_PATH`** and Node **`command`** fields.
+
+### Changed
+- **SQLite MCP config is no longer tracked** - **`.cursor/mcp.json`** is **gitignored**; clone/fetch no longer overwrites a developer's local MCP entry. Regenerate with **`python library/tools/setup_mcp_sqlite.py`** (or copy from the example template) after pull or on a new machine.
+- **`.gitignore`** - Ignores **`.cursor/mcp.json`**, with allow-list exceptions so **`library/tools/mcp_sqlite_server/`** and **`setup_mcp_sqlite.py`** stay tracked; other ignore refinements.
+- **`.agentignore`**, **`.cursorignore`**, **`.gitattributes`** - Tuned patterns and attributes for tools and line endings; fewer noisy diffs in mixed environments.
+- **`.cursor/commands/start.md`** - Expanded with mandatory **MCP setup check** (path validation, **`npm install`**, Windows **`Test-Path`** / Unix **`test`**, optional import smoke test, **reload Cursor** after changes).
+- **`.cursor/rules/agent_onboarding.mdc`** - Aligned with the **`/start`** flow (when to re-read `agent_foundation.json` vs. session reuse).
+- **`library/tools/mcp_sqlite_server/SETUP.md`**, **`package-lock.json`** - Dependency lock and setup notes in step with the setup script and Node 18+ **`engines`**.
+
+### Removed
+- **`library/templates/example-mcp.json`** - Replaced by **`mcp.json.example`** under **`library/templates/configuration_templates/`** (kebab-case template layout).
 
 ## [2.0.0] - 2026-04-04
 
@@ -146,7 +163,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session lifecycle management (current → recent → archived)
 - Cross-platform Python tooling
 
-[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.1.1...v1.2.0
