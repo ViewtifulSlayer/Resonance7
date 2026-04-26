@@ -5,6 +5,14 @@
 
 
 # =============================================================================
+# Cursor (local project config)
+# =============================================================================
+# Machine-specific; use library/tools/setup_mcp_sqlite.py to generate locally.
+
+.cursor/mcp.json
+
+
+# =============================================================================
 # Resource Modules
 # =============================================================================
 # Exclude library resources by default, but keep README breadcrumbs tracked.
@@ -25,6 +33,7 @@ library/tools/**
 !library/tools/mcp_sqlite_server/**
 !library/tools/project_tools.py
 !library/tools/session_tools.py
+!library/tools/setup_mcp_sqlite.py
 
 
 # =============================================================================

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "Resonance7-sqlite": {
+      "command": "<ABSOLUTE_PATH_TO_NODE_EXE>",
+      "args": [
+        "<ABSOLUTE_PATH_TO_WORKSPACE>\\library\\tools\\mcp_sqlite_server\\src\\server.js"
+      ],
+      "env": {
+        "DEFAULT_DB_PATH": "<ABSOLUTE_PATH_TO_WORKSPACE>\\library\\resources\\databases\\db\\session_logs.db"
+      }
+    }
+  }
+}

@@ -2,6 +2,8 @@
 
 Quick setup instructions for configuring the SQLite MCP server in Cursor IDE.
 
+**Quick setup (recommended):** from the Resonance7 workspace root, run `python library/tools/setup_mcp_sqlite.py`. That writes a project-level `.cursor/mcp.json` with absolute paths, runs `npm install` in this folder with the same Node, then `npm audit fix`, and tells you to reload Cursor. Use `--dry-run` to only print the JSON; use `--skip-audit-fix` to skip the audit step. If Node 18+ is missing, the script prints install links. A placeholder-only JSON template lives at `library/templates/configuration_templates/mcp.json.example`.
+
 ## Step 1: Install Dependencies
 
 ```bash
