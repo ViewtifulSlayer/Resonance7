@@ -7,8 +7,9 @@ Initialize and verify Resonance7 workspace setup for first-time or returning use
 When this command is invoked:
 1. Load the foundation (same as `/foundation`)
 2. Check workspace state and verify setup
-3. Provide a personalized onboarding checklist based on current state
-4. Guide user to next steps
+3. **Run the [MCP Setup Check (SQLite)](#mcp-setup-check-sqlite) below** (config, path validation, and Node dependencies). This is not optional for `/start` - actually perform the checks and `npm install`, do not only describe them.
+4. Provide a personalized onboarding checklist based on current state
+5. Guide user to next steps
 
 ## Verification Checks
 
@@ -18,6 +19,7 @@ Check for:
 - Existing sessions (if any)
 - Existing projects (if any)
 - Shared resource symlinks (in current project if applicable)
+- **SQLite MCP:** `.cursor/mcp.json` valid paths, and `node_modules` for `library/tools/mcp_sqlite_server` (see MCP section)
 
 ## Onboarding Checklist
 
@@ -64,36 +66,51 @@ Based on workspace state, suggest:
 
 ## MCP Setup Check (SQLite)
 
-During `/start`, verify MCP config is usable for this workspace.
+**Agents:** perform this block every time `/start` runs. Use the tools and shell to read files, run `Test-Path` / `npm install`, and report results. If you only summarize these steps without executing them, you have not completed `/start`.
 
 ### Check `.cursor/mcp.json`
 
 1. Confirm file exists at `.cursor/mcp.json`
-2. Confirm server entry exists (example key: `Resonance7-sqlite`)
-3. Validate required fields:
-   - `command`
-   - `args[0]`
-   - `env.DEFAULT_DB_PATH` (optional only if your server supports no default)
+2. Confirm a server entry exists (example key: `Resonance7-sqlite`)
+3. Read the resolved values and validate required fields:
+   - `command` (Node executable)
+   - `args[0]` (path to `library/tools/mcp_sqlite_server/src/server.js`)
+   - `env.DEFAULT_DB_PATH` if set (else the server uses its own default under `library/resources/...` - still confirm the DB file exists if you rely on it)
 
-### Placeholder Detection
+### Placeholder detection
 
 If any value contains placeholders (examples: `<ABSOLUTE_PATH_TO_NODE_EXE>`, `<ABSOLUTE_PATH_TO_WORKSPACE>`), pause and ask the user to replace them with real paths.
 
-Minimum substitutions:
-- `command` -> absolute path to `node.exe`
+Minimum substitutions (when using explicit paths):
+- `command` -> absolute path to `node.exe` (e.g. `C:\Program Files\nodejs\node.exe` on Windows when a full install exists)
 - `args[0]` -> absolute path to `library/tools/mcp_sqlite_server/src/server.js`
-- `env.DEFAULT_DB_PATH` -> absolute path to `library/resources/databases/db/session_logs.db`
+- `env.DEFAULT_DB_PATH` -> absolute path to `library/resources/databases/db/session_logs.db` (on Windows the drive letter must be valid, e.g. `E:\Resonance7\...`, not `E:Resonance7\...`)
 
-### Path Validation (Windows)
+### Node dependencies (MCP SQLite server)
 
-Run checks:
+The MCP process loads `better-sqlite3` and `@modelcontextprotocol/sdk`. Ensure packages are installed:
+
+1. Working directory: `library/tools/mcp_sqlite_server` (under the workspace root)
+2. Run: `npm install` (use the same Node as in `mcp.json` if multiple installs exist, e.g. `& "C:\Program Files\nodejs\npm.cmd" install` in that folder on Windows)
+3. If the command fails, report the error. Native modules may need a matching Node version (see `engines` in that folder's `package.json`)
+
+### Path validation (Windows)
+
+Run and report results (substitute the actual strings from `mcp.json`):
+
 - `Test-Path -LiteralPath "<command path>"`
 - `Test-Path -LiteralPath "<args[0] path>"`
-- `Test-Path -LiteralPath "<DEFAULT_DB_PATH path>"`
+- `Test-Path -LiteralPath "<DEFAULT_DB_PATH or default DB file path>"` when applicable
 
-If any are `False`, report exactly which path failed and ask user to fix it.
+If any are `False`, report exactly which path failed and how to fix it.
 
-### Final Step
+On non-Windows, verify the same three files exist with the platform equivalent (e.g. `test -f`).
 
-After edits to MCP config, remind user:
-- Reload Cursor window so MCP servers restart.
+### Optional quick import check
+
+If path validation passed, you may run a one-shot check from `library/tools/mcp_sqlite_server` that the same imports as `src/server.js` load (e.g. `import` from `@modelcontextprotocol/sdk/...` and `better-sqlite3`). If this fails after `npm install`, report the error.
+
+### Final step
+
+- If `mcp.json` or `node_modules` was fixed during this run, remind the user: **reload the Cursor window** so MCP servers restart.
+- If the config was already valid and `npm install` was up to date, a reload is not strictly required but safe after any MCP change.
