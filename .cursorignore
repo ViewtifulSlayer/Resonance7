@@ -5,26 +5,38 @@
 # path discoverability through README breadcrumbs.
 # Note: These patterns affect indexing behavior, not file existence/access.
 
-
 # =============================================================================
 # Resource Module Overrides
 # =============================================================================
-# Exclude library resources by default, but keep README breadcrumbs indexed.
+# Include library resources by default and add exceptions as needed.
+# Example: To exclude a specific resource directory from indexing:
+# library/resources/*
 
-library/resources/**
-!library/resources/**/
+# Preserve access to README breadcrumbs, even if the directory is excluded.
+
 !library/resources/**/README.md
 
 
 # =============================================================================
 # Tool Module Overrides
 # =============================================================================
-# Exclude library tools by default, but keep README breadcrumbs indexed.
+# Include library tools by default and add exceptions as needed.
+# Example: To exclude a specific tool directory from indexing:
+# library/tools/*
+ keep README breadcrumbs and core tools indexed.
 
-library/tools/**
-!library/tools/**/
-!library/tools/**/README.md
+library/tools/
+!library/tools/*
+!library/tools/mcp_sqlite_server/
+!library/tools/mcp_sqlite_server/*
+!library/tools/mcpsqlite_server/**
+#!library/tools/**/
+#!library/tools/mcp_sqlite_server/
+#!library/tools/mcp_sqlite_server/**
 
+#!library/tools/README.md
+#!library/tools/project_tools.py
+#!library/tools/session_tools.py
 
 # =============================================================================
 # Project Overrides
