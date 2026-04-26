@@ -14,6 +14,7 @@
 
 # Preserve access to README breadcrumbs, even if the directory is excluded.
 
+!library/resources/**/
 !library/resources/**/README.md
 
 
@@ -23,34 +24,23 @@
 # Include library tools by default and add exceptions as needed.
 # Example: To exclude a specific tool directory from indexing:
 # library/tools/*
- keep README breadcrumbs and core tools indexed.
 
-library/tools/
-!library/tools/*
-!library/tools/mcp_sqlite_server/
-!library/tools/mcp_sqlite_server/*
-!library/tools/mcpsqlite_server/**
-#!library/tools/**/
-#!library/tools/mcp_sqlite_server/
-#!library/tools/mcp_sqlite_server/**
+# Preserve access to README breadcrumbs, even if the directory is excluded.
 
-#!library/tools/README.md
-#!library/tools/project_tools.py
-#!library/tools/session_tools.py
+!library/resources/**/
+!library/resources/**/README.md
+
 
 # =============================================================================
 # Project Overrides
 # =============================================================================
-# Exclude inactive projects from indexing.
+# Exclude project directories by default and add exceptions as needed.
+# Example: To exclude a specific project directory from indexing:
+# projects/specific_project/*
 
-projects/inactive/**
+# Keep project trees discoverable through README breadcrumbs.
 
-# Keep project tree discoverable through README breadcrumbs.
-
-projects/**
 !projects/**/
-!projects/INDEX.md
-!projects/README.md
 !projects/**/README.md
 
 
