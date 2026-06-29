@@ -1,6 +1,6 @@
 # Resonance7 v3.0.0 - Foundation layout, bootstrap, and session ingest
 
-**Release date:** 2026-06-28
+**Release date:** 2026-06-29
 
 **Documentation note:** This is the **last release** shipped with `RELEASE_NOTES.md` in the repository. From the next release onward, user-facing release notes will appear on **GitHub release pages** and in **`CHANGELOG.md`** only. This file remains in v3.0.0 so you can paste it for the GitHub release post; it will not be updated for future versions.
 
