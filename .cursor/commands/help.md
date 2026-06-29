@@ -10,12 +10,11 @@ When this command is invoked:
 
 Be ready to explain:
 - Workspace structure and architecture
-- How symlinks work in projects
+- Foundation repo vs external projects
 - Available tools and their usage
 - Session management system
-- Installer scripts (when implemented)
+- Setup scripts
 - Ignore files (.gitignore, .cursorignore, .agentignore)
-- Project creation and setup
 - Any other Resonance7 concepts
 
 ## Explanation Style
@@ -29,39 +28,30 @@ Be ready to explain:
 ## Common Topics
 
 **Workspace Structure:**
-- Explain the directory layout (library/, sessions/, tools/, projects/)
-- How shared resources are organized
-- Project workspace structure
+- Foundation repo: `library/`, `.cursor/`, `projects/` (pairing files), `tests/`
+- Session logs: `library/sessions/{current,recent,archived}/`
+- External project code: separate folder, linked via `projects/*.code-workspace`
 
-**Symlinks:**
-- How symlinks connect projects to shared resources
-- What gets symlinked (library, sessions, tools, .cursor, batch files)
-- Platform differences (Windows vs Linux/macOS)
-- Why symlinks are used (single source of truth, consistency)
-
-**Tools:**
-- `session_tools.py` - Session management and logging
-- `project_tools.py` - Project workspace creation
-- How to run tools from any project directory
+**Tools (`library/tools/scripts/`):**
+- `setup_workspace.py` - Bootstrap dirs; pair external projects
+- `setup_database.py` - MCP config and `npm install`
+- `session_tools.py` - Session log create, prune, ingest (when ingest script exists)
 
 **Session Management:**
-- How sessions are created and tracked
-- Session lifecycle (current → recent → archived)
-- Session file naming and structure
-- Pruning and maintenance
+- Lifecycle: current -> recent -> archived
+- Naming: `YYYYMMDD-NN.md`
+- Template: `library/templates/session_template.md`
 
 **Configuration Files:**
-- `.gitignore` - Git version control exclusions
-- `.cursorignore` - Cursor IDE indexing exclusions
+- `.gitignore` - Git exclusions (session payloads, local MCP, pairing files)
+- `.cursorignore` - Cursor indexing exclusions
 - `.agentignore` - Agent file modification protection
-- How ignore patterns cascade from parent directories
-- Using `!` to override parent-level ignores
+- `library/.workspace_setup_required` - First-run marker (removed after bootstrap)
 
-**Project Setup:**
-- Creating new projects with `project_tools.py`
-- What gets created automatically
-- Shared resource symlinking
-- Configuration file generation
+**First-Time Setup:**
+1. `python library/tools/scripts/setup_workspace.py`
+2. `python library/tools/scripts/setup_database.py`
+3. Reload editor
 
 ## When to Use
 

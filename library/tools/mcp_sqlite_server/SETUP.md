@@ -2,7 +2,7 @@
 
 Quick setup instructions for configuring the SQLite MCP server in Cursor IDE.
 
-**Quick setup (recommended):** from the Resonance7 workspace root, run `python library/tools/setup_mcp_sqlite.py`. That writes a project-level `.cursor/mcp.json` with absolute paths, runs `npm install` in this folder with the same Node, then `npm audit fix`, and tells you to reload Cursor. Use `--dry-run` to only print the JSON; use `--skip-audit-fix` to skip the audit step. If Node 18+ is missing, the script prints install links. A placeholder-only JSON template lives at `library/templates/configuration_templates/mcp.json.example`.
+**Quick setup (recommended):** from the Resonance7 workspace root, run `python library/tools/scripts/setup_database.py`. That writes a project-level `.cursor/mcp.json` with absolute paths, runs `npm install` in this folder with the same Node, then `npm audit fix`, and tells you to reload Cursor. Use `--dry-run` to only print the JSON; use `--skip-audit-fix` to skip the audit step. If Node 18+ is missing, the script prints install links. A placeholder-only JSON template lives at `library/templates/mcp.json.example`.
 
 ## Step 1: Install Dependencies
 
@@ -39,7 +39,9 @@ This installs:
          "args": [
            "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
          ],
-         "env": {}
+         "env": {
+           "DEFAULT_DB_PATH": "${workspaceFolder}/library/databases/db/session_logs.db"
+         }
        }
      }
    }
@@ -47,7 +49,7 @@ This installs:
 
    **Important**:
    - On Windows, if `node` is not on PATH for Cursor, set `"command"` to the **full path** to `node.exe` (see the mcp-sqlite skill).
-   - Optional: set `KNOWLEDGE_BASE_DB_PATH` or `SESSION_LOGS_DB_PATH` to override the default `library/resources/databases/db/session_logs.db`.
+   - Optional: set `DEFAULT_DB_PATH`, `SESSION_LOGS_DB_PATH`, or `KNOWLEDGE_BASE_DB_PATH` to override the default `library/databases/db/session_logs.db`.
    - If `${workspaceFolder}` is not expanded in your Cursor version, replace it with your workspace root using **escaped backslashes** on Windows (e.g. `C:\\Users\\you\\Resonance7\\library\\tools\\...`).
 
 4. **Restart Cursor:**
@@ -90,7 +92,7 @@ After restarting Cursor:
 
 ### Database Not Found
 
-- Verify the database path in the `env.KNOWLEDGE_BASE_DB_PATH` setting
+- Verify the database path in `env.DEFAULT_DB_PATH` (or the other env vars above)
 - Use absolute paths (full path from drive letter)
 - Check that the database file exists at that location
 

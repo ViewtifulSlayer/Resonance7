@@ -67,10 +67,10 @@ In PowerShell (in a shell where `node` works): `(Get-Command node).Source` gives
     "Resonance7-sqlite": {
       "command": "C:\\Program Files\\nodejs\\node.exe",
       "args": [
-        "<workspace_root>\\tools\\mcp_sqlite_server\\src\\server.js"
+        "<workspace_root>\\library\\tools\\mcp_sqlite_server\\src\\server.js"
       ],
       "env": {
-        "DEFAULT_DB_PATH": "<workspace_root>\\resources\\databases\\knowledge_base.db"
+        "DEFAULT_DB_PATH": "<workspace_root>\\library\\databases\\db\\session_logs.db"
       }
     }
   }
@@ -106,11 +106,8 @@ When passing `database_path`, prefer **aliases or absolute paths** for reliabili
 
 | Purpose | Example alias / path (adjust to actual config) |
 |--------|-----------------------------------------------|
-| Default knowledge base | `DEFAULT_DB_PATH` (e.g. `<workspace_root>/resources/databases/knowledge_base.db`) |
-| Web sources | Alias `web_sources` -> `<workspace_root>/resources/databases/web_sources.db` |
-| Compiled knowledge base | Alias `compiled_kb` -> `<workspace_root>/resources/databases/compiled_kb.db` |
-| Session logs | Alias `session_logs` -> `<workspace_root>/library/resources/databases/db/session_logs.db` (if configured) |
-| Project app DB | Alias `app_db` -> `<workspace_root>/resources/databases/app.db` |
+| Session logs (default) | Alias `session_logs` or `DEFAULT_DB_PATH` -> `<workspace_root>/library/databases/db/session_logs.db` |
+| Other workspace DBs | Absolute path to `<workspace_root>/library/databases/db/<name>.db` (add aliases in a full workspace server) |
 
 If the workspace root differs (e.g. a project under `projects/`), resolve paths from that root or from the path shown in your MCP config.
 
@@ -211,5 +208,5 @@ For schema changes, migrations, and decisions about what to store, see the **dat
 
 - MCP / SQLite behavior details: `reference.md`
 - MCP server implementation and config: your MCP server repo/folder (`README.md`, `SETUP.md`, `mcp-config.json` if present)
-- **Workspace MCP index**: When this workspace contains `library/resources/databases/workspace_mcp_servers.md`, see it for a list of all MCP servers (SQLite, Ghidra, etc.), paths, and tool summaries.
-- **Workspace DBs**: When this workspace contains `library/resources/databases/`, see `library/resources/databases/README.md` for which databases exist, trigger words, and the canonical DB table. For this minimal framework release, use `database_path: "session_logs"` (resolved by the bundled MCP server) or the **absolute path** to `library/resources/databases/db/session_logs.db`.
+- **Workspace MCP index**: When this workspace contains `library/databases/workspace_mcp_servers.md`, see it for MCP server paths and tool summaries.
+- **Workspace DBs**: When this workspace contains `library/databases/`, see `library/databases/README.md` for which databases exist and the canonical DB table. For this minimal framework release, use `database_path: "session_logs"` (resolved by the bundled MCP server) or the **absolute path** to `library/databases/db/session_logs.db`.

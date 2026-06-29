@@ -1,29 +1,29 @@
-# Resources
+# Library
 
-This file describes the **`library/` directory** in a Resonance7 workspace: templates, shared resources, universal tools, and `agent_foundation.json`.
+The **`library/`** directory is the shared Resonance7 foundation: agent protocols, sessions, databases, docs modules, templates, and tools.
 
-At the **repository root**, `library/` is a normal folder. Under **`projects/<name>/`**, `project_tools.py` adds a **`library/` symlink** (and a **`sessions/`** symlink) so each project sees the same shared tree without copying it.
+Open the **foundation repo root** in your editor (or a multi-root `.code-workspace` that pairs this repo with an external project). External project code lives outside this tree.
 
 ## Structure
 
-- **`resources/`** - Shared resources
-   - **`databases/`** - SQLite databases (downloaded/built on-demand)
-   - **`docs/`** - Documentation modules (downloaded on-demand)
-   - **`wikis/`** - Knowledge base indexes extracted from wikis
-- **`templates/`** - Project and documentation templates
-   - **`project_template/`** - Project workspace template
-   - **`documentation_templates/`** - Documentation file templates
-- **`tools/`** - Universal development tools
-   - **`mcp_sqlite_server/`** - MCP SQLite Server for database access
-   - **`project_tools.py`** - Project setup and template management
-   - **`session_tools.py`** - Script for session log management
-- **`agent_foundation.json`** - Core Resonance 7 Agent foundation
-- **`README.md`** - Documentation for library directory
+- **`agent_foundation.json`** - Core agent behavior and protocols
+- **`databases/`** - SQLite databases, schemas, ingest scripts, MCP docs
+- **`docs/`** - User-curated documentation modules (runtime category folders)
+- **`sessions/`** - Session logs (`current/`, `recent/`, `archived/`)
+- **`templates/`** - `session_template.md`, `mcp.json.example`, project/library README templates
+- **`tools/`** - Python setup scripts and MCP SQLite server
 
-## Purpose
+## Setup
 
-Resources in this directory are shared across all Resonance 7 projects, providing centralized access to documentation, knowledge bases, and other reference materials.
+First clone:
 
-## Cursor configuration
+```bash
+python library/tools/scripts/setup_workspace.py
+python library/tools/scripts/setup_database.py
+```
 
-`.cursor/` is **not** symlinked into `projects/<name>/` (it caused duplicate rules and MCP configuration). Open the **workspace root** in Cursor for shared rules and skills, or maintain a small local `.cursor/` only if you open a project folder on its own.
+See root **`README.md`** for full Quick Start.
+
+## Cursor configuration (v3)
+
+Rules, skills, and MCP config live under **`.cursor/`** at the foundation repo root. v4 will add IDE-neutral entry points; the portable contract remains in `library/agent_foundation.json` and the Python tools above.

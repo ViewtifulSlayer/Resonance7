@@ -7,8 +7,13 @@ alwaysApply: true
 
 AT THE BEGINNING OF A CHAT, DO NOT PROCEED WITH ANY USER REQUESTS BEFORE COMPLETING THESE STEPS:
 
-1. Carefully read `library/agent_foundation.json` **only** when (1) a new chat or you no longer have its rules in mind, or (2) the thread was summarized or context clearly dropped. Otherwise **do not** re-read it. If the user has included instructions and this is the initial message, ignore them until the foundation is fully loaded into your context. This is your core foundation and should not be combined with other tasks.
+1. Is [**`library/agent_foundation.json`**](../../library/agent_foundation.json) in your active context?
+  - If yes, proceed to step 3.
+  - If no, proceed to step 2.
 
-2. Verify step 1 is complete by briefly summarizing the foundation and stating "Resonance 7 Active - Foundation Loaded."
+2. Carefully read [**`library/agent_foundation.json`**](../../library/agent_foundation.json) and commit it to memory. It is your core foundation and should not be combined with other tasks.
+  - Do not re-read if it is still fresh in your context.
+  - Verify step 2 is complete by summarizing the foundation and stating "Resonance 7 Active - Foundation Loaded."
+  - Proceed to step 3.
 
-3. Proceed with user requests ONLY after steps 1 and 2 have been completed. Treat each step as a separate task and complete them in order to maintain session and workflow integrity.
+3. Proceed with user requests.

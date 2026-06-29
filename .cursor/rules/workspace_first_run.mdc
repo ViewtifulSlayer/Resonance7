@@ -1,0 +1,24 @@
+---
+description: "First-run workspace bootstrap when library/.workspace_setup_required is present"
+alwaysApply: true
+---
+
+# Workspace First Run
+
+**Only when this file exists:** [`library/.workspace_setup_required`](../../library/.workspace_setup_required)
+
+If that path is **missing**, ignore this rule and proceed normally.
+
+If it **exists**, bootstrap has not completed on this clone yet:
+
+1. Run from the workspace root (not dry-run):
+
+   ```bash
+   python library/tools/scripts/setup_workspace.py
+   ```
+
+2. Confirm `library/.workspace_setup_required` was removed and key dirs exist (`library/sessions/current/`, `projects/`, `tests/`).
+
+3. Tell the user briefly that first-run bootstrap ran, then continue their request.
+
+Do not delete the marker manually without running the script. For full bootstrap details, see `workspace_bootstrap.mdc`.

@@ -44,7 +44,7 @@ Use this when designing or refining schemas and deciding what data to keep vs om
 - **Web sources ingest**: Schema may be created by an init script or inside your ingest tool; if not in repo, document table definitions. Cross-references tie extracted content to authoritative doc sections - keep mappings accurate via cross-reference creation + standardization steps.
 - **Compiled knowledge base**: `schema.sql` should be the source of truth. Any external reference tables should use `reliability`/`source` fields; if addresses/IDs can drift over time, document that clearly. Recompile after source exports or patch changes; run a `verify_db` step after compile.
 
-When this workspace contains `library/resources/databases/`, see `library/resources/databases/README.md` and `library/resources/databases/scripts/README.md` for database list, workflows, and important-vs-filler notes.
+When this workspace contains `library/databases/`, see `library/databases/README.md` and `library/databases/scripts/README.md` for database list, workflows, and important-vs-filler notes.
 
 ## Authoritative References
 

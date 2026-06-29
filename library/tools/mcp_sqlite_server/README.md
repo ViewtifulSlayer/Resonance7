@@ -51,13 +51,15 @@ In Cursor's MCP settings, add:
       "args": [
         "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
       ],
-      "env": {}
+      "env": {
+        "DEFAULT_DB_PATH": "${workspaceFolder}/library/databases/db/session_logs.db"
+      }
     }
   }
 }
 ```
 
-**Important**: See `SETUP.md` for Windows `node` path, `${workspaceFolder}` fallbacks, and optional `KNOWLEDGE_BASE_DB_PATH` / `SESSION_LOGS_DB_PATH` overrides.
+**Important**: See `SETUP.md` for Windows `node` path, `${workspaceFolder}` fallbacks, and optional `DEFAULT_DB_PATH` / `SESSION_LOGS_DB_PATH` / `KNOWLEDGE_BASE_DB_PATH` overrides.
 
 ## Available Tools
 
@@ -69,7 +71,7 @@ Execute a SQL query against the knowledge base database.
 
 **Parameters:**
 - `query` (required): SQL query string
-- `database_path` (optional): Absolute path to a `.db` file, or the alias `session_logs` (defaults to `library/resources/databases/db/session_logs.db`)
+- `database_path` (optional): Absolute path to a `.db` file, or the alias `session_logs` (defaults to `library/databases/db/session_logs.db`)
 
 **Example:**
 ```
@@ -142,7 +144,14 @@ node src/server.js
 
 ## Configuration
 
-The default database path is set in `mcp-config.json` via the `KNOWLEDGE_BASE_DB_PATH` environment variable. You can override this per-query using the `database_path` parameter.
+Default database resolution (first match wins):
+
+1. `SESSION_LOGS_DB_PATH` env var (explicit session log DB)
+2. `DEFAULT_DB_PATH` env var (written by `library/tools/scripts/setup_database.py`)
+3. `KNOWLEDGE_BASE_DB_PATH` env var (legacy name)
+4. Built-in fallback: `library/databases/db/session_logs.db` relative to the workspace
+
+You can override per-query using the `database_path` parameter (`session_logs` alias or an absolute `.db` path).
 
 ## Security Considerations
 
@@ -173,7 +182,7 @@ The default database path is set in `mcp-config.json` via the `KNOWLEDGE_BASE_DB
 
 ### Database Files Not Visible to Agents
 
-If agents cannot see knowledge base database files (`.db`, `.sqlite`, `.sqlite3`) in `library/resources/wikis/`, check `.cursorignore` patterns.
+If agents cannot see database files (`.db`, `.sqlite`, `.sqlite3`) under `library/databases/db/`, check `.cursorignore` patterns.
 
 **Solution**: Add exceptions to the root-level `.cursorignore` file:
 
@@ -208,7 +217,7 @@ If MCP server isn't configured, you can use the SQLite command-line tool directl
 
 ```bash
 # Run a query
-sqlite3 -header -column library/resources/databases/db/session_logs.db "SELECT session_id, title FROM sessions LIMIT 10;"
+sqlite3 -header -column library/databases/db/session_logs.db "SELECT session_id, title FROM sessions LIMIT 10;"
 ```
 
 **Note**: Terminal output capture can be unreliable in Cursor. The MCP server is recommended to avoid these issues.

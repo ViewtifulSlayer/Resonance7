@@ -140,7 +140,7 @@ Resources are read-only. The application decides when to fetch and pass them to 
   - When a raw path is needed, use absolute paths so the server finds the file regardless of current working directory.
 - **Default DB**: If a default DB env var is set (e.g. `DEFAULT_DB_PATH`), omitting `database_path` uses that DB. Prefer named aliases for clarity when multiple DBs exist.
 
-When this workspace contains `library/resources/databases/`, see `library/resources/databases/README.md` for the canonical alias list and paths.
+When this workspace contains `library/databases/`, see `library/databases/README.md` for the canonical alias list and paths.
 
 ---
 

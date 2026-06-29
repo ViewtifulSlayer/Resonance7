@@ -1,0 +1,49 @@
+---
+description: "Bootstrap missing Resonance7 runtime directories via setup_workspace.py"
+alwaysApply: false
+---
+
+# Workspace Bootstrap
+
+Use when runtime folders are missing, session tools fail to find `library/sessions/current/`, or the user asks to set up the workspace.
+
+## Check status
+
+```bash
+python library/tools/scripts/setup_workspace.py --show
+```
+
+## Bootstrap (idempotent)
+
+```bash
+python library/tools/scripts/setup_workspace.py
+```
+
+Creates missing paths defined in `library/tools/scripts/setup_workspace.py` (`RUNTIME_DIRECTORIES`), including:
+
+- `library/sessions/{current,recent,archived}/`
+- `library/docs/` category folders
+- `library/databases/{schemas,scripts,sources}/`
+- `projects/`, `tests/`
+
+## First-run marker
+
+Fresh clones include `library/.workspace_setup_required`. Successful bootstrap removes it locally. Do not commit that deletion.
+
+If the marker is gone but dirs are still missing, run bootstrap anyway.
+
+## Pair external project (optional)
+
+```bash
+python library/tools/scripts/setup_workspace.py --pair my-app --project-path "D:/path/to/project"
+```
+
+## After bootstrap
+
+Standard post-clone flow continues with MCP setup:
+
+```bash
+python library/tools/scripts/setup_database.py
+```
+
+Then reload the editor. See root `README.md` Quick Start.

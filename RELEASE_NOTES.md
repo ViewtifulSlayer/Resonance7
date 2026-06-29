@@ -1,18 +1,126 @@
+# Resonance7 v3.0.0 - Foundation layout, bootstrap, and session ingest
+
+**Release date:** 2026-06-28
+
+**Documentation note:** This is the **last release** shipped with `RELEASE_NOTES.md` in the repository. From the next release onward, user-facing release notes will appear on **GitHub release pages** and in **`CHANGELOG.md`** only. This file remains in v3.0.0 so you can paste it for the GitHub release post; it will not be updated for future versions.
+
+v3 reorganizes the workspace around an **IDE-neutral `library/` core** with Cursor integration in `.cursor/`. Sessions, databases, templates, and Python tools move to consistent v3 paths. **First-run bootstrap** (`setup_workspace.py`), **external project pairing** (no embedded project trees or symlinks), and a restored **session log ingest** pipeline round out the release. Agent **authorization policy** in `agent_foundation.json` now defaults to assess-then-act with explicit approval before edits.
+
+v3 keeps Cursor as the primary supported editor. **VS Code MCP config** (dual emit from `setup_database.py`) is planned for a follow-up release, not v3.0.0.
+
+## Migration (from 2.x)
+
+### Paths (update scripts, habits, and docs)
+
+| v2.x | v3.0.0 |
+|------|--------|
+| `sessions/` | `library/sessions/` (`current/`, `recent/`, `archived/`) |
+| `library/resources/databases/` | `library/databases/` (`db/`, `schemas/`, `scripts/`, `sources/`) |
+| `library/tools/setup_database.py` (etc.) | `library/tools/scripts/setup_database.py` |
+| `library/tools/session_tools.py` | `library/tools/scripts/session_tools.py` |
+| `library/tools/project_tools.py` | **Removed** - use `setup_workspace.py --pair` |
+| `library/templates/configuration_templates/` | Flat `library/templates/` (`mcp.json.example`, `session_template.md`, ...) |
+
+`session_tools.py` still accepts a legacy root `sessions/` fallback when resolving paths, but new work should use `library/sessions/`.
+
+### Projects
+
+- **`projects/`** holds local **`*.code-workspace`** files that pair this repo with **external** project folders (paths are machine-specific and gitignored).
+- No more embedded `projects/<name>/` trees or `library/` / `sessions/` symlinks into projects.
+- Pair a project: `python library/tools/scripts/setup_workspace.py --pair my-app --project-path "D:\dev\my-app"`
+
+### First clone on a new machine
+
+1. `python library/tools/scripts/setup_workspace.py` - creates runtime dirs; removes `library/.workspace_setup_required` locally when complete.
+2. `python library/tools/scripts/setup_database.py` - writes `.cursor/mcp.json`, runs `npm install` in `library/tools/mcp_sqlite_server`.
+3. Reload Cursor.
+
+### Session log database (optional)
+
+- Shipped placeholder: `library/databases/db/session_logs.db` (empty).
+- Refresh for MCP recall when you want it: `python library/tools/scripts/session_tools.py --ingest`
+- Ingest is **not** automatic at handoff; run only when you explicitly want the DB updated.
+
+### MCP config
+
+If you hand-edit MCP, use `library/templates/mcp.json.example` (not `configuration_templates/`). Default DB path is `library/databases/db/session_logs.db`.
+
+## What is new
+
+### Workspace bootstrap and pairing
+
+- **`library/tools/scripts/setup_workspace.py`** - Idempotent runtime directory creation; `--pair` writes multi-root workspace files under `projects/`; `--interactive` menu; `--show` for status.
+- **`library/.workspace_setup_required`** - First-run sentinel on fresh clones; removed locally after bootstrap (tracked in Git so new clones know to bootstrap).
+- **`.cursor/rules/workspace_first_run.mdc`**, **`workspace_bootstrap.mdc`** - Agent guidance for first-run bootstrap.
+
+### Layout and documentation
+
+- **`library/databases/`** - Consolidated from `library/resources/databases/`; schemas under `schemas/`, ingest under `scripts/`, DB files under `db/`.
+- **`library/sessions/`** - Canonical session log location.
+- **Root `README.md`** - v3 Quick Start, directory tree, IDE/agents section (Cursor now, IDE-neutral direction for v4).
+- **Fewer placeholder READMEs** - Less per-folder noise; session logs and root docs carry more of the story.
+
+### Session log ingest (restored)
+
+- **`library/databases/scripts/ingest_session_logs.py`** - Ingests `library/sessions/current/`, `recent/`, and `archived/*.zip` into `session_logs.db` (FTS5 over section content).
+- **`library/databases/schemas/session_logs.sql`** - Schema applied on first ingest.
+- **`session_tools.py --ingest`** - Delegates to the ingest script; menu option 5 in interactive mode.
+
+### Agent foundation and commands
+
+- **`agent_foundation.json`** - v3 paths, `workspace_setup` block; **authorization policy** simplified to: assess in chat, act only on clear user approval (replaces phrase-list intent detection).
+- **Commands** - `/start`, `/session`, `/help`, `/foundation` aligned with v3 paths and onboarding order.
+
+### Removed
+
+- **`library/tools/project_tools.py`** - Replaced by external pairing via `setup_workspace.py`.
+
+## Planned (not in v3.0.0)
+
+- **`setup_database.py` dual emit** - `.vscode/mcp.json` alongside `.cursor/mcp.json` for VS Code / local agent workflows.
+- **Session ingest at handoff** - Opt-in automation when session status leaves Active (design only today).
+- **Session date recognition** - Smarter continue-vs-new-session behavior in `session_tools.py`.
+
+## Getting started (new clone)
+
+```bash
+python library/tools/scripts/setup_workspace.py
+python library/tools/scripts/setup_database.py
+# Reload Cursor
+python library/tools/scripts/session_tools.py    # create or manage session logs
+python library/tools/scripts/session_tools.py --ingest   # optional: populate session_logs.db
+```
+
+In Cursor: `/start` for onboarding checks, `/foundation` to load protocols, `/help` for topics.
+
+## Requirements
+
+- Python 3.7+
+- Git
+- **Node 18+** (for SQLite MCP) - same Node for `mcp.json` `command` and `npm install` in `library/tools/mcp_sqlite_server`
+- **Cursor** recommended for v3 (rules, skills, MCP); `library/agent_foundation.json` and Python tools work without it
+
+## Full changelog
+
+[Compare v2.1.0...v3.0.0](https://github.com/ViewtifulSlayer/Resonance7/compare/v2.1.0...v3.0.0) - see [CHANGELOG.md](CHANGELOG.md).
+
+---
+
 # Resonance7 v2.1.0 - MCP setup automation and local config
 
 **Release date:** 2026-04-26
 
-This release stops tracking **`.cursor/mcp.json`**, adds **`library/tools/setup_mcp_sqlite.py`** (absolute paths, **`npm install`**, optional audit) so each machine uses a consistent Node and native build for the MCP server, and expands **`/start`** so the SQLite MCP setup check is run, not only described. Ignore files, git attributes, **`README`**, and **`LICENSE`** have minor updates.
+This release stops tracking **`.cursor/mcp.json`**, adds **`library/tools/setup_database.py`** (absolute paths, **`npm install`**, optional audit) so each machine uses a consistent Node and native build for the MCP server, and expands **`/start`** so the SQLite MCP setup check is run, not only described. Ignore files, git attributes, **`README`**, and **`LICENSE`** have minor updates.
 
 ## Migration (from 2.0.0)
 
-- If you relied on a committed **`.cursor/mcp.json`**, it is no longer in the repo. Run `python library/tools/setup_mcp_sqlite.py` from the workspace root, then reload the Cursor window. Alternatively, copy `library/templates/configuration_templates/mcp.json.example` to `.cursor/mcp.json`, set absolute paths to your Node binary, `mcp_sqlite_server/src/server.js`, and `session_logs.db`, then run `npm install` in `library/tools/mcp_sqlite_server` with the same Node, and reload Cursor.
+- If you relied on a committed **`.cursor/mcp.json`**, it is no longer in the repo. Run `python library/tools/setup_database.py` from the workspace root, then reload the Cursor window. Alternatively, copy `library/templates/configuration_templates/mcp.json.example` to `.cursor/mcp.json`, set absolute paths to your Node binary, `mcp_sqlite_server/src/server.js`, and `session_logs.db`, then run `npm install` in `library/tools/mcp_sqlite_server` with the same Node, and reload Cursor.
 
 ## What is new
 
 ### SQLite MCP and setup
 
-- **`library/tools/setup_mcp_sqlite.py`** - One entry point: write **`.cursor/mcp.json`**, install npm deps in **`library/tools/mcp_sqlite_server`**, optional **`npm audit fix`**, and clear errors when Node is missing or versions mismatch.
+- **`library/tools/setup_database.py`** - One entry point: write **`.cursor/mcp.json`**, install npm deps in **`library/tools/mcp_sqlite_server`**, optional **`npm audit fix`**, and clear errors when Node is missing or versions mismatch.
 - **Example template** - **`library/templates/configuration_templates/mcp.json.example`** replaces the old **`library/templates/example-mcp.json`** (removed) for hand-edits.
 - **Lockfile** - Updated **`package-lock.json`** in **`mcp_sqlite_server`**; **`SETUP.md`** notes aligned with the script.
 

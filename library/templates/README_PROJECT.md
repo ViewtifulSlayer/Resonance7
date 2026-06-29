@@ -54,13 +54,12 @@
 ├── tests/                  # Test files
 ├── tools/                  # Project-specific tools
 ├── README.md               # This file
-├── requirements.txt        # Python dependencies
-│
-├── library/                # Symlink → Shared Resonance7 resources
-└── sessions/               # Symlink → Shared session management
+└── requirements.txt        # Python dependencies
 ```
 
-Cursor rules, skills, and MCP config live under the **workspace root** `.cursor/` only (not symlinked here) so nested projects do not duplicate IDE configuration.
+Open this project with the Resonance7 foundation via a multi-root `.code-workspace` file (created with `setup_workspace.py --pair` under the foundation repo's `projects/`). Session logs and shared library content live in the foundation repo at `library/sessions/` and `library/`.
+
+Cursor rules, skills, and MCP config live under the **Resonance7 foundation** `.cursor/` (v3), not inside the external project folder.
 
 ---
 
@@ -91,7 +90,7 @@ Cursor rules, skills, and MCP config live under the **workspace root** `.cursor/
 
 ## Development Log
 
-> **Note**: This log tracks project-wide progress across all sessions. For detailed session-by-session work, see `sessions/current/`.
+> **Note**: This log tracks project-wide progress across all sessions. For detailed session-by-session work, see session logs in the Resonance7 foundation repo (`library/sessions/current/`).
 
 ### Summary
 
@@ -151,11 +150,11 @@ Cursor rules, skills, and MCP config live under the **workspace root** `.cursor/
 
 Session logs documenting work on this project:
 
-- **[YYYYMMDD-NN](sessions/current/YYYYMMDD-NN.md)** – [Brief description of work done]
-- **[YYYYMMDD-NN](sessions/current/YYYYMMDD-NN.md)** – [Brief description of work done]
-- **[YYYYMMDD-NN](sessions/recent/YYYYMMDD-NN.md)** – [Brief description of work done]
+- **[YYYYMMDD-NN](../Resonance7/library/sessions/current/YYYYMMDD-NN.md)** – [Brief description of work done]
+- **[YYYYMMDD-NN](../Resonance7/library/sessions/current/YYYYMMDD-NN.md)** – [Brief description of work done]
+- **[YYYYMMDD-NN](../Resonance7/library/sessions/recent/YYYYMMDD-NN.md)** – [Brief description of work done]
 
-> **Note**: Session logs are automatically archived after 7 days. Older sessions can be found in `sessions/recent/` or `sessions/archived/`.
+> **Note**: Session logs are automatically archived after 7 days. Older sessions are in `library/sessions/recent/` or `library/sessions/archived/` on the foundation repo.
 
 ---
 

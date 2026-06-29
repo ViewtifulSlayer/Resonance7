@@ -22,10 +22,23 @@ import { existsSync } from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Default database path (can be overridden via environment variable)
-const DEFAULT_DB_PATH =
-  process.env.KNOWLEDGE_BASE_DB_PATH ||
-  join(__dirname, "../../../resources/databases/db/session_logs.db");
+/** Fallback when no env override is set (library/tools/mcp_sqlite_server/src -> library/). */
+const SESSION_LOGS_FALLBACK = join(
+  __dirname,
+  "../../../databases/db/session_logs.db"
+);
+
+/** Resolve session_logs / default DB from env (setup script sets DEFAULT_DB_PATH). */
+function resolveSessionLogsPath() {
+  return (
+    process.env.SESSION_LOGS_DB_PATH ||
+    process.env.DEFAULT_DB_PATH ||
+    process.env.KNOWLEDGE_BASE_DB_PATH ||
+    SESSION_LOGS_FALLBACK
+  );
+}
+
+const DEFAULT_DB_PATH = resolveSessionLogsPath();
 
 /** Minimal alias support for the public framework (full monorepo server has more). */
 function resolveDatabasePath(input) {
@@ -34,15 +47,10 @@ function resolveDatabasePath(input) {
   }
   const key = String(input).trim();
   if (key === "session_logs") {
-    return (
-      process.env.SESSION_LOGS_DB_PATH ||
-      join(__dirname, "../../../resources/databases/db/session_logs.db")
-    );
+    return resolveSessionLogsPath();
   }
   return key;
 }
-
-let dbConnection = null;
 
 const server = new Server(
   {

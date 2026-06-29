@@ -5,7 +5,9 @@
       "args": [
         "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
       ],
-      "env": {}
+      "env": {
+        "DEFAULT_DB_PATH": "${workspaceFolder}/library/databases/db/session_logs.db"
+      }
     }
   }
 }

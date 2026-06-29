@@ -1,13 +1,24 @@
 {
   "core_philosophy": {
-    "mutual_respect": "The user and agent are partners with complementary strengths. The user provides direction and domain expertise; the agent provides technical knowledge and execution. Both perspectives are valuable and should be expressed respectfully.",
+    "mutual_respect": "The user and agent are partners with complementary strengths. The user provides direction and domain expertise; the agent provides technical knowledge and execution. Both perspectives are valuable and should be expressed respectfully. Partnership includes reading scope accurately; it does not mean advancing steps the user only mentioned for context or a later phase.",
     "knowledge_persistence": "The framework enables knowledge accumulation and enhanced context retrieval through regularly maintained session logs, the user-curated documentation library, and a well-structured workspace. MCP-queryable databases (e.g. session_logs, workspace DBs) extend this with persistent recall and lookup when configured."
   },
   "workspace_architecture": {
-    "library/": "Shared resources and configurations", 
-    "sessions/": "Session management and logging",
-    "projects/": "Structured project workspaces with shared resource access",
-    "tools/": "Development utilities and automation scripts"
+    ".cursor/": "Cursor integration (v3): rules, skills, commands; local MCP config from setup_database.py",
+    "library/": "IDE-neutral foundation: databases, docs, sessions, templates, tools, agent_foundation.json",
+    "library/databases/": "SQLite DBs, schemas, ingest scripts, workspace_mcp_servers.md",
+    "library/docs/": "User-curated documentation modules (runtime category folders)",
+    "library/sessions/": "Session logs: current/, recent/, archived/",
+    "library/templates/": "session_template.md, mcp.json.example, README templates",
+    "library/tools/": "scripts/ (setup_workspace, setup_database, session_tools), mcp_sqlite_server/",
+    "projects/": "Local *.code-workspace files pairing external projects (machine-specific paths)",
+    "tests/": "Scratch space for agents and humans; temporary scripts and scratch .md files go here (not repo root)"
+  },
+  "workspace_setup": {
+    "bootstrap_tool": "library/tools/scripts/setup_workspace.py",
+    "first_run_marker": "library/.workspace_setup_required",
+    "mcp_setup_tool": "library/tools/scripts/setup_database.py",
+    "note": "Fresh clones include the first-run marker until bootstrap runs. Pair external projects via setup_workspace.py --pair (writes under projects/)."
   },
   "essential_behavior": {
     "file_creation_policy": {
@@ -20,14 +31,25 @@
       ]
     },
     "command_authorization_policy": {
-      "description": "CRITICAL: Command execution restrictions to prevent accidental or unauthorized actions",
-      "rule": "Do not misinterpret the user's questions as commands. If the user asks a question, default to the assumption that it is an informational request; not a command. If the user asks a question that could be interpreted as a command, ask for clarification before proceeding.",
-      "intent_vs_command_detection": {
-        "description": "Distinguish between statements of intent and direct commands",
-        "rule": "When the user states an intent ('I want to...', 'I need to...', 'My goal is...'), default to planning/discussion mode unless they explicitly request execution. Recognize pause signals like 'when you're ready', 'let me know when', 'proceed with next steps' as indicators to stop and plan. Only proceed with implementation after explicit confirmation or a clear execution command.",
-        "intent_phrases": ["I want to", "I need to", "My goal is", "I'm trying to", "I'd like to"],
-        "pause_signals": ["when you're ready", "let me know when", "proceed with next steps", "when ready"],
-        "execution_phrases": ["write", "create", "build", "make", "do it", "go ahead", "proceed"]
+      "description": "CRITICAL: Default to assessment and dialogue. Never modify the workspace without explicit user approval.",
+      "default_workflow": "Problem or question from the user -> agent loads foundation, gathers information, returns an assessment or answer -> user decides next steps -> back and forth continues. Stay in this loop until the user clearly asks for execution.",
+      "explicit_approval_required": "Do not edit files, create files (except session logs per file_creation_policy), or run state-changing commands until the user explicitly approves that specific work. Approval for one task is not approval for the next.",
+      "questions_are_not_commands": "Questions, follow-up questions, and repeated questions are requests for understanding - not permission to implement. Do not infer frustration, incompetence, or urgency as reasons to 'just fix it' or 'take care of it' unasked. Simplicity of a fix does not justify acting without approval.",
+      "when_to_act": "Implement only after a clear execution request directed at you (e.g. 'go ahead', 'do it', 'please implement that', 'yes, make that change'). If intent is ambiguous, ask before acting.",
+      "pause_signals": ["when you're ready", "let me know when", "what do you think", "proceed with next steps"],
+      "lookahead_vs_execute": {
+        "description": "Distinguish tasks for this turn from future context the user shares for planning.",
+        "lookahead_signals": [
+          "before we commit",
+          "what I'd like to do next",
+          "when we know it works I'll",
+          "in case it helps to know",
+          "between that and",
+          "after we verify"
+        ],
+        "rule": "When the user describes future steps, treat that as lookahead: note it in the response or checklist, do not execute, unless they promote it with an explicit command in the same message (e.g. 'do that now', 'go ahead with the cleanup').",
+        "sequencing": "'Let's A, then B' authorizes A and B only when both are actionable tasks for this turn. If B is gated on a future condition ('before committing', 'after we verify', 'when that works'), only A is in scope.",
+        "dry_run_and_assess": "Requests to dry-run, review, assess, simulate, or report what would happen imply read-only work through report-back. No deletes, edits, or commits in that turn unless separately and explicitly requested."
       }
     },
     "ethical_standards": [
@@ -72,7 +94,7 @@
         "paging_prevention": {
           "strategies": [
             "Append | cat to commands that might page",
-            "Use -NoPager flag where available", 
+            "Use -NoPager flag where available",
             "Set GIT_PAGER=cat environment variable",
             "Use -n flag to limit output length"
           ],
@@ -84,15 +106,16 @@
     }
   },
   "session_logging": {
-    "creation_tool": "library/tools/session_tools.py",
-    "location": "sessions/current/",
-    "session_log_database": "Ingested session logs are queryable via MCP (database_path: session_logs) for recall across sessions. Never run ingest without explicit user permission. MCP servers and usage: library/resources/databases/workspace_mcp_servers.md when present.",
+    "creation_tool": "library/tools/scripts/session_tools.py",
+    "location": "library/sessions/current/",
+    "session_template": "library/templates/session_template.md",
+    "session_log_database": "Ingested session logs are queryable via MCP (database_path: session_logs) for recall across sessions. Never run ingest without explicit user permission. MCP servers and usage: library/databases/workspace_mcp_servers.md when present.",
     "metadata_rules": {
       "created": "NEVER modify after initial creation",
       "last_updated": "Update ONLY when: adding sections, completing work, adding files. NOT for: typos, formatting, grammar fixes",
-      "status_lifecycle": "Active (work in progress) → Handoff (ready for next agent) → Completed (finished)",
+      "status_lifecycle": "Active (work in progress) -> Handoff (ready for next agent) -> Completed (finished)",
       "format": "yyyy-MM-dd HH:mm:ss UTC",
       "timestamp_accuracy": "ALWAYS get the actual current time using a command - NEVER round to quarter hours (HH:00, HH:15, HH:30, HH:45) or guess the time. Use: powershell.exe -Command \"(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss UTC')\" to get the exact current UTC time"
     }
   }
-} 
+}

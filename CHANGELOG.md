@@ -7,18 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Features to be added.
+
+## [3.0.0] - 2026-06-29
+
 ### Added
-- (Planned) Session log date recognition - improve when agents continue an existing session vs. start a new one from calendar context
+- **`library/tools/scripts/setup_workspace.py`** - Bootstrap runtime directories; pair external projects via `projects/*.code-workspace`; first-run sentinel `library/.workspace_setup_required`.
+- **`.cursor/rules/workspace_first_run.mdc`**, **`workspace_bootstrap.mdc`** - First-run and manual bootstrap guidance for agents.
+- **IDE and agents** section in root README (v3 Cursor, v4 IDE-neutral direction).
+- **Session log ingest** - `library/databases/scripts/ingest_session_logs.py` + `library/databases/schemas/session_logs.sql`; run via `session_tools.py --ingest`.
+
+### Changed
+- **Sessions** - Canonical path is **`library/sessions/`** (not root `sessions/`). `.gitignore` updated accordingly.
+- **Databases** - **`library/resources/`** consolidated into **`library/databases/`**; `.gitignore` database policy (allow-list schema, ingest, README breadcrumbs, empty `session_logs.db`; ignore `sources/` and other runtime DBs).
+- **Scripts** - Core Python tools under **`library/tools/scripts/`** (`setup_workspace`, `setup_database`, `session_tools`).
+- **Templates** - Flat layout: `library/templates/session_template.md`, `mcp.json.example` (removed nested `documentation_templates/` and `project_template/` trees).
+- **Projects** - **`projects/`** holds local `*.code-workspace` pairing files only (no embedded project trees).
+- **README** - Restructured for v3 Quick Start, directory tree, and external-project model.
+- **`session_tools.py`** - Resolves `library/sessions/current/`; `--ingest` calls `library/databases/scripts/ingest_session_logs.py`.
+- **Commands** - `/start`, `/session`, `/help` aligned with v3 paths; `agent_foundation.json` updated for `library/sessions/`, `library/tools/scripts/`, and `workspace_setup`.
+
+### Removed
+- **`library/tools/project_tools.py`** - Replaced by `setup_workspace.py` pairing model.
+- **Placeholder README proliferation** - Fewer per-folder READMEs under sessions, resources, and project templates.
+
+### Planned
+- `setup_database.py` dual emit for Cursor and VS Code MCP config
+- Session ingest permissions at handoff (opt-in)
+- (Planned) Session log date recognition for continuing vs new sessions
+
+### Deferred hardening (post-v3.0.0)
+- **`.cursorignore` alignment** - Mirror `tests/**` and `library/databases/sources/**`; exclude `library/databases/db/*.db` and `.cursor/mcp.json` from indexing (paths documented in `library/databases/README.md`).
+- **`.agentignore` scope** - Only `foundation.md` and `agent_onboarding.mdc` are protected among commands/rules; other commands and bootstrap rules remain editable unless policy expands.
+- **Ingest/schema** - Intentionally tracked, indexed, and agent-editable; DB binaries protected in `.agentignore` (mutate via ingest scripts).
+- **Additional `.db` files** - Gitignored by default under `library/databases/**` allow-list; add explicit `!` exceptions when new reference DBs ship.
+- Deeper foundation assessment (overlap with rules/skills, trimming)
+- Foundation meta-lesson bullets beyond `lookahead_vs_execute` (user-approved wording)
 
 ## [2.1.0] - 2026-04-26
 
 ### Added
-- **`library/tools/setup_mcp_sqlite.py`** - Writes a machine-local **`.cursor/mcp.json`** with absolute paths, runs **`npm install`** (and **`npm audit fix`**, optional skip) in **`library/tools/mcp_sqlite_server`** so Node and `better-sqlite3` match; prints Node/npm guidance if Node is missing.
+- **`library/tools/setup_database.py`** - Writes a machine-local **`.cursor/mcp.json`** with absolute paths, runs **`npm install`** (and **`npm audit fix`**, optional skip) in **`library/tools/mcp_sqlite_server`** so Node and `better-sqlite3` match; prints Node/npm guidance if Node is missing.
 - **`library/templates/configuration_templates/mcp.json.example`** - Committed template shape for hand-editing if you do not use the setup script; documents **`DEFAULT_DB_PATH`** and Node **`command`** fields.
 
 ### Changed
-- **SQLite MCP config is no longer tracked** - **`.cursor/mcp.json`** is **gitignored**; clone/fetch no longer overwrites a developer's local MCP entry. Regenerate with **`python library/tools/setup_mcp_sqlite.py`** (or copy from the example template) after pull or on a new machine.
-- **`.gitignore`** - Ignores **`.cursor/mcp.json`**, with allow-list exceptions so **`library/tools/mcp_sqlite_server/`** and **`setup_mcp_sqlite.py`** stay tracked; other ignore refinements.
+- **SQLite MCP config is no longer tracked** - **`.cursor/mcp.json`** is **gitignored**; clone/fetch no longer overwrites a developer's local MCP entry. Regenerate with **`python library/tools/setup_database.py`** (or copy from the example template) after pull or on a new machine.
+- **`.gitignore`** - Ignores **`.cursor/mcp.json`**, with allow-list exceptions so **`library/tools/mcp_sqlite_server/`** and **`setup_database.py`** stay tracked; other ignore refinements.
 - **`.agentignore`**, **`.cursorignore`**, **`.gitattributes`** - Tuned patterns and attributes for tools and line endings; fewer noisy diffs in mixed environments.
 - **`.cursor/commands/start.md`** - Expanded with mandatory **MCP setup check** (path validation, **`npm install`**, Windows **`Test-Path`** / Unix **`test`**, optional import smoke test, **reload Cursor** after changes).
 - **`.cursor/rules/agent_onboarding.mdc`** - Aligned with the **`/start`** flow (when to re-read `agent_foundation.json` vs. session reuse).

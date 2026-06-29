@@ -5,14 +5,14 @@ session_tools.py - Resonance 7 Session Management Tool
 Creates session log files and manages session maintenance.
 Part of the Resonance7 framework.
 
-When using /session: prefer updating the most recent session in sessions/current/
+When using /session: prefer updating the most recent session in library/sessions/current/
 if the agent has already contributed to it; create a new session only when none
 exists or the user explicitly starts a new one (not solely because UTC date changed).
 
 Usage:
-    python session_tools.py                   # Interactive mode
-    python session_tools.py --help           # Show help
-    python session_tools.py --dry-run        # Test without making changes
+    python library/tools/scripts/session_tools.py
+    python library/tools/scripts/session_tools.py --help
+    python library/tools/scripts/session_tools.py --dry-run
 
 Version: 1.0.0
 Author: Resonance 7 Team
@@ -87,38 +87,68 @@ def get_utc_timestamp():
     return now.strftime("%Y-%m-%d %H:%M:%S UTC")
 
 
-def find_sessions_directory():
+def find_workspace_root() -> Path:
     """
-    Find the sessions/current/ directory relative to the workspace root.
-    
-    Returns:
-        Path: Path to sessions/current/ directory
-    
-    Raises:
-        FileNotFoundError: If sessions/current/ doesn't exist
-    
-    Logic:
-        Searches upward from script location to find the workspace root,
-        then looks for sessions/current/ within that workspace.
+    Find the Resonance7 foundation repo root (contains library/agent_foundation.json).
+
+    Searches upward from cwd and from this script's location.
     """
-    # Start from script location
-    current = Path(__file__).resolve().parent
-    
-    # Search upward for the workspace root
-    while current != current.parent:
-        # Check if sessions/current/ exists at this level
-        sessions_dir = current / "sessions" / "current"
-        if sessions_dir.exists():
-            return sessions_dir
-        
-        # Move up one directory
-        current = current.parent
-    
-    # If we get here, we couldn't find it
+    starts = [Path.cwd().resolve(), Path(__file__).resolve().parent]
+    seen: set[Path] = set()
+
+    for start in starts:
+        current = start
+        while current != current.parent:
+            if current in seen:
+                break
+            seen.add(current)
+            marker = current / "library" / "agent_foundation.json"
+            if marker.is_file():
+                return current
+            current = current.parent
+
     raise FileNotFoundError(
-        "Could not find sessions/current/ directory. "
-        "Make sure you're running this from within the Resonance 7 workspace."
+        "Could not find Resonance7 workspace root (library/agent_foundation.json). "
+        "Run this from the foundation repo or pass a valid working directory."
     )
+
+
+def find_sessions_directory() -> Path:
+    """
+    Find library/sessions/current/ under the workspace root.
+
+    Returns:
+        Path: Path to library/sessions/current/
+
+    Raises:
+        FileNotFoundError: If neither canonical nor legacy session dirs exist.
+
+    Legacy: root-level sessions/current/ (pre-v3) is still accepted if present.
+    """
+    root = find_workspace_root()
+
+    canonical = root / "library" / "sessions" / "current"
+    if canonical.is_dir():
+        return canonical
+
+    legacy = root / "sessions" / "current"
+    if legacy.is_dir():
+        return legacy
+
+    raise FileNotFoundError(
+        "Could not find library/sessions/current/. "
+        "Run: python library/tools/scripts/setup_workspace.py"
+    )
+
+
+def workspace_root_from_sessions_dir(sessions_dir: Path) -> Path:
+    """Resolve foundation repo root from a sessions/current/ path."""
+    sessions_root = sessions_dir.parent
+    # v3: library/sessions/current -> root is parent of library/
+    if sessions_root.parent.name == "library":
+        return sessions_root.parent.parent
+    # Legacy: sessions/current at repo root
+    return sessions_root.parent
 
 
 def get_session_files(sessions_dir):
@@ -440,13 +470,13 @@ def generate_template_body(session_id, topic):
         str: Complete template body with placeholders
     
     Logic:
-        Hardcoded template (kept in sync with library/templates/documentation_templates/session_template.md)
+        Hardcoded template (kept in sync with library/templates/session_template.md)
         Replaces YYYYMMDD-NN with actual session ID
         Replaces [Topic/Project] with actual topic
     
     Note:
         This is the complete template structure that agents fill in.
-        Kept in sync with library/templates/documentation_templates/session_template.md
+        Kept in sync with library/templates/session_template.md
     """
     template = f"""# Session {session_id}: {topic}
 
@@ -1409,9 +1439,9 @@ def create_continuation_workflow(sessions_dir, dry_run=False):
 def initialize_pruning_paths():
     """Initialize the path configuration for pruning."""
     global SESSIONS_ROOT, CURRENT_DIR, RECENT_DIR, ARCHIVE_DIR
-    workspace_root = find_sessions_directory().parent.parent
-    SESSIONS_ROOT = workspace_root / "sessions"
-    CURRENT_DIR = SESSIONS_ROOT / "current"
+    current = find_sessions_directory()
+    SESSIONS_ROOT = current.parent
+    CURRENT_DIR = current
     RECENT_DIR = SESSIONS_ROOT / "recent"
     ARCHIVE_DIR = SESSIONS_ROOT / "archived"
 
@@ -1843,7 +1873,7 @@ def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> i
     Relays script stdout via log() and stderr via error() to match pruning format.
 
     Args:
-        workspace_root: Workspace root (e.g. sessions_dir.parent.parent)
+        workspace_root: Workspace root (foundation repo)
         no_archives: If True, pass --no-archives to the ingest script
 
     Returns:
@@ -1852,10 +1882,8 @@ def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> i
     ingest_script = (
         workspace_root
         / "library"
-        / "resources"
         / "databases"
         / "scripts"
-        / "session_logs"
         / "ingest_session_logs.py"
     )
     if not ingest_script.exists():
@@ -1893,7 +1921,7 @@ def ingest_session_logs_workflow(sessions_dir: Path, no_archives: bool = False) 
     scope = "current/, recent/ (archives skipped)" if no_archives else "current/, recent/, archived/"
     log(f"Updating session_logs.db from {scope}...")
     print()
-    workspace_root = sessions_dir.parent.parent
+    workspace_root = workspace_root_from_sessions_dir(sessions_dir)
     code = run_session_log_ingest(workspace_root, no_archives=no_archives)
     if code == 0:
         success("Session log ingest completed.")
@@ -1930,7 +1958,7 @@ Examples:
   %(prog)s --ingest           # Update session_logs.db from current/recent/archived
   %(prog)s --help             # Show this help message
 
-For more information, see: library/templates/documentation_templates/session_template.md
+For more information, see: library/templates/session_template.md
         '''
     )
     
@@ -1993,7 +2021,8 @@ def main():
         except FileNotFoundError as e:
             print(f"❌ Error: {e}")
             print("\nMake sure you're running this from within the Resonance 7 workspace.")
-            print("Expected structure: [workspace-root]/sessions/current/")
+            print("Expected structure: [workspace-root]/library/sessions/current/")
+            print("Bootstrap: python library/tools/scripts/setup_workspace.py")
             return 1
         
         # Calculate next session number

@@ -7,23 +7,34 @@
 # =============================================================================
 # Cursor (local project config)
 # =============================================================================
-# Machine-specific; use library/tools/setup_mcp_sqlite.py to generate locally.
+# Machine-specific; use library/tools/scripts/setup_database.py to generate locally.
 
 .cursor/mcp.json
 
 
 # =============================================================================
-# Resource Modules
+# Documentation Policy
 # =============================================================================
-# Exclude library resources by default, but keep README breadcrumbs tracked.
+# Exclude library docs by default, but keep README breadcrumbs tracked.
 
-library/resources/**
-!library/resources/**/
-!library/resources/**/README.md
+library/docs/**
+!library/docs/**/
+!library/docs/**/README.md
 
 
 # =============================================================================
-# Tool Modules
+# Session Policy
+# =============================================================================
+# Exclude session payloads, keep docs tracked.
+
+library/sessions/archived/**
+library/sessions/current/**
+library/sessions/recent/**
+!library/sessions/README.md
+
+
+# =============================================================================
+# Tool Policy
 # =============================================================================
 # Exclude library tools by default, but keep README breadcrumbs and core tools.
 
@@ -31,37 +42,41 @@ library/tools/**
 !library/tools/**/
 !library/tools/**/README.md
 !library/tools/mcp_sqlite_server/**
-!library/tools/project_tools.py
-!library/tools/session_tools.py
-!library/tools/setup_mcp_sqlite.py
+!library/tools/scripts/session_tools.py
+!library/tools/scripts/setup_database.py
+!library/tools/scripts/setup_workspace.py
 
 
 # =============================================================================
-# Sessions
+# Database Policy
 # =============================================================================
-# Exclude session payloads, keep docs tracked.
+# Exclude library databases by default; track README breadcrumbs, schema, ingest, and default DB placeholder.
 
-sessions/archived/**
-sessions/current/**
-sessions/recent/**
-!sessions/README.md
-!sessions/**/README.md
+library/databases/**
+!library/databases/**/
+!library/databases/README.md
+!library/databases/workspace_mcp_servers.md
+!library/databases/db/session_logs.db
+!library/databases/schemas/session_logs.sql
+!library/databases/scripts/README.md
+!library/databases/scripts/ingest_session_logs.py
+library/databases/sources/**
 
 
 # =============================================================================
-# Project Overrides
+# Workspace pairing (local machine paths)
 # =============================================================================
-# Keep hub repo lean; track project breadcrumb docs only.
 
-projects/**
-!projects/**/
-!projects/INDEX.md
-!projects/README.md
-!projects/**/README.md
+projects/*.code-workspace
 
-# To include a specific project in hub tracking, add explicit allow rules, e.g.
-# !projects/specific_project/
-# !projects/specific_project/**
+
+# =============================================================================
+# Scratch and runtime data
+# =============================================================================
+# tests/ is agent/human scratch (see README); created by setup_workspace.py.
+# Temporary .md files (drafts, one-off notes) belong here if created -- not repo root.
+
+tests/**
 
 
 # =============================================================================

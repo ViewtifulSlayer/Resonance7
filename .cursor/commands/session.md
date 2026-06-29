@@ -4,7 +4,7 @@ Create or update a Resonance 7 session log automatically based on current contex
 
 ## What This Command Does
 
-When you invoke `/session`, the agent **creates or updates the session markdown file** in `sessions/current/` (or updates the most recent one). A **session logs database** (`session_logs.db`) provides queryable recall (e.g. via MCP); the user runs ingest when they want the database updated. **Never run session log ingest without explicit user permission.**
+When you invoke `/session`, the agent **creates or updates the session markdown file** in `library/sessions/current/` (or updates the most recent one). A **session logs database** (`session_logs.db`) provides queryable recall (e.g. via MCP); the user runs ingest when they want the database updated. **Never run session log ingest without explicit user permission.**
 
 ## Action
 
@@ -24,7 +24,7 @@ When this command is invoked:
 4. Preserve existing content, append new information
 
 **If you have not created or updated a session log:**
-1. In `sessions/current/`: if the most recent session has status **Handoff**, set its `status` to **Completed** (status only).
+1. In `library/sessions/current/`: if the most recent session has status **Handoff**, set its `status` to **Completed** (status only).
 2. Calculate next session ID (YYYYMMDD-NN format).
 3. Create new session file with:
    - **Metadata auto-filled from context:**
@@ -55,7 +55,7 @@ Extract from current conversation:
 
 ## Session File Structure
 
-Follow the template from `library/templates/documentation_templates/session_template.md`:
+Follow the template from `library/templates/session_template.md`:
 - YAML frontmatter (metadata)
 - Summary section
 - Key Decisions & Rationale
@@ -72,7 +72,7 @@ Follow the template from `library/templates/documentation_templates/session_temp
 
 - `created`: NEVER modify after initial creation
 - `last_updated`: Update ONLY when adding sections, completing work, adding files. NOT for typos, formatting, grammar fixes
-- `status`: Active → Handoff → Completed. When creating a new log, if the previous session is Handoff, set it to Completed first (status only).
+- `status`: Active -> Handoff -> Completed. When creating a new log, if the previous session is Handoff, set it to Completed first (status only).
 
 ## When to Use
 
@@ -81,4 +81,3 @@ Follow the template from `library/templates/documentation_templates/session_temp
 - After completing significant work (updates existing with deliverables)
 - When transitioning between major tasks (updates existing context)
 - Before ending a session (final update with complete state)
-

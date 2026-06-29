@@ -7,42 +7,46 @@
 
 
 # =============================================================================
-# Resource Module Overrides
+# Documentation Overrides
 # =============================================================================
-# Include library resources by default and add exceptions as needed.
-# Example: To exclude a specific resource directory from indexing:
-# library/resources/*
+# Exclude library docs by default and add exceptions on project level.
+# Example: To include a specific resource directory in indexing:
+# !library/docs/*
 
-# Preserve access to README breadcrumbs, even if the directory is excluded.
+library/docs/
 
-!library/resources/**/
-!library/resources/**/README.md
+# Preserve access to README breadcrumbs, even if subdirectories are excluded.
 
-
-# =============================================================================
-# Tool Module Overrides
-# =============================================================================
-# Include library tools by default and add exceptions as needed.
-# Example: To exclude a specific tool directory from indexing:
-# library/tools/*
-
-# Preserve access to README breadcrumbs, even if the directory is excluded.
-
-!library/resources/**/
-!library/resources/**/README.md
+!library/docs/**/
+!library/docs/**/README.md
 
 
 # =============================================================================
-# Project Overrides
+# Tool indexing
 # =============================================================================
-# Exclude project directories by default and add exceptions as needed.
-# Example: To exclude a specific project directory from indexing:
-# projects/specific_project/*
+# library/tools/ is indexed (not excluded). README breadcrumbs stay discoverable.
+# node_modules and other build outputs are excluded in sections below.
 
-# Keep project trees discoverable through README breadcrumbs.
+!library/tools/**/
+!library/tools/**/README.md
 
-!projects/**/
-!projects/**/README.md
+
+# =============================================================================
+# Scratch and runtime data
+# =============================================================================
+# Align with .gitignore: tests/ scratch and library/databases/sources/ inputs.
+
+tests/**
+library/databases/sources/**
+
+
+# =============================================================================
+# Database files (binary)
+# =============================================================================
+# Paths and aliases: library/databases/README.md and workspace_mcp_servers.md.
+# Exclude binary DBs from indexing; query via MCP or read ingest/schema docs.
+
+library/databases/db/*.db
 
 
 # =============================================================================
@@ -50,6 +54,7 @@
 # =============================================================================
 # Exclude IDE-specific configuration files (reduce index noise).
 
+.cursor/mcp.json
 .cursor/settings.json
 .vscode/
 !.vscode/extensions.json
@@ -150,20 +155,3 @@ yarn-error.log*
 **/*.so
 **/*.egg
 **/*.whl
-
-
-# =============================================================================
-# Large Data Files
-# =============================================================================
-# Optionally exclude large database files from indexing.
-# Uncomment if needed.
-
-# *.db
-# *.sqlite
-# *.sqlite3
-
-# Uncomment if you want selected knowledge bases indexed:
-
-# !library/**/*_knowledge_base.db
-# !library/**/*.sqlite
-# !library/**/*.sqlite3

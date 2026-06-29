@@ -17,10 +17,19 @@ library/agent_foundation.json
 
 
 # =============================================================================
+# Essential Scripts
+# =============================================================================
+# Protect scripts that are essential to Resonance 7 functionality
+
+library/tools/scripts/
+
+
+# =============================================================================
 # Configuration Files
 # =============================================================================
 # Protect ignore and configuration files (prevent accidental modification)
 
+library/templates/
 .agentignore
 .cursorignore
 .gitattributes
@@ -30,13 +39,9 @@ library/agent_foundation.json
 # =============================================================================
 # Shared Resonance 7 Resources
 # =============================================================================
-# Protect shared resources (symlinked or shared across projects)
+# Protect user-curated documentation modules (runtime under library/docs/).
 
-#library/
-#sessions/
-
-# Note: These are shared resources - modifications affect all projects
-# Use project-specific directories for project work
+library/docs/
 
 
 # =============================================================================
@@ -50,10 +55,10 @@ library/agent_foundation.json
 # =============================================================================
 # Knowledge Base Databases
 # =============================================================================
-# Protect knowledge base databases (data integrity - modify only with explicit request)
-# Note: Databases are accessible for reading via MCP server, but should not be modified
+# DB files live under library/databases/db/ (see library/databases/README.md).
+# Query via MCP; update via ingest/migration scripts -- not casual direct edits.
 
-# TBD
+library/databases/db/*.db
 
 
 # =============================================================================

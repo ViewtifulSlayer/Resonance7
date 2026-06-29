@@ -1,0 +1,12 @@
+Resonance7 first-run marker.
+
+This file is tracked in Git. A fresh clone includes it so agents know bootstrap has not run yet.
+
+After you run:
+  python library/tools/scripts/setup_workspace.py
+
+the script removes this file locally. That is expected. Do not commit the deletion to Git
+(the marker should stay in the upstream repo for the next clone).
+
+If you see this file, runtime directories under library/sessions/, projects/, tests/, etc.
+may be missing. Run setup_workspace.py before session logging or project pairing work.

@@ -15,10 +15,10 @@ When this command is invoked:
 
 Check for:
 - Python installation and version
-- Workspace structure (library/, sessions/, tools/, projects/)
+- **First-run marker:** `library/.workspace_setup_required` (if present, run `python library/tools/scripts/setup_workspace.py`)
+- Workspace structure (`library/sessions/`, `projects/`, `tests/`); use `setup_workspace.py --show` for detail
 - Existing sessions (if any)
-- Existing projects (if any)
-- Shared resource symlinks (in current project if applicable)
+- Existing project pairing files under `projects/*.code-workspace` (if any)
 - **SQLite MCP:** `.cursor/mcp.json` valid paths, and `node_modules` for `library/tools/mcp_sqlite_server` (see MCP section)
 
 ## Onboarding Checklist
@@ -26,10 +26,10 @@ Check for:
 **For First-Time Users:**
 - [x] Python 3.7+ installed ([Download if needed](https://www.python.org/downloads/))
 - [ ] Workspace cloned/downloaded
-- [ ] Configure SQLite MCP: `python library/tools/setup_mcp_sqlite.py`, then reload Cursor ([MCP Setup Check (SQLite)](#mcp-setup-check-sqlite))
+- [ ] Configure SQLite MCP: `python library/tools/scripts/setup_database.py`, then reload Cursor ([MCP Setup Check (SQLite)](#mcp-setup-check-sqlite))
 - [ ] Agent foundation loaded (done automatically)
-- [ ] Create first session: `python library/tools/session_tools.py`
-- [ ] Create first project: `python library/tools/project_tools.py --project my-project`
+- [ ] Create first session: `python library/tools/scripts/session_tools.py`
+- [ ] Bootstrap workspace: `python library/tools/scripts/setup_workspace.py` (removes `library/.workspace_setup_required` on first run)
 - [ ] Explore available commands: `/help` for explanations
 
 **For Returning Users:**
@@ -54,10 +54,10 @@ Based on workspace state, suggest:
 
 ## Quick Access
 
-- `library/tools/session_tools.py` - Session management
-- `library/tools/project_tools.py` - Create new projects
-- `library/tools/setup_mcp_sqlite.py` - Write `.cursor/mcp.json` and run `npm install` for the SQLite MCP (see [MCP Setup Check (SQLite)](#mcp-setup-check-sqlite))
-- Or use Python scripts directly: `python library/tools/session_tools.py`
+- `library/tools/scripts/setup_workspace.py` - Bootstrap dirs and pair external projects
+- `library/tools/scripts/session_tools.py` - Session management
+- `library/tools/scripts/setup_database.py` - Write `.cursor/mcp.json` and run `npm install` for the SQLite MCP (see [MCP Setup Check (SQLite)](#mcp-setup-check-sqlite))
+- Or use Python scripts directly: `python library/tools/scripts/session_tools.py`
 
 ## When to Use
 
@@ -74,13 +74,13 @@ Based on workspace state, suggest:
 
 From the **workspace root**, run the helper so one Node is used for both `npm install` and `mcp.json` (avoids `better-sqlite3` / NODE_MODULE_VERSION issues):
 
-1. `python library/tools/setup_mcp_sqlite.py`  
+1. `python library/tools/scripts/setup_database.py`  
    - Writes `.cursor/mcp.json` with absolute paths, runs `npm install` in `library/tools/mcp_sqlite_server`, then runs `npm audit fix` (compatible security updates). Use `--skip-audit-fix` to skip the audit step.
-   - Optional: `python library/tools/setup_mcp_sqlite.py --dry-run` to print what would be written (no file write, no `npm install` or audit).
+   - Optional: `python library/tools/scripts/setup_database.py --dry-run` to print what would be written (no file write, no `npm install` or audit).
    - If Node is missing, the script prints how to install Node 18+ and exit instructions.
-2. If the user cannot run Python, they may hand-edit using the **committed template shape**: `library/templates/configuration_templates/mcp.json.example` (placeholders; copy into `.cursor/mcp.json` and substitute), then run `npm install` in `library/tools/mcp_sqlite_server` with the **same** `node.exe` you put in `command`.
+2. If the user cannot run Python, they may hand-edit using the **committed template shape**: `library/templates/mcp.json.example` (placeholders; copy into `.cursor/mcp.json` and substitute), then run `npm install` in `library/tools/mcp_sqlite_server` with the **same** `node.exe` you put in `command`.
 
-**After** a successful `setup_mcp_sqlite.py` run, remind the user: **reload the Cursor window** so MCP servers pick up the config.
+**After** a successful `setup_database.py` run, remind the user: **reload the Cursor window** so MCP servers pick up the config.
 
 If `.cursor/mcp.json` is already present with **no** placeholders and `node_modules` is installed, you can skip the script and go straight to validation below (unless the user reports MCP errors, in which case re-run the script or `npm install` with the same Node as in `command`).
 
@@ -91,20 +91,20 @@ If `.cursor/mcp.json` is already present with **no** placeholders and `node_modu
 3. Read the resolved values and validate required fields:
    - `command` (Node executable)
    - `args[0]` (path to `library/tools/mcp_sqlite_server/src/server.js`)
-   - `env.DEFAULT_DB_PATH` if set (else the server uses its own default under `library/resources/...` - still confirm the DB file exists if you rely on it)
+   - `env.DEFAULT_DB_PATH` if set (else the server uses its own default under `library/databases/db/` - still confirm the DB file exists if you rely on it)
 
 ### Placeholder detection
 
-If any value still contains placeholders (examples: `<ABSOLUTE_PATH_TO_NODE_EXE>`, `<ABSOLUTE_PATH_TO_WORKSPACE>`), do **not** only ask the user to hand-edit: run `python library/tools/setup_mcp_sqlite.py` from the workspace root (unless the user opts out), then re-check the file.
+If any value still contains placeholders (examples: `<ABSOLUTE_PATH_TO_NODE_EXE>`, `<ABSOLUTE_PATH_TO_WORKSPACE>`), do **not** only ask the user to hand-edit: run `python library/tools/scripts/setup_database.py` from the workspace root (unless the user opts out), then re-check the file.
 
 If the user will edit manually, minimum substitutions are:
 - `command` -> absolute path to `node.exe` (e.g. `C:\Program Files\nodejs\node.exe` on Windows when a full install exists)
 - `args[0]` -> absolute path to `library/tools/mcp_sqlite_server/src/server.js`
-- `env.DEFAULT_DB_PATH` -> absolute path to `library/resources/databases/db/session_logs.db` (on Windows the drive letter must be valid, e.g. `E:\Resonance7\...`, not `E:Resonance7\...`)
+- `env.DEFAULT_DB_PATH` -> absolute path to `library/databases/db/session_logs.db` (on Windows the drive letter must be valid, e.g. `D:\Resonance7\...`, not `D:Resonance7\...`)
 
 ### Node dependencies (MCP SQLite server)
 
-The MCP process loads `better-sqlite3` and `@modelcontextprotocol/sdk`. If you did not use `setup_mcp_sqlite.py`, ensure packages are installed:
+The MCP process loads `better-sqlite3` and `@modelcontextprotocol/sdk`. If you did not use `setup_database.py`, ensure packages are installed:
 
 1. Working directory: `library/tools/mcp_sqlite_server` (under the workspace root)
 2. Run: `npm install` (use the same Node as in `mcp.json` if multiple installs exist, e.g. `& "C:\Program Files\nodejs\npm.cmd" install` in that folder on Windows)

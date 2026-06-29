@@ -11,11 +11,11 @@ Environment:
     NODE_EXE   If set, use this path as the Node executable (overridden by --node).
 
 Usage:
-    python library/tools/setup_mcp_sqlite.py
-    python library/tools/setup_mcp_sqlite.py --dry-run
-    python library/tools/setup_mcp_sqlite.py --node "C:\\Program Files\\nodejs\\node.exe"
-    python library/tools/setup_mcp_sqlite.py --workspace "E:\\Resonance7"
-    python library/tools/setup_mcp_sqlite.py --skip-audit-fix
+    python library/tools/scripts/setup_database.py
+    python library/tools/scripts/setup_database.py --dry-run
+    python library/tools/scripts/setup_database.py --node "C:\\Program Files\\nodejs\\node.exe"
+    python library/tools/scripts/setup_database.py --workspace "D:\\Resonance7"
+    python library/tools/scripts/setup_database.py --skip-audit-fix
 """
 
 from __future__ import annotations
@@ -35,8 +35,8 @@ __version__ = "1.0.0"
 # Minimum major Node version (must stay aligned with mcp_sqlite_server/package.json engines)
 MIN_NODE_MAJOR = 18
 
-# Template committed at library/templates/configuration_templates/mcp.json.example
-TEMPLATE_REF = "library/templates/configuration_templates/mcp.json.example"
+# Template committed at library/templates/mcp.json.example
+TEMPLATE_REF = "library/templates/mcp.json.example"
 
 
 def _err(msg: str) -> None:
@@ -69,9 +69,9 @@ def find_workspace_root(explicit: Optional[Path] = None) -> Path:
                 f"Not a Resonance7 workspace: missing library/tools/mcp_sqlite_server under {root}"
             )
         return root
-    # This file: library/tools/setup_mcp_sqlite.py
+    # This file: library/tools/scripts/setup_database.py
     here = Path(__file__).resolve()
-    root = here.parents[2]  # tools -> library -> workspace
+    root = here.parents[3]  # scripts -> tools -> library -> workspace
     if not (root / "library" / "tools" / "mcp_sqlite_server").is_dir():
         raise SystemExit(
             f"Could not resolve workspace root from {here}. Use --workspace <path to Resonance7 root>."
@@ -229,7 +229,6 @@ def build_mcp_config(workspace: Path, node: Path) -> dict[str, Any]:
     default_db = (
         workspace
         / "library"
-        / "resources"
         / "databases"
         / "db"
         / "session_logs.db"

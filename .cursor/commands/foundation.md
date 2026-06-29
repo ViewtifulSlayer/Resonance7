@@ -12,11 +12,13 @@ MANDATORY: DO NOT PROCEED WITH ANY USER REQUESTS BEFORE COMPLETING THESE STEPS:
 
 ## What It Loads
 
-- Core philosophy (Human-AI Collaborative Synergy, Knowledge Persistence)
+- Core philosophy (mutual respect, knowledge persistence)
 - Essential behavior guidelines (ethical standards, communication protocols)
 - Development protocols (web_first, file_safety, command_execution)
-- Workspace architecture understanding
-- **MCP**: For MCP servers and how to use them in this workspace, see `library/resources/databases/workspace_mcp_servers.md` when present.
+- Workspace architecture (foundation repo, library/, projects/ pairing)
+- Workspace setup (`library/tools/scripts/setup_workspace.py`, first-run marker)
+- Session logging (`library/sessions/current/`, `library/tools/scripts/session_tools.py`)
+- **MCP**: `library/databases/workspace_mcp_servers.md`; setup via `library/tools/scripts/setup_database.py`
 
 ## When to Use
 
