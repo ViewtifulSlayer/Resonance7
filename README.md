@@ -143,7 +143,7 @@ Resonance7/
 │   │   ├── scripts/                  # e.g. ingest_session_logs.py
 │   │   ├── sources/                  # runtime
 │   │   ├── README.md
-│   │   └── workspace_mcp_servers.md
+│   │   └── workspace_mcp_servers.md  # local - from templates/ on bootstrap
 │   ├── docs/                         # runtime category folders (user content)
 │   │   ├── devtools/
 │   │   ├── frameworks/
@@ -157,6 +157,7 @@ Resonance7/
 │   │   └── README.md
 │   ├── templates/                    # tracked - copy/edit templates
 │   │   ├── mcp.json.example
+│   │   ├── workspace_mcp_servers.md
 │   │   ├── session_template.md
 │   │   ├── README_LIBRARY.md
 │   │   ├── README_PROJECT.md

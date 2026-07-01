@@ -7,7 +7,7 @@ title, description, and section content (Summary, Key Decisions, Next Work Items
 Reads archives in place (no unzipping required).
 
 Usage:
-    python library/databases/scripts/ingest_session_logs.py [--db-path PATH] [--sessions-root PATH] [--no-archives] [--current-only]
+    python library/databases/scripts/ingest_session_logs.py [--db-path PATH] [--sessions-root PATH] [--no-archives] [--current-only] [--dry-run]
     Run from workspace root. Default db-path: library/databases/db/session_logs.db
     Default sessions-root: library/sessions/
     --current-only: only ingest library/sessions/current/ (skip recent and archives).
@@ -159,7 +159,21 @@ def main() -> int:
     ap.add_argument("--sessions-root", type=Path, default=default_sessions, help="library/sessions/ directory (current + recent + archived)")
     ap.add_argument("--no-archives", action="store_true", help="Skip reading archived/*.zip")
     ap.add_argument("--current-only", action="store_true", help="Only ingest sessions/current/ (skip recent and archives)")
+    ap.add_argument("--dry-run", action="store_true", help="List files that would be ingested without writing session_logs.db")
     args = ap.parse_args()
+
+    if args.dry_run:
+        count = 0
+        if not args.no_archives and not args.current_only:
+            for zip_path, entry_name in collect_archived_sessions(args.sessions_root):
+                file_path = f"archived/{zip_path.name}/{entry_name}"
+                print(f"Would ingest: {file_path}")
+                count += 1
+        for path, location in collect_session_files(args.sessions_root, current_only=args.current_only):
+            print(f"Would ingest: {path.relative_to(args.sessions_root)}")
+            count += 1
+        print(f"Dry run complete. Would ingest {count} session(s) into {args.db_path}")
+        return 0
 
     args.db_path.parent.mkdir(parents=True, exist_ok=True)
     databases_dir = Path(__file__).resolve().parent.parent

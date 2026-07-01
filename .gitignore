@@ -70,7 +70,6 @@ library/tools/**
 library/databases/**
 !library/databases/**/
 !library/databases/README.md
-!library/databases/workspace_mcp_servers.md
 !library/databases/schemas/session_logs.sql
 !library/databases/scripts/README.md
 !library/databases/scripts/ingest_session_logs.py

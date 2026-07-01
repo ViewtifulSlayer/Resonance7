@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **MCP `list_databases` tool** - Scans `library/databases/db/*.db` and returns alias (filename stem) and absolute path for each file.
 - **Auto-alias resolution** - `database_path` accepts any stem matching `library/databases/db/<stem>.db` without hand-editing `server.js` or `.cursor/mcp.json`.
+- **`library/templates/workspace_mcp_servers.md`** - Framework-only MCP reference template; copied to gitignored `library/databases/workspace_mcp_servers.md` on bootstrap (same pattern as `mcp.json.example` -> `.cursor/mcp.json`).
 
 ### Changed
 
+- **`session_tools.py` / `ingest_session_logs.py` ingest dry-run** - Menu option 5 and `--ingest` now honor `--dry-run`: list files that would be ingested without writing `session_logs.db` (previously dry-run still updated the database).
+- **`library/databases/workspace_mcp_servers.md` git policy** - No longer tracked; userland MCP notes (e.g. Scryfall) belong in the local copy or `library/docs/`, not in the framework repo. Removes erroneous userland content from `main`.
+- **`setup_workspace.py`** - Installs local `workspace_mcp_servers.md` from template when missing.
 - **`.gitignore`** - Allowlist policy separating framework from local content: Cursor commands, onboarding/bootstrap rules, and core agent skills; `library/tools/` README, MCP SQLite server package, and setup scripts; database READMEs, schema, and ingest script; session lifecycle `README.md` only. Ignores session log payloads, user `library/docs/**`, runtime `db/*.db` and `sources/`, scratch `tests/`, project pairing files, and machine-local `.cursor/mcp.json`. Parent-directory un-ignore entries (`!.../**/`) under `library/tools/` and `library/databases/` so Git can reach nested allowlisted files.
 - **Database git policy** - All `library/databases/db/*.db` files are local-only; `library/databases/db/` is created by workspace bootstrap. Populate `session_logs.db` via ingest when desired (MCP starts without it; default queries need the file).
 - **`library/tools/scripts/setup_workspace.py`** - Bootstrap includes `library/databases/db/`.
@@ -28,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Known issues
 
 - **`setup_database.py --help` Node install message** - Running `python library/tools/scripts/setup_database.py --help` always prints the Node 18+ install block at the end because it is wired as argparse `epilog` (`_node_install_instructions()`), not because Node failed detection. A successful `--dry-run` or normal run can still find Node. Planned fix: emit install guidance only when `resolve_node_exe()` actually fails.
+- **`session_tools.py` prune collision rename** - `move_old_sessions()` appends `_YYYYMMDD_HHMMSS` to the filename when the same `YYYYMMDD-NN.md` already exists in `recent/` (no content check). Consolidating sessions into `current/` while copies remain in `recent/` produces timestamp-suffixed duplicates (e.g. `20260219-01_20260701_014942.md`). Planned fix: compare content (identical = skip move); on real differences, prompt or renumber per policy.
+- **`session_tools.py` `extract_session_date()` too strict** - Only matches `^YYYYMMDD-NN.md$`. Prune collision suffixes (`_*_HHMMSS`) and legacy continuation names (`_*_ptN`, `-*-ptN`) are not parsed, so 90-day `recent/` cleanup can skip them and leave orphans. Planned fix: parse session date from the leading `YYYYMMDD-NN` stem for all supported filename variants.
+- **`ingest_session_logs.py` stale rows after re-ingest** - Upserts by `session_id` (`INSERT OR REPLACE`) but never deletes rows for files removed or renamed on disk. After a filename cleanup, old IDs (timestamp duplicates, `_pt*` stems) remain in `session_logs.db` until the DB file is deleted or replaced. Planned fix: optional full rebuild or prune pass for IDs not seen in the current ingest set.
+- **`ingest_session_logs.py` collision precedence** - Ingest order is archived, then `current/`, then `recent/`; later sources win on the same `session_id`. `recent/` overwrites `current/`, which is counterintuitive when both hold the same session. Planned fix: document clearly or prefer `current/` over `recent/`.
+- **Session continuation `_pt*` filenames** - `session_tools.py` continuation flow still uses `YYYYMMDD-NN_pt2.md` (and renames the original to `_pt1`). Convention is redundant with same-day `YYYYMMDD-NN` numbering; historical logs may use inconsistent `_pt` / `-pt` suffixes. Planned fix: retire `_pt*`; continuations use next `-NN` for that date; migrate existing files and `previous_part` / `next_part` links.
+- **UTF-8 BOM breaks session frontmatter parsing** - `session_tools.py` (prune status updates) and `ingest_session_logs.py` read session `.md` files with `encoding='utf-8'`, so a UTF-8 BOM (`EF BB BF`) before the opening `---` prevents the frontmatter regex from matching. Prune logs "No YAML frontmatter" / skips status update; ingest may miss metadata. Common when Windows editors save "UTF-8 with BOM". `setup_database.py` already uses BOM-tolerant reads; session tooling does not. Planned fix: read with `utf-8-sig` (and optionally normalize on write).
 
 ## [3.0.0] - 2026-06-29
 

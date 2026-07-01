@@ -11,7 +11,7 @@ library/databases/
   scripts/               <- Ingest and maintenance scripts (e.g. ingest_session_logs.py)
   db/                    <- Local SQLite files (gitignored; created by bootstrap)
     session_logs.db      <- Optional: from session_tools.py --ingest (MCP default)
-  workspace_mcp_servers.md
+  workspace_mcp_servers.md      <- local copy from library/templates/ (gitignored)
 ```
 
 After workspace setup, `sources/` may also appear (see root `README.md`).
@@ -20,7 +20,8 @@ After workspace setup, `sources/` may also appear (see root `README.md`).
 
 | What | Git | Cursor index | Agent edit |
 |------|-----|--------------|------------|
-| `README.md`, `workspace_mcp_servers.md`, schema, ingest script | Tracked (allow-list) | Indexed | Allowed (schema/ingest); docs via normal rules |
+| `README.md`, schema, ingest script | Tracked (allow-list) | Indexed | Allowed (schema/ingest); docs via normal rules |
+| `workspace_mcp_servers.md` | Ignored (local) | Indexed when present | Local MCP notes; copy from `library/templates/workspace_mcp_servers.md` on bootstrap |
 | `db/session_logs.db` | Ignored (local) | Excluded (binary); path in this README | Protected; create via `session_tools.py --ingest` |
 | `db/*.db` (all) | Ignored | Excluded | Protected |
 | `sources/**` | Ignored | Excluded | Allowed |
@@ -54,6 +55,6 @@ See `library/tools/mcp_sqlite_server/README.md` and `library/databases/workspace
 1. Place the `.db` file in `library/databases/db/<name>.db`.
 2. Reload Cursor (restarts the MCP server). The alias is the filename **stem** (e.g. `iog_disassembly.db` -> `iog_disassembly`).
 3. Call MCP tool `list_databases` to see all aliases and paths, or pass `database_path: "<stem>"` on other tools.
-4. Document purpose in this README when you add a DB agents should know about.
+4. Document purpose in `library/docs/` or your local `workspace_mcp_servers.md` when you add a DB agents should know about (not in tracked `README.md`).
 
 No per-database edits to `.cursor/mcp.json` or `server.js` are required for standard drops under `db/`. Absolute paths still work.

@@ -1867,7 +1867,9 @@ def prune_sessions_workflow(sessions_dir, dry_run=False):
 # STEP 8: SESSION LOG INGEST
 # =============================================================================
 
-def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> int:
+def run_session_log_ingest(
+    workspace_root: Path, no_archives: bool = False, dry_run: bool = False
+) -> int:
     """
     Run the session log ingest script to update session_logs.db.
     Relays script stdout via log() and stderr via error() to match pruning format.
@@ -1875,6 +1877,7 @@ def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> i
     Args:
         workspace_root: Workspace root (foundation repo)
         no_archives: If True, pass --no-archives to the ingest script
+        dry_run: If True, pass --dry-run to the ingest script (no DB writes)
 
     Returns:
         int: 0 on success, 1 on failure (script missing or non-zero exit)
@@ -1892,6 +1895,8 @@ def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> i
     args = [sys.executable, str(ingest_script)]
     if no_archives:
         args.append("--no-archives")
+    if dry_run:
+        args.append("--dry-run")
     result = subprocess.run(
         args,
         cwd=str(workspace_root),
@@ -1912,19 +1917,27 @@ def run_session_log_ingest(workspace_root: Path, no_archives: bool = False) -> i
     return 0
 
 
-def ingest_session_logs_workflow(sessions_dir: Path, no_archives: bool = False) -> int:
+def ingest_session_logs_workflow(
+    sessions_dir: Path, no_archives: bool = False, dry_run: bool = False
+) -> int:
     """
     Run the session log ingest to update session_logs.db for queryable recall.
     Uses section header and log/success format to match session pruning.
     """
     show_section_header("Session Log Ingest")
     scope = "current/, recent/ (archives skipped)" if no_archives else "current/, recent/, archived/"
-    log(f"Updating session_logs.db from {scope}...")
+    if dry_run:
+        log(f"DRY RUN: Would update session_logs.db from {scope}...")
+    else:
+        log(f"Updating session_logs.db from {scope}...")
     print()
     workspace_root = workspace_root_from_sessions_dir(sessions_dir)
-    code = run_session_log_ingest(workspace_root, no_archives=no_archives)
+    code = run_session_log_ingest(workspace_root, no_archives=no_archives, dry_run=dry_run)
     if code == 0:
-        success("Session log ingest completed.")
+        if dry_run:
+            success("Session log ingest dry run completed.")
+        else:
+            success("Session log ingest completed.")
     return code
 
 
@@ -2033,7 +2046,7 @@ def main():
         
         # Dry run notice
         if args.dry_run:
-            print("DRY RUN MODE - No files will be created or modified")
+            print("DRY RUN MODE - No session files or session_logs.db will be created or modified")
             print()
         
         # Handle direct pruning
@@ -2043,7 +2056,9 @@ def main():
         # Handle direct ingest
         if args.ingest:
             return ingest_session_logs_workflow(
-                sessions_dir, no_archives=args.ingest_no_archives
+                sessions_dir,
+                no_archives=args.ingest_no_archives,
+                dry_run=args.dry_run,
             )
         
         # Show menu
@@ -2068,7 +2083,9 @@ def main():
             
         elif choice == 5:
             # Ingest session logs to database
-            return ingest_session_logs_workflow(sessions_dir, no_archives=False)
+            return ingest_session_logs_workflow(
+                sessions_dir, no_archives=False, dry_run=args.dry_run
+            )
             
         else:
             # Cancel (6)

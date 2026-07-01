@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -53,6 +54,8 @@ _PAIR_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 
 # Tracked in Git; removed locally after first successful bootstrap (do not commit deletion).
 SETUP_SENTINEL_REL = "library/.workspace_setup_required"
+WORKSPACE_MCP_TEMPLATE_REL = "library/templates/workspace_mcp_servers.md"
+WORKSPACE_MCP_LOCAL_REL = "library/databases/workspace_mcp_servers.md"
 
 
 # ---------------------------------------------------------------------------
@@ -126,6 +129,28 @@ def bootstrap_directories(root: Path, dry_run: bool = False) -> BootstrapResult:
         result.created.append(rel)
 
     return result
+
+
+def install_workspace_mcp_reference(root: Path, dry_run: bool = False) -> bool:
+    """
+    Copy framework MCP reference to library/databases/ if missing.
+
+    Local file is gitignored (like .cursor/mcp.json); template ships in Git.
+    """
+    template = root / WORKSPACE_MCP_TEMPLATE_REL
+    dest = root / WORKSPACE_MCP_LOCAL_REL
+    if dest.is_file():
+        return False
+    if not template.is_file():
+        _warn(f"Template missing: {template}")
+        return False
+    if dry_run:
+        _info(f"Would install: {WORKSPACE_MCP_TEMPLATE_REL} -> {WORKSPACE_MCP_LOCAL_REL}")
+        return True
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(template, dest)
+    _info(f"Installed local MCP reference: {WORKSPACE_MCP_LOCAL_REL}")
+    return True
 
 
 def print_bootstrap_summary(root: Path, result: BootstrapResult, dry_run: bool) -> None:
@@ -237,6 +262,7 @@ def write_code_workspace(
 
     # Bootstrap ensures projects/ exists before we write into it.
     bootstrap_directories(root, dry_run=dry_run)
+    install_workspace_mcp_reference(root, dry_run=dry_run)
 
     out_path = workspace_file_path(root, name)
     if out_path.exists() and not force:
@@ -369,6 +395,7 @@ def run_interactive_menu(root: Path, dry_run: bool) -> int:
         if choice == 1:
             result = bootstrap_directories(root, dry_run=dry_run)
             print_bootstrap_summary(root, result, dry_run)
+            install_workspace_mcp_reference(root, dry_run=dry_run)
             clear_setup_sentinel(root, dry_run=dry_run)
         elif choice == 2:
             code = pair_project_workflow(
@@ -493,6 +520,7 @@ def main() -> int:
     # Default: bootstrap only (README install step 2).
     result = bootstrap_directories(root, dry_run=args.dry_run)
     print_bootstrap_summary(root, result, dry_run=args.dry_run)
+    install_workspace_mcp_reference(root, dry_run=args.dry_run)
     clear_setup_sentinel(root, dry_run=args.dry_run)
     return 0
 
