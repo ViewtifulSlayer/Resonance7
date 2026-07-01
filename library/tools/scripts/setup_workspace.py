@@ -34,6 +34,7 @@ __version__ = "1.0.0"
 RUNTIME_DIRECTORIES: tuple[str, ...] = (
     "library/databases/schemas",  # e.g. session_logs.sql
     "library/databases/scripts",  # e.g. ingest_session_logs.py
+    "library/databases/db",  # local SQLite files (session_logs.db from ingest, etc.)
     "library/databases/sources",
     "library/docs/devtools",
     "library/docs/frameworks",

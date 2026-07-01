@@ -2,6 +2,9 @@
 """
 Write `.cursor/mcp.json` and run `npm install` for the Resonance7 SQLite MCP server.
 
+Updates only the managed SQLite server entry in an existing `.cursor/mcp.json`;
+other MCP server blocks (user-added) are preserved.
+
 Resolves the workspace root from this file's location, picks a single Node
 executable (prefer a full install over the first on PATH), and uses that same
 Node's npm in `library/tools/mcp_sqlite_server` so native modules (better-sqlite3)
@@ -37,6 +40,9 @@ MIN_NODE_MAJOR = 18
 
 # Template committed at library/templates/mcp.json.example
 TEMPLATE_REF = "library/templates/mcp.json.example"
+
+# Server entry this script owns; other mcpServers keys are preserved on write.
+MANAGED_MCP_SERVER_KEY = "Resonance7-sqlite"
 
 
 def _err(msg: str) -> None:
@@ -236,13 +242,46 @@ def build_mcp_config(workspace: Path, node: Path) -> dict[str, Any]:
 
     return {
         "mcpServers": {
-            "Resonance7-sqlite": {
+            MANAGED_MCP_SERVER_KEY: {
                 "command": str(node),
                 "args": [str(server_js)],
                 "env": {"DEFAULT_DB_PATH": str(default_db)},
             }
         }
     }
+
+
+def load_existing_mcp_config(out_file: Path) -> dict[str, Any]:
+    """Read existing mcp.json if present; return {} on missing or invalid file."""
+    if not out_file.is_file():
+        return {}
+    try:
+        data = json.loads(out_file.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as exc:
+        _warn(f"Could not read existing {out_file}; writing fresh config. ({exc})")
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def merge_mcp_config(existing: dict[str, Any], generated: dict[str, Any]) -> dict[str, Any]:
+    """
+    Merge generated SQLite config into existing mcp.json.
+
+    Refreshes MANAGED_MCP_SERVER_KEY only; preserves other mcpServers entries
+    and any other top-level keys on the existing file.
+    """
+    merged = dict(existing)
+    existing_servers = dict(merged.get("mcpServers") or {})
+    generated_servers = dict(generated.get("mcpServers") or {})
+    merged["mcpServers"] = {**existing_servers, **generated_servers}
+    return merged
+
+
+def count_preserved_servers(existing: dict[str, Any]) -> int:
+    servers = existing.get("mcpServers") or {}
+    if not isinstance(servers, dict):
+        return 0
+    return sum(1 for key in servers if key != MANAGED_MCP_SERVER_KEY)
 
 
 def run_npm_install(npm: Path, cwd: Path) -> None:
@@ -315,7 +354,10 @@ def main() -> None:
 
     mcp_dir = root / "library" / "tools" / "mcp_sqlite_server"
     out_file = root / ".cursor" / "mcp.json"
-    cfg = build_mcp_config(root, node)
+    generated = build_mcp_config(root, node)
+    existing = load_existing_mcp_config(out_file)
+    cfg = merge_mcp_config(existing, generated)
+    preserved = count_preserved_servers(existing)
 
     _info(f"Workspace:     {root}")
     _info(f"Node:          {node}")
@@ -326,6 +368,11 @@ def main() -> None:
     _info(f"npm:           {npm}")
     _info(f"MCP config:    {out_file}")
     _info(f"Template ref:  {root / TEMPLATE_REF}")
+    if preserved:
+        _info(
+            f"MCP merge:     refresh {MANAGED_MCP_SERVER_KEY}; "
+            f"preserve {preserved} other server(s)"
+        )
     if args.dry_run:
         _info("--- would write mcp.json ---")
         print(json.dumps(cfg, indent=2))

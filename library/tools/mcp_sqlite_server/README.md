@@ -65,13 +65,24 @@ In Cursor's MCP settings, add:
 
 Once configured, agents can use these tools directly in Cursor:
 
+### 0. `list_databases`
+
+List workspace databases under `library/databases/db/` (alias = filename stem, absolute path).
+
+**Parameters:** none
+
+**Example:**
+```
+Use list_databases tool (no parameters)
+```
+
 ### 1. `execute_query`
 
 Execute a SQL query against the knowledge base database.
 
 **Parameters:**
 - `query` (required): SQL query string
-- `database_path` (optional): Absolute path to a `.db` file, or the alias `session_logs` (defaults to `library/databases/db/session_logs.db`)
+- `database_path` (optional): Alias (filename stem under `library/databases/db/`), `session_logs`, or absolute `.db` path (default: `session_logs`)
 
 **Example:**
 ```
@@ -151,7 +162,13 @@ Default database resolution (first match wins):
 3. `KNOWLEDGE_BASE_DB_PATH` env var (legacy name)
 4. Built-in fallback: `library/databases/db/session_logs.db` relative to the workspace
 
-You can override per-query using the `database_path` parameter (`session_logs` alias or an absolute `.db` path).
+You can override per-query using the `database_path` parameter:
+
+- `session_logs` - default session log DB (env override aware)
+- `<stem>` - any `library/databases/db/<stem>.db` that exists (e.g. `iog_disassembly`)
+- absolute path - full path to a `.db` file
+
+Use `list_databases` to discover aliases after adding files to `db/`. Reload Cursor after `server.js` changes.
 
 ## Security Considerations
 

@@ -17,16 +17,19 @@ import {
 import Database from "better-sqlite3";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { existsSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+/** Workspace DB directory (library/tools/mcp_sqlite_server/src -> library/databases/db). */
+const DB_DIR = join(__dirname, "../../../databases/db");
+
+const DATABASE_PATH_HELP =
+  "Optional: alias (filename stem under library/databases/db/, e.g. iog_disassembly), session_logs, or absolute path to a .db file. Default: session_logs.";
+
 /** Fallback when no env override is set (library/tools/mcp_sqlite_server/src -> library/). */
-const SESSION_LOGS_FALLBACK = join(
-  __dirname,
-  "../../../databases/db/session_logs.db"
-);
+const SESSION_LOGS_FALLBACK = join(DB_DIR, "session_logs.db");
 
 /** Resolve session_logs / default DB from env (setup script sets DEFAULT_DB_PATH). */
 function resolveSessionLogsPath() {
@@ -40,7 +43,25 @@ function resolveSessionLogsPath() {
 
 const DEFAULT_DB_PATH = resolveSessionLogsPath();
 
-/** Minimal alias support for the public framework (full monorepo server has more). */
+/** List *.db files in DB_DIR with alias = filename stem. */
+function listWorkspaceDatabases() {
+  if (!existsSync(DB_DIR)) {
+    return [];
+  }
+  return readdirSync(DB_DIR)
+    .filter((name) => name.endsWith(".db"))
+    .map((name) => {
+      const alias = name.slice(0, -3);
+      const path = join(DB_DIR, name);
+      return { alias, path };
+    })
+    .filter((entry) => existsSync(entry.path))
+    .sort((a, b) => a.alias.localeCompare(b.alias));
+}
+
+/**
+ * Resolve database_path: default, session_logs, db-dir stem alias, or absolute path.
+ */
 function resolveDatabasePath(input) {
   if (input === undefined || input === null || input === "" || input === "default") {
     return DEFAULT_DB_PATH;
@@ -48,6 +69,14 @@ function resolveDatabasePath(input) {
   const key = String(input).trim();
   if (key === "session_logs") {
     return resolveSessionLogsPath();
+  }
+  const stem = key.endsWith(".db") ? key.slice(0, -3) : key;
+  const byStem = join(DB_DIR, `${stem}.db`);
+  if (existsSync(byStem)) {
+    return byStem;
+  }
+  if (existsSync(key)) {
+    return key;
   }
   return key;
 }
@@ -69,6 +98,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
+        name: "list_databases",
+        description:
+          "List workspace SQLite databases (alias and path) from library/databases/db/",
+        inputSchema: {
+          type: "object",
+          properties: {},
+        },
+      },
+      {
         name: "execute_query",
         description: "Execute a SQL query against the knowledge base database and return results",
         inputSchema: {
@@ -80,8 +118,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             database_path: {
               type: "string",
-              description:
-                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
+              description: DATABASE_PATH_HELP,
             },
           },
           required: ["query"],
@@ -95,8 +132,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             database_path: {
               type: "string",
-              description:
-                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
+              description: DATABASE_PATH_HELP,
             },
           },
         },
@@ -113,8 +149,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             database_path: {
               type: "string",
-              description:
-                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
+              description: DATABASE_PATH_HELP,
             },
           },
           required: ["table_name"],
@@ -128,8 +163,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             database_path: {
               type: "string",
-              description:
-                "Optional: Absolute path to a .db file, or the alias session_logs. If omitted, uses session_logs default.",
+              description: DATABASE_PATH_HELP,
             },
           },
         },
@@ -141,9 +175,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 // Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+  const toolArgs = args ?? {};
 
   try {
-    const dbPath = resolveDatabasePath(args.database_path);
+    if (name === "list_databases") {
+      const databases = listWorkspaceDatabases();
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                db_dir: DB_DIR,
+                default_alias: "session_logs",
+                databases,
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+
+    const dbPath = resolveDatabasePath(toolArgs.database_path);
 
     // Verify database exists
     if (!existsSync(dbPath)) {
@@ -160,7 +215,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     switch (name) {
       case "execute_query": {
-        const query = args.query;
+        const query = toolArgs.query;
         if (!query) {
           return {
             content: [
@@ -265,7 +320,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "get_table_schema": {
-        const tableName = args.table_name;
+        const tableName = toolArgs.table_name;
         if (!tableName) {
           return {
             content: [

@@ -7,7 +7,7 @@ Universal Python and Node tooling for the Resonance7 foundation workspace. Run c
 | Script | Purpose |
 |--------|---------|
 | [**`scripts/setup_workspace.py`**](scripts/setup_workspace.py) | Bootstrap runtime dirs; pair external projects via `projects/*.code-workspace` |
-| [**`scripts/setup_database.py`**](scripts/setup_database.py) | Write `.cursor/mcp.json`, run `npm install` in `mcp_sqlite_server/` |
+| [**`scripts/setup_database.py`**](scripts/setup_database.py) | Write/merge `.cursor/mcp.json` (framework SQLite entry), run `npm install` in `mcp_sqlite_server/` |
 | [**`scripts/session_tools.py`**](scripts/session_tools.py) | Create and maintain session logs under **`library/sessions/`** |
 
 Quick help:

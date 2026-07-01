@@ -137,8 +137,8 @@ Resonance7/
 │   ├── agent_foundation.json
 │   ├── .workspace_setup_required     # tracked first-run marker (removed locally after bootstrap)
 │   ├── README.md
-│   ├── databases/                    # tracked README + db; runtime subdirs below
-│   │   ├── db/                       # tracked - session_logs.db (MCP default)
+│   ├── databases/                    # tracked README, schema, ingest; db/ runtime (gitignored)
+│   │   ├── db/                       # runtime - local *.db (gitignored; bootstrap creates dir)
 │   │   ├── schemas/                  # e.g. session_logs.sql
 │   │   ├── scripts/                  # e.g. ingest_session_logs.py
 │   │   ├── sources/                  # runtime
@@ -234,7 +234,7 @@ Pairing files are gitignored (they contain local paths). Open the `.code-workspa
 |------|------|
 | `.agentignore` | Paths agents should not modify without explicit request |
 | `.cursorignore` | Cursor indexing exclusions (editor-specific; v3) |
-| `.gitignore` | Keeps local session payloads, `node_modules`, and `.cursor/mcp.json` out of Git |
+| `.gitignore` | Allowlist for framework files; keeps session payloads, local docs, runtime DBs, `node_modules`, and `.cursor/mcp.json` out of Git |
 
 Example `.agentignore` entries:
 

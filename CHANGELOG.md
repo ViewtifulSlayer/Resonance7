@@ -7,7 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Features to be added.
+### Added
+
+- **MCP `list_databases` tool** - Scans `library/databases/db/*.db` and returns alias (filename stem) and absolute path for each file.
+- **Auto-alias resolution** - `database_path` accepts any stem matching `library/databases/db/<stem>.db` without hand-editing `server.js` or `.cursor/mcp.json`.
+
+### Changed
+
+- **`.gitignore`** - Allowlist policy separating framework from local content: Cursor commands, onboarding/bootstrap rules, and core agent skills; `library/tools/` README, MCP SQLite server package, and setup scripts; database READMEs, schema, and ingest script; session lifecycle `README.md` only. Ignores session log payloads, user `library/docs/**`, runtime `db/*.db` and `sources/`, scratch `tests/`, project pairing files, and machine-local `.cursor/mcp.json`. Parent-directory un-ignore entries (`!.../**/`) under `library/tools/` and `library/databases/` so Git can reach nested allowlisted files.
+- **Database git policy** - All `library/databases/db/*.db` files are local-only; `library/databases/db/` is created by workspace bootstrap. Populate `session_logs.db` via ingest when desired (MCP starts without it; default queries need the file).
+- **`library/tools/scripts/setup_workspace.py`** - Bootstrap includes `library/databases/db/`.
+- **`library/tools/scripts/setup_database.py`** - Merging write for `.cursor/mcp.json`: refreshes the managed framework SQLite server entry only; preserves other existing MCP server blocks; reads existing JSON with UTF-8 BOM tolerance (Windows).
+- **`library/tools/mcp_sqlite_server/src/server.js`** - `resolveDatabasePath()` resolves db-dir stems; tool schemas document alias behavior.
+- **`library/databases/README.md`**, **`workspace_mcp_servers.md`**, **`mcp_sqlite_server/README.md`**, root **`README.md`** - Document auto-aliases, local DB policy, and gitignore scope.
+
+### Removed
+
+- **Tracked `session_logs.db` placeholder** - No empty session log database in the repository; created locally via optional ingest.
+
+### Known issues
+
+- **`setup_database.py --help` Node install message** - Running `python library/tools/scripts/setup_database.py --help` always prints the Node 18+ install block at the end because it is wired as argparse `epilog` (`_node_install_instructions()`), not because Node failed detection. A successful `--dry-run` or normal run can still find Node. Planned fix: emit install guidance only when `resolve_node_exe()` actually fails.
 
 ## [3.0.0] - 2026-06-29
 
