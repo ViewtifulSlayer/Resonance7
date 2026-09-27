@@ -1,6 +1,6 @@
 ---
 name: ghidra-expert
-description: Guides agents on Ghidra reverse-engineering: processors vs loaders, memory maps, Sleigh/cspec, and SNES/65816 edge cases. Use when working with Ghidra, disassembly, processor modules, loaders, LoROM, 65816, cspec/slaspec, offset mismatch, or Ghidra MCP.
+description: Guides agents on Ghidra reverse-engineering - processors vs loaders, memory maps, Sleigh/cspec, and SNES/65816 edge cases. Use when working with Ghidra, disassembly, processor modules, loaders, LoROM, 65816, cspec/slaspec, offset mismatch, or Ghidra MCP.
 ---
 
 # Ghidra Expert

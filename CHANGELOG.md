@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`ghidra-expert` skill could not load by name** - The YAML frontmatter `description` in `.agents/skills/ghidra-expert/SKILL.md` contained an unquoted internal colon (`Ghidra reverse-engineering: processors vs loaders`), which is invalid in a plain YAML scalar. Strict frontmatter parsers rejected the file, so skill loaders reported the skill as not found even though the file existed on disk. Replaced the colon with a hyphen, matching the unquoted plain-scalar style of the other eight skill descriptions; all nine `SKILL.md` files now parse cleanly.
+
 ## [4.0.0] - 2026-09-26
 
 Freebuff-first migration. The workspace is no longer Cursor-specific: always-on agent context lives in a root `AGENTS.md`, skills live in `.agents/skills/`, and MCP configuration is generated at `.agents/mcp.json`.
