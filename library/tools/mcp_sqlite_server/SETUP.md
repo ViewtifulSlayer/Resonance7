@@ -1,8 +1,8 @@
 # MCP SQLite Server Setup Guide
 
-Quick setup instructions for configuring the SQLite MCP server in Cursor IDE.
+Quick setup instructions for configuring the SQLite MCP server for Freebuff (VS Code).
 
-**Quick setup (recommended):** from the Resonance7 workspace root, run `python library/tools/scripts/setup_database.py`. That writes a project-level `.cursor/mcp.json` with absolute paths, runs `npm install` in this folder with the same Node, then `npm audit fix`, and tells you to reload Cursor. Use `--dry-run` to only print the JSON; use `--skip-audit-fix` to skip the audit step. If Node 18+ is missing, the script prints install links. A placeholder-only JSON template lives at `library/templates/mcp.json.example`.
+**Quick setup (recommended):** from the Resonance7 workspace root, run `python library/tools/scripts/setup_database.py`. That writes a project-level `.agents/mcp.json` with absolute paths, runs `npm install` in this folder with the same Node, then `npm audit fix`, and tells you to reload your editor. Use `--dry-run` to only print the JSON; use `--skip-audit-fix` to skip the audit step. If Node 18+ is missing, the script prints install links. A placeholder-only JSON template lives at `library/templates/mcp.json.example`.
 
 ## Step 1: Install Dependencies
 
@@ -15,49 +15,36 @@ This installs:
 - `@modelcontextprotocol/sdk` - MCP protocol implementation
 - `better-sqlite3` - Fast SQLite3 library for Node.js
 
-## Step 2: Configure Cursor MCP Settings
+## Step 2: Configure MCP
 
-1. **Open Cursor Settings:**
-   - Press `Ctrl+Shift+J` (Windows/Linux) or `Cmd+,` (Mac)
-   - Or: File → Preferences → Settings
+Add the server to **`.agents/mcp.json`** at the workspace root, or let `setup_database.py` generate it:
 
-2. **Navigate to MCP Settings:**
-   - Search for "MCP" or "Model Context Protocol"
-   - Or go to: **Features > MCP**
+```json
+{
+  "mcpServers": {
+    "Resonance7-sqlite": {
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
+      ],
+      "env": {
+        "DEFAULT_DB_PATH": "${workspaceFolder}/library/databases/db/session_logs.db"
+      }
+    }
+  }
+}
+```
 
-3. **Add MCP Server Configuration:**
-   
-   Click "Add New MCP Server" or edit the MCP settings JSON directly.
+**Important**:
+- On Windows, if `node` is not on PATH for your editor, set `"command"` to the **full path** to `node.exe` (see the mcp-sqlite skill).
+- Optional: set `DEFAULT_DB_PATH`, `SESSION_LOGS_DB_PATH`, or `KNOWLEDGE_BASE_DB_PATH` to override the default `library/databases/db/session_logs.db`.
+- If `${workspaceFolder}` is not expanded by your editor, replace it with your workspace root using **escaped backslashes** on Windows (e.g. `C:\\Users\\you\\Resonance7\\library\\tools\\...`).
 
-   **Copy this configuration** (Cursor expands `${workspaceFolder}` to the opened workspace root):
-
-   ```json
-   {
-     "mcpServers": {
-       "resonance7-sqlite": {
-         "command": "node",
-         "args": [
-           "${workspaceFolder}/library/tools/mcp_sqlite_server/src/server.js"
-         ],
-         "env": {
-           "DEFAULT_DB_PATH": "${workspaceFolder}/library/databases/db/session_logs.db"
-         }
-       }
-     }
-   }
-   ```
-
-   **Important**:
-   - On Windows, if `node` is not on PATH for Cursor, set `"command"` to the **full path** to `node.exe` (see the mcp-sqlite skill).
-   - Optional: set `DEFAULT_DB_PATH`, `SESSION_LOGS_DB_PATH`, or `KNOWLEDGE_BASE_DB_PATH` to override the default `library/databases/db/session_logs.db`.
-   - If `${workspaceFolder}` is not expanded in your Cursor version, replace it with your workspace root using **escaped backslashes** on Windows (e.g. `C:\\Users\\you\\Resonance7\\library\\tools\\...`).
-
-4. **Restart Cursor:**
-   - Close and reopen Cursor for MCP server to connect
+Then **reload your editor** so the MCP server connects.
 
 ## Step 3: Verify Installation
 
-After restarting Cursor:
+After reloading your editor:
 
 1. Open a chat with an agent
 2. The agent should now have access to these tools:
@@ -82,13 +69,13 @@ After restarting Cursor:
 
 - **Check Paths**: Verify all paths in the MCP config are correct and absolute
 - **Check Permissions**: Ensure the database file is readable
-- **Check Cursor Logs**: View → Output → Select "MCP" to see connection logs
+- **Check editor MCP logs**: open the Output panel and select "MCP" to see connection logs
 
 ### "Command not found: node"
 
 - Install Node.js from [nodejs.org](https://nodejs.org/)
 - Or ensure Node.js is in your system PATH
-- Restart Cursor after installing Node.js
+- Reload your editor after installing Node.js
 
 ### Database Not Found
 

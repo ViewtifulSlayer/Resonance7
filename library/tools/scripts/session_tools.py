@@ -13,8 +13,9 @@ Usage:
     python library/tools/scripts/session_tools.py
     python library/tools/scripts/session_tools.py --help
     python library/tools/scripts/session_tools.py --dry-run
+    python library/tools/scripts/session_tools.py --auto --dry-run
 
-Version: 1.0.0
+Version: 1.1.0
 Author: Resonance 7 Team
 License: MIT
 """
@@ -31,7 +32,7 @@ from pathlib import Path
 from typing import Optional, List, Tuple
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 # =============================================================================
 # PRUNING CONFIGURATION
@@ -50,6 +51,22 @@ class Colors:
     YELLOW = '\033[1;33m'
     BLUE = '\033[0;34m'
     NC = '\033[0m'  # No Color
+
+def enable_utf8_output() -> None:
+    """
+    Reconfigure stdout/stderr to UTF-8 so glyph output survives pipes and
+    redirects on Windows.
+
+    A Windows console is already UTF-8, but a redirected or piped stdout falls
+    back to the console code page (cp1252 here), where characters such as
+    U+2705 raise UnicodeEncodeError and abort the script. Decoding errors are
+    mapped to the replacement character so output can never abort a run.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError, OSError):
+            pass
 
 def log(message: str) -> None:
     """Print a log message with timestamp and blue color."""
@@ -137,7 +154,7 @@ def find_sessions_directory() -> Path:
 
     raise FileNotFoundError(
         "Could not find library/sessions/current/. "
-        "Run: python library/tools/scripts/setup_workspace.py"
+        "Create the directory or run: python library/tools/scripts/setup.py --init-dirs"
     )
 
 
@@ -484,13 +501,13 @@ def generate_template_body(session_id, topic):
 [Main accomplishments, decisions, and key insights from this session]
 
 ## Key Decisions & Rationale
-- **Decision 1** – [Brief reasoning]
-- **Decision 2** – [Brief reasoning]
+- **Decision 1** - [Brief reasoning]
+- **Decision 2** - [Brief reasoning]
 
 ## Deliverables & Metrics
-- ✅ **Deliverable 1** – [File / feature] — [LoC / size / metric]
-- 🚧 **Partial Deliverable** – [Status % or remaining tasks]
-- 📊 **Metric** – [Coverage %, build time, etc.]
+- [x] **Deliverable 1** - [File / feature] - [LoC / size / metric]
+- [ ] **Partial Deliverable** - [Status % or remaining tasks]
+- **Metric** - [Coverage %, build time, etc.]
 
 ## Implementation Highlights
 - [Notable techniques, libraries, commands, patterns]
@@ -524,14 +541,14 @@ def generate_template_body(session_id, topic):
 
 ## Sources
 ### Web Sources
-- [URL] – [Brief description of relevance]
+- [URL] - [Brief description of relevance]
 
 ### Local Sources
-- [File path] – [Brief description of relevance]
+- [File path] - [Brief description of relevance]
 
 ## Related Sessions
-- [Previous session ID] – [Brief connection]
-- [Next session context] – [What to expect]
+- [Previous session ID] - [Brief connection]
+- [Next session context] - [What to expect]
 
 ## Notes
 #### **User Feedback**
@@ -1017,13 +1034,14 @@ def create_new_session_workflow(sessions_dir, dry_run=False):
         return 1
 
 
-def create_auto_session_workflow(sessions_dir, dry_run=False):
+def create_auto_session_workflow(sessions_dir, dry_run=False, assume_yes=False):
     """
     Auto-create a session with all default/placeholder values.
     
     Args:
         sessions_dir (Path): Path to sessions/current/
         dry_run (bool): If True, don't actually create files
+        assume_yes (bool): If True, skip the confirmation prompt (--auto)
     
     Returns:
         int: 0 for success, 1 for cancellation/error
@@ -1071,7 +1089,9 @@ def create_auto_session_workflow(sessions_dir, dry_run=False):
         print()
         
         # Confirm
-        if not prompt_yes_no("Proceed?", default_yes=True):
+        if assume_yes:
+            print("Proceeding without confirmation (--auto).")
+        elif not prompt_yes_no("Proceed?", default_yes=True):
             print("\n❌ Cancelled by user")
             return 1
         
@@ -1958,6 +1978,7 @@ def parse_arguments():
         --version: Show version number
         --prune: Go directly to pruning menu
         --ingest: Run session log ingest to update session_logs.db
+        --auto: Skip the menu and auto-create with defaults, no prompts
     """
     parser = argparse.ArgumentParser(
         prog='Session Tools',
@@ -1969,6 +1990,7 @@ Examples:
   %(prog)s --dry-run          # Test run without making changes
   %(prog)s --prune            # Go directly to pruning menu
   %(prog)s --ingest           # Update session_logs.db from current/recent/archived
+  %(prog)s --auto --dry-run   # Unattended preview: no menu, no prompts
   %(prog)s --help             # Show this help message
 
 For more information, see: library/templates/session_template.md
@@ -2000,6 +2022,12 @@ For more information, see: library/templates/session_template.md
     )
     
     parser.add_argument(
+        '--auto',
+        action='store_true',
+        help='Skip the interactive menu and auto-create a session with defaults; assumes yes to the confirmation prompt (combine with --dry-run for an unattended preview)'
+    )
+
+    parser.add_argument(
         '--version',
         action='version',
         version=f'%(prog)s {__version__}'
@@ -2024,6 +2052,8 @@ def main():
     Returns:
         int: Exit code (0 for success, 1 for error/cancel)
     """
+    enable_utf8_output()
+
     try:
         # Parse arguments
         args = parse_arguments()
@@ -2035,7 +2065,7 @@ def main():
             print(f"❌ Error: {e}")
             print("\nMake sure you're running this from within the Resonance 7 workspace.")
             print("Expected structure: [workspace-root]/library/sessions/current/")
-            print("Bootstrap: python library/tools/scripts/setup_workspace.py")
+            print("Create it with: python library/tools/scripts/setup.py --init-dirs")
             return 1
         
         # Calculate next session number
@@ -2061,6 +2091,12 @@ def main():
                 dry_run=args.dry_run,
             )
         
+        # Non-interactive create (skip the menu when --auto is given)
+        if args.auto:
+            return create_auto_session_workflow(
+                sessions_dir, dry_run=args.dry_run, assume_yes=True
+            )
+
         # Show menu
         choice = show_session_type_menu()
         

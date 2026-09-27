@@ -77,12 +77,12 @@ See "Database Access" section below for full usage guide.
 
 ### Option 1: MCP Server (Recommended - No File Creation)
 
-The MCP server provides direct database access through Cursor's tool system, bypassing all terminal output issues.
+The MCP server provides direct database access through the editor's MCP tool system, bypassing all terminal output issues.
 
 **Setup:**
 1. Install: `cd library/tools/mcp_sqlite_server && npm install`
-2. Configure in Cursor: See `library/tools/mcp_sqlite_server/SETUP.md`
-3. Restart Cursor
+2. Configure MCP: See `library/tools/mcp_sqlite_server/SETUP.md`
+3. Restart your editor
 
 **Agent Usage:**
 ```
@@ -95,7 +95,7 @@ Use execute_query tool with:
 - ✅ No file creation needed
 - ✅ Direct tool integration
 - ✅ Structured JSON responses
-- ✅ Native Cursor tool system
+- ✅ Native editor tool system
 
 ### Option 2: SQLite Command-Line Tool (Fallback)
 

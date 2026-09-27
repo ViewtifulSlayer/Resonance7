@@ -11,7 +11,7 @@ library/sessions/
 └── archived/     # Monthly zip archives (YYYY-MM.zip)
 ```
 
-Created by `python library/tools/scripts/setup_workspace.py` on first run.
+`current/` is created on demand by `session_tools.py`; `recent/` and `archived/` are populated by maintenance and archiving.
 
 ## Session Lifecycle
 

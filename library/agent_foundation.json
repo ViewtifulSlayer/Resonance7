@@ -4,21 +4,21 @@
     "knowledge_persistence": "The framework enables knowledge accumulation and enhanced context retrieval through regularly maintained session logs, the user-curated documentation library, and a well-structured workspace. MCP-queryable databases (e.g. session_logs, workspace DBs) extend this with persistent recall and lookup when configured."
   },
   "workspace_architecture": {
-    ".cursor/": "Cursor integration (v3): rules, skills, commands; local MCP config from setup_database.py",
+    ".agents/": "Freebuff integration: skills/, generated mcp.json (machine-local)",
+    "AGENTS.md": "Always-on agent context at the repo root",
     "library/": "IDE-neutral foundation: databases, docs, sessions, templates, tools, agent_foundation.json",
     "library/databases/": "SQLite DBs, schemas, ingest scripts, workspace_mcp_servers.md",
     "library/docs/": "User-curated documentation modules (runtime category folders)",
     "library/sessions/": "Session logs: current/, recent/, archived/",
     "library/templates/": "session_template.md, mcp.json.example, README templates",
-    "library/tools/": "scripts/ (setup_workspace, setup_database, session_tools), mcp_sqlite_server/",
+    "library/tools/": "scripts/ (setup, setup_database, session_tools), mcp_sqlite_server/",
     "projects/": "Local *.code-workspace files pairing external projects (machine-specific paths)",
     "tests/": "Scratch space for agents and humans; temporary scripts and scratch .md files go here (not repo root)"
   },
   "workspace_setup": {
-    "bootstrap_tool": "library/tools/scripts/setup_workspace.py",
-    "first_run_marker": "library/.workspace_setup_required",
+    "runtime_folders": "Runtime folders are created on demand; session_tools.py creates library/sessions/current/ when it is missing.",
     "mcp_setup_tool": "library/tools/scripts/setup_database.py",
-    "note": "Fresh clones include the first-run marker until bootstrap runs. Pair external projects via setup_workspace.py --pair (writes under projects/)."
+    "note": "No bootstrap step. Pair an external project by adding a multi-root .code-workspace file under projects/."
   },
   "essential_behavior": {
     "file_creation_policy": {
@@ -114,6 +114,8 @@
       "created": "NEVER modify after initial creation",
       "last_updated": "Update ONLY when: adding sections, completing work, adding files. NOT for: typos, formatting, grammar fixes",
       "status_lifecycle": "Active (work in progress) -> Handoff (ready for next agent) -> Completed (finished)",
+      "previous_session_handoff": "When creating a new log, if the most recent session's status is Handoff, set it to Completed first (status only).",
+      "log_reuse": "Reuse only the log you created earlier in this same session, including across a day change or past midnight UTC; last_updated need not match created. A UTC day change alone is never a reason to start a new log. A log left behind by a previous agent or session is not yours to continue or amend, even when its status is still Active - start a new log and leave the prior one as it stands.",
       "format": "yyyy-MM-dd HH:mm:ss UTC",
       "timestamp_accuracy": "ALWAYS get the actual current time using a command - NEVER round to quarter hours (HH:00, HH:15, HH:30, HH:45) or guess the time. Use: powershell.exe -Command \"(Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss UTC')\" to get the exact current UTC time"
     }

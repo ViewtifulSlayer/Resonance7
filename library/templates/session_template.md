@@ -15,13 +15,13 @@ description: "[Brief description of session focus]"
 [Main accomplishments, decisions, and key insights from this session]
 
 ## Key Decisions & Rationale
-- **Decision 1** – [Brief reasoning]
-- **Decision 2** – [Brief reasoning]
+- **Decision 1** - [Brief reasoning]
+- **Decision 2** - [Brief reasoning]
 
 ## Deliverables & Metrics
-- ✅ **Deliverable 1** – [File / feature] — [LoC / size / metric]
-- 🚧 **Partial Deliverable** – [Status % or remaining tasks]
-- 📊 **Metric** – [Coverage %, build time, etc.]
+- [x] **Deliverable 1** - [File / feature] - [LoC / size / metric]
+- [ ] **Partial Deliverable** - [Status % or remaining tasks]
+- **Metric** - [Coverage %, build time, etc.]
 
 ## Implementation Highlights
 - [Notable techniques, libraries, commands, patterns]
@@ -55,14 +55,14 @@ description: "[Brief description of session focus]"
 
 ## Sources
 ### Web Sources
-- [URL] – [Brief description of relevance]
+- [URL] - [Brief description of relevance]
 
 ### Local Sources
-- [File path] – [Brief description of relevance]
+- [File path] - [Brief description of relevance]
 
 ## Related Sessions
-- [Previous session ID] – [Brief connection]
-- [Next session context] – [What to expect]
+- [Previous session ID] - [Brief connection]
+- [Next session context] - [What to expect]
 
 ## Notes
 #### **User Feedback**
@@ -72,4 +72,4 @@ description: "[Brief description of session focus]"
 - [Workflow discoveries, efficiency improvements]
 
 #### **Ready State**
-- [What’s ready for use, what needs work]
+- [What's ready for use, what needs work]

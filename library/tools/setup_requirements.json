@@ -1,0 +1,24 @@
+{
+  "_note": "External prerequisites for a fresh Resonance7 clone. Commands only - never put secrets here. Consumed by library/tools/scripts/setup.py. Python tools are stdlib-only, so there is intentionally no requirements.txt.",
+  "items": [
+    {
+      "name": "Node.js 18+",
+      "required": true,
+      "check": ["node", "--version"],
+      "hint": "Install Node 18+ from https://nodejs.org/ (or via a version manager), then re-run setup.py."
+    },
+    {
+      "name": "npm",
+      "required": true,
+      "check": ["npm", "--version"],
+      "hint": "npm ships with Node 18+."
+    },
+    {
+      "name": "Freebuff CLI",
+      "required": false,
+      "check": ["freebuff", "--version"],
+      "install": ["npm", "install", "-g", "freebuff"],
+      "hint": "Optional if you already use Freebuff Desktop, Web, or the VS Code client. Opt-in install via --install-missing."
+    }
+  ]
+}

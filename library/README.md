@@ -18,12 +18,14 @@ Open the **foundation repo root** in your editor (or a multi-root `.code-workspa
 First clone:
 
 ```bash
-python library/tools/scripts/setup_workspace.py
+python library/tools/scripts/setup.py --init-dirs
 python library/tools/scripts/setup_database.py
 ```
 
+`setup.py` creates the runtime folders (including `library/sessions/current/`); `setup_database.py` writes `.agents/mcp.json` and installs Node dependencies.
+
 See root **`README.md`** for full Quick Start.
 
-## Cursor configuration (v3)
+## Agent configuration
 
-Rules, skills, and MCP config live under **`.cursor/`** at the foundation repo root. v4 will add IDE-neutral entry points; the portable contract remains in `library/agent_foundation.json` and the Python tools above.
+Agent context and skills live in **`AGENTS.md`** and **`.agents/skills/`** at the foundation repo root; MCP is configured in **`.agents/mcp.json`**. The portable contract remains in `library/agent_foundation.json` and the Python tools above.

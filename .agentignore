@@ -11,8 +11,7 @@
 # =============================================================================
 # Protect core protocol and configuration files (modify only with explicit user request)
 
-.cursor/rules/agent_onboarding.mdc
-.cursor/commands/foundation.md
+AGENTS.md
 library/agent_foundation.json
 
 
@@ -31,7 +30,6 @@ library/tools/scripts/
 
 library/templates/
 .agentignore
-.cursorignore
 .gitattributes
 .gitignore
 
@@ -66,7 +64,6 @@ library/databases/db/*.db
 # =============================================================================
 # Protect IDE-specific configuration (usually user-specific)
 
-.cursor/settings.json
 .vscode/
 .idea/
 *.code-workspace

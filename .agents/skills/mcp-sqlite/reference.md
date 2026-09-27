@@ -111,7 +111,7 @@ For migration strategy and data-quality decisions, see the `database-specialist`
 | `tools/list` | Discover tools | Array of tool definitions (name, description, inputSchema) |
 | `tools/call` | Run a tool | Result payload (e.g. content array with text) |
 
-Tool definitions use **JSON Schema** for `inputSchema`. The client (Cursor) sends `tools/call` with `name` and `arguments`; the server executes and returns content or an error.
+Tool definitions use **JSON Schema** for `inputSchema`. The client sends `tools/call` with `name` and `arguments`; the server executes and returns content or an error.
 
 ### 5.2 Resources
 
@@ -125,7 +125,7 @@ Resources are read-only. The application decides when to fetch and pass them to 
 
 ### 5.3 Transport
 
-- Cursor typically uses **stdio**: the server is spawned as a subprocess; Cursor sends JSON-RPC over stdin and reads from stdout.
+- MCP clients typically use **stdio**: the server is spawned as a subprocess; the client sends JSON-RPC over stdin and reads from stdout.
 - Stderr is for server logs.
 - `command` and `args` in `mcp.json` must start the server process correctly; PATH is not reliable on Windows unless the full executable path is used (e.g. full path to `node.exe`).
 

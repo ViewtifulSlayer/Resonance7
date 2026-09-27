@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """
-Write `.cursor/mcp.json` and run `npm install` for the Resonance7 SQLite MCP server.
+Write `.agents/mcp.json` (Freebuff/Codebuff) and run `npm install` for the
+Resonance7 SQLite MCP server.
 
-Updates only the managed SQLite server entry in an existing `.cursor/mcp.json`;
-other MCP server blocks (user-added) are preserved.
+Updates only the managed SQLite server entry in an existing config; other MCP
+server blocks (user-added) are preserved.
+
+With `--global-agents`, also copies missing workspace `.agents` files into the
+global `~/.agents` directory. Existing destination files are preserved (never
+overwritten); the workspace `.agents/mcp.json` is excluded.
 
 Resolves the workspace root from this file's location, picks a single Node
 executable (prefer a full install over the first on PATH), and uses that same
@@ -19,6 +24,7 @@ Usage:
     python library/tools/scripts/setup_database.py --node "C:\\Program Files\\nodejs\\node.exe"
     python library/tools/scripts/setup_database.py --workspace "D:\\Resonance7"
     python library/tools/scripts/setup_database.py --skip-audit-fix
+    python library/tools/scripts/setup_database.py --global-agents
 """
 
 from __future__ import annotations
@@ -62,7 +68,7 @@ def _node_install_instructions() -> str:
         "Node.js was not found or could not be used. Install Node 18 or newer, then run this script again.\n"
         "  LTS (recommended): https://nodejs.org/en/download\n"
         "  Windows (winget):  winget install OpenJS.NodeJS.LTS\n"
-        "After installing, open a new terminal (or restart Cursor) so PATH updates.\n"
+        "After installing, open a new terminal (or restart your editor) so PATH updates.\n"
         "If Node is already installed, set NODE_EXE to the full path to node.exe, or pass --node."
     )
 
@@ -310,9 +316,46 @@ def run_npm_audit_fix(npm: Path, cwd: Path) -> None:
         )
 
 
+def sync_global_agents(
+    workspace_agents: Path, global_agents: Path, dry_run: bool
+) -> tuple[int, int]:
+    """
+    Copy workspace `.agents` files into the global `~/.agents`, never overwriting.
+
+    The workspace `.agents/mcp.json` is excluded (machine-specific). A file that
+    already exists at the destination is preserved and counted as a conflict.
+    Returns (copied, conflicts).
+    """
+    if not workspace_agents.is_dir():
+        _warn(f"No workspace .agents directory at {workspace_agents}; nothing to copy.")
+        return 0, 0
+
+    copied = 0
+    conflicts = 0
+    skip = (workspace_agents / "mcp.json").resolve()
+
+    for src in sorted(workspace_agents.rglob("*")):
+        if not src.is_file() or src.resolve() == skip:
+            continue
+        dest = global_agents / src.relative_to(workspace_agents)
+        if dest.exists():
+            conflicts += 1
+            _warn(f"preserve existing {dest}")
+            continue
+        if dry_run:
+            _info(f"would copy {src.relative_to(workspace_agents)} -> {dest}")
+            copied += 1
+            continue
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dest)
+        _info(f"copied {src.relative_to(workspace_agents)} -> {dest}")
+        copied += 1
+    return copied, conflicts
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Configure Cursor MCP for the Resonance7 SQLite server and install npm dependencies.",
+        description="Configure MCP for the Resonance7 SQLite server (.agents/mcp.json) and install npm dependencies.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=_node_install_instructions(),
     )
@@ -331,12 +374,17 @@ def main() -> None:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Print paths and JSON only; do not write .cursor/mcp.json or run npm install/audit fix.",
+        help="Print paths and JSON only; do not write mcp.json files or run npm install/audit fix.",
     )
     parser.add_argument(
         "--skip-audit-fix",
         action="store_true",
         help="After npm install, skip `npm audit fix` (not recommended).",
+    )
+    parser.add_argument(
+        "--global-agents",
+        action="store_true",
+        help="Also copy missing workspace .agents files into ~/.agents (never overwrites existing files).",
     )
     args = parser.parse_args()
 
@@ -353,11 +401,12 @@ def main() -> None:
     npm = resolve_npm_path(node)
 
     mcp_dir = root / "library" / "tools" / "mcp_sqlite_server"
-    out_file = root / ".cursor" / "mcp.json"
+    agents_out = root / ".agents" / "mcp.json"
     generated = build_mcp_config(root, node)
-    existing = load_existing_mcp_config(out_file)
-    cfg = merge_mcp_config(existing, generated)
-    preserved = count_preserved_servers(existing)
+
+    existing_agents = load_existing_mcp_config(agents_out)
+    cfg = merge_mcp_config(existing_agents, generated)
+    preserved = count_preserved_servers(existing_agents)
 
     _info(f"Workspace:     {root}")
     _info(f"Node:          {node}")
@@ -366,7 +415,7 @@ def main() -> None:
         ver_s = "v" + ".".join(str(n) for n in v)
         _info(f"Node version:  {ver_s}")
     _info(f"npm:           {npm}")
-    _info(f"MCP config:    {out_file}")
+    _info(f"MCP config:    {agents_out}")
     _info(f"Template ref:  {root / TEMPLATE_REF}")
     if preserved:
         _info(
@@ -376,18 +425,25 @@ def main() -> None:
     if args.dry_run:
         _info("--- would write mcp.json ---")
         print(json.dumps(cfg, indent=2))
-        _info("--- dry run: skipped writing file and npm install ---")
+        if args.global_agents:
+            _info("--- would sync global agents ---")
+            sync_global_agents(root / ".agents", Path.home() / ".agents", dry_run=True)
+        _info("--- dry run: skipped writing files and npm install ---")
         return
 
-    out_file.parent.mkdir(parents=True, exist_ok=True)
-    out_file.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
-    _info(f"Wrote {out_file}")
+    agents_out.parent.mkdir(parents=True, exist_ok=True)
+    agents_out.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
+    _info(f"Wrote {agents_out}")
+    if args.global_agents:
+        _info(f"Global agents: {Path.home() / '.agents'}")
+        copied, conflicts = sync_global_agents(root / ".agents", Path.home() / ".agents", dry_run=False)
+        _info(f"Global sync:   copied {copied}, preserved {conflicts} existing file(s)")
     run_npm_install(npm, mcp_dir)
     if not args.skip_audit_fix:
         run_npm_audit_fix(npm, mcp_dir)
     else:
         _info("Skipped npm audit fix (--skip-audit-fix).")
-    _info("Done. Reload the Cursor window so MCP servers pick up the new config.")
+    _info("Done. Freebuff reads .agents/mcp.json at the next session start.")
 
 
 if __name__ == "__main__":

@@ -57,9 +57,9 @@
 └── requirements.txt        # Python dependencies
 ```
 
-Open this project with the Resonance7 foundation via a multi-root `.code-workspace` file (created with `setup_workspace.py --pair` under the foundation repo's `projects/`). Session logs and shared library content live in the foundation repo at `library/sessions/` and `library/`.
+Open this project with the Resonance7 foundation via a multi-root `.code-workspace` file under the foundation repo's `projects/`. Pairing files contain local paths and are gitignored. Session logs and shared library content live in the foundation repo at `library/sessions/` and `library/`.
 
-Cursor rules, skills, and MCP config live under the **Resonance7 foundation** `.cursor/` (v3), not inside the external project folder.
+Agent rules, skills, and MCP config live under the **Resonance7 foundation** (root `AGENTS.md` for always-on rules, `.agents/skills/` for skills, `.agents/mcp.json` for Freebuff MCP), not inside the external project folder.
 
 ---
 
@@ -98,8 +98,8 @@ Cursor rules, skills, and MCP config live under the **Resonance7 foundation** `.
 
 ### Key Decisions & Rationale
 
-- **Decision 1** – [Brief reasoning]
-- **Decision 2** – [Brief reasoning]
+- **Decision 1** - [Brief reasoning]
+- **Decision 2** - [Brief reasoning]
 
 ### Recent Work
 
@@ -113,9 +113,9 @@ Cursor rules, skills, and MCP config live under the **Resonance7 foundation** `.
 
 ### Deliverables & Metrics
 
-- ✅ **Deliverable 1** – [File / feature] — [LoC / size / metric]
-- 🚧 **Partial Deliverable** – [Status % or remaining tasks]
-- 📊 **Metric** – [Coverage %, build time, etc.]
+- [x] **Deliverable 1** - [File / feature] - [LoC / size / metric]
+- [ ] **Partial Deliverable** - [Status % or remaining tasks]
+- **Metric** - [Coverage %, build time, etc.]
 
 ### Implementation Highlights
 
@@ -150,9 +150,9 @@ Cursor rules, skills, and MCP config live under the **Resonance7 foundation** `.
 
 Session logs documenting work on this project:
 
-- **[YYYYMMDD-NN](../Resonance7/library/sessions/current/YYYYMMDD-NN.md)** – [Brief description of work done]
-- **[YYYYMMDD-NN](../Resonance7/library/sessions/current/YYYYMMDD-NN.md)** – [Brief description of work done]
-- **[YYYYMMDD-NN](../Resonance7/library/sessions/recent/YYYYMMDD-NN.md)** – [Brief description of work done]
+- **[YYYYMMDD-NN](../Resonance7/library/sessions/current/YYYYMMDD-NN.md)** - [Brief description of work done]
+- **[YYYYMMDD-NN](../Resonance7/library/sessions/current/YYYYMMDD-NN.md)** - [Brief description of work done]
+- **[YYYYMMDD-NN](../Resonance7/library/sessions/recent/YYYYMMDD-NN.md)** - [Brief description of work done]
 
 > **Note**: Session logs are automatically archived after 7 days. Older sessions are in `library/sessions/recent/` or `library/sessions/archived/` on the foundation repo.
 

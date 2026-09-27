@@ -7,29 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-09-26
+
+Freebuff-first migration. The workspace is no longer Cursor-specific: always-on agent context lives in a root `AGENTS.md`, skills live in `.agents/skills/`, and MCP configuration is generated at `.agents/mcp.json`.
+
+### Breaking changes
+
+- **Cursor integration removed** - `.cursor/commands/` (`foundation`, `help`, `session`, `start`), `.cursor/rules/` (`agent_onboarding`, `workspace_bootstrap`, `workspace_first_run`), `.cursor/skills/`, and `.cursorignore` are deleted. Root `AGENTS.md` and `.agents/skills/` replace them; the `foundation` and `help` command content is folded into `AGENTS.md`.
+- **MCP config path** - `setup_database.py` writes `.agents/mcp.json`. Cursor config generation and Cursor-config seeding are gone; no `.cursor/mcp.json` is emitted.
+- **`setup_workspace.py` removed** - `library/tools/scripts/setup_workspace.py` (529 lines) is replaced by `setup.py` plus on-demand creation of runtime directories. As a consequence `setup_workspace.py --pair` no longer exists; external projects are paired by adding a multi-root `projects/*.code-workspace` file. See Known issues.
+- **No bootstrap step** - The first-run sentinel `library/.workspace_setup_required` is deleted. `session_tools.py` creates `library/sessions/current/` when it is missing, and `setup.py --init-dirs` creates the remaining runtime directories.
+- **`RELEASE_NOTES.md` retired** - The file is deleted and all live references are removed. `CHANGELOG.md` is the only ongoing release record.
+
 ### Added
 
+- **Root `AGENTS.md`** - Always-on agent context, auto-read at session start: agent onboarding, capability-availability policy, MCP notes, session-logging rules, a skill index, and the file-safety/approval policy.
+- **`.agents/skills/`** - Nine portable skill packages converted from `.cursor/skills/`: `codebuff`, `database-specialist`, `freebuff`, `ghidra-expert`, `markdown-punctuation`, `mcp-sqlite`, `python-expert`, `skill-authoring`, `vscode`.
+- **`library/tools/scripts/setup.py`** - First-run doctor, runtime-directory creation (`--init-dirs`), dependency and MCP setup, with report-only and `--dry-run` modes.
+- **`library/tools/setup_requirements.json`** - Declarative requirements manifest consumed by `setup.py`.
+- **`setup_database.py --global-agents`** - Syncs the managed SQLite MCP server entry into a global `~/.agents` config.
+- **`session_tools.py --auto`** - Skips the interactive menu and the confirmation prompt, so `--auto --dry-run` runs unattended and exits 0 without writing. Without the flag the interactive menu is unchanged.
 - **MCP `list_databases` tool** - Scans `library/databases/db/*.db` and returns alias (filename stem) and absolute path for each file.
-- **Auto-alias resolution** - `database_path` accepts any stem matching `library/databases/db/<stem>.db` without hand-editing `server.js` or `.cursor/mcp.json`.
-- **`library/templates/workspace_mcp_servers.md`** - Framework-only MCP reference template; copied to gitignored `library/databases/workspace_mcp_servers.md` on bootstrap (same pattern as `mcp.json.example` -> `.cursor/mcp.json`).
+- **MCP auto-alias resolution** - `database_path` accepts any stem matching `library/databases/db/<stem>.db` without hand-editing `server.js` or the MCP config.
+- **`library/templates/workspace_mcp_servers.md`** - Framework-only MCP reference template; copied to the gitignored `library/databases/workspace_mcp_servers.md` locally (same pattern as `mcp.json.example` -> `.agents/mcp.json`).
+- **Session-log lifecycle rules** - `agent_foundation.json` records `previous_session_handoff` (close a prior `Handoff` log as `Completed` when opening a new one) and `log_reuse` (reuse the current log across a day change rather than starting a new file).
 
 ### Changed
 
-- **`session_tools.py` / `ingest_session_logs.py` ingest dry-run** - Menu option 5 and `--ingest` now honor `--dry-run`: list files that would be ingested without writing `session_logs.db` (previously dry-run still updated the database).
+- **`library/tools/scripts/setup_database.py`** - Writes `.agents/mcp.json` (Freebuff/Codebuff) only; retains managed-server merge behaviour and `--skip-audit-fix`; drops Cursor dual-emit and config seeding. Existing JSON is still read with UTF-8 BOM tolerance (Windows).
+- **`.gitignore` / `.agentignore`** - Cursor transitional rules, onboarding/bootstrap allowlist entries, and media/bootstrap exceptions replaced with editor-neutral allowlists. Machine-local `.agents/mcp.json`, `node_modules/`, and local `db/*.db` files are ignored.
+- **`.gitignore` allowlist policy** - Separates framework from local content: root `AGENTS.md`, `.agents/skills/`, `library/tools/` README, MCP SQLite server package, and setup scripts; database READMEs, schema, and ingest script; session lifecycle `README.md` only. Ignores session log payloads, user `library/docs/**`, runtime `db/*.db` and `sources/`, scratch `tests/`, and project pairing files. Parent-directory un-ignore entries (`!.../**/`) under `library/tools/` and `library/databases/` so Git can reach nested allowlisted files.
+- **Database git policy** - All `library/databases/db/*.db` files are local-only; `library/databases/db/` is created by `setup.py`. Populate `session_logs.db` via ingest when desired (MCP starts without it; default queries need the file).
+- **`library/agent_foundation.json`** - `workspace_architecture` describes `.agents/` and root `AGENTS.md` instead of `.cursor/`; `workspace_setup` drops `bootstrap_tool` and `first_run_marker` in favour of on-demand runtime folders.
+- **Docs and templates** - Root `README.md`, `library/README.md`, `library/databases/README.md`, `library/sessions/README.md`, `library/tools/README.md`, `workspace_mcp_servers.md`, and `README_PROJECT.md` use Freebuff/editor-neutral wording and the `setup.py` flow. `README_PROJECT.md` no longer references the removed `--pair` command and documents `projects/*.code-workspace` files as local-path-specific and gitignored.
+- **`session_tools.py`** - Two help/error messages that named the removed `setup_workspace.py` now direct users to create the session directory or run `setup.py --init-dirs`.
+- **MCP server package** - `package.json` keyword `cursor` replaced with `freebuff`; `package-lock.json` refreshed (MCP SDK 1.29.0, better-sqlite3 11.10.0). Node import and the better-sqlite3 native binding verified on Windows.
+- **`session_tools.py` / `ingest_session_logs.py` ingest dry-run** - Menu option 5 and `--ingest` honor `--dry-run`: list files that would be ingested without writing `session_logs.db` (previously dry-run still updated the database).
 - **`library/databases/workspace_mcp_servers.md` git policy** - No longer tracked; userland MCP notes (e.g. Scryfall) belong in the local copy or `library/docs/`, not in the framework repo. Removes erroneous userland content from `main`.
-- **`setup_workspace.py`** - Installs local `workspace_mcp_servers.md` from template when missing.
-- **`.gitignore`** - Allowlist policy separating framework from local content: Cursor commands, onboarding/bootstrap rules, and core agent skills; `library/tools/` README, MCP SQLite server package, and setup scripts; database READMEs, schema, and ingest script; session lifecycle `README.md` only. Ignores session log payloads, user `library/docs/**`, runtime `db/*.db` and `sources/`, scratch `tests/`, project pairing files, and machine-local `.cursor/mcp.json`. Parent-directory un-ignore entries (`!.../**/`) under `library/tools/` and `library/databases/` so Git can reach nested allowlisted files.
-- **Database git policy** - All `library/databases/db/*.db` files are local-only; `library/databases/db/` is created by workspace bootstrap. Populate `session_logs.db` via ingest when desired (MCP starts without it; default queries need the file).
-- **`library/tools/scripts/setup_workspace.py`** - Bootstrap includes `library/databases/db/`.
-- **`library/tools/scripts/setup_database.py`** - Merging write for `.cursor/mcp.json`: refreshes the managed framework SQLite server entry only; preserves other existing MCP server blocks; reads existing JSON with UTF-8 BOM tolerance (Windows).
 - **`library/tools/mcp_sqlite_server/src/server.js`** - `resolveDatabasePath()` resolves db-dir stems; tool schemas document alias behavior.
-- **`library/databases/README.md`**, **`workspace_mcp_servers.md`**, **`mcp_sqlite_server/README.md`**, root **`README.md`** - Document auto-aliases, local DB policy, and gitignore scope.
+- **Docs for auto-aliases** - `library/databases/README.md`, `workspace_mcp_servers.md`, `mcp_sqlite_server/README.md`, and root `README.md` document auto-aliases, local DB policy, and gitignore scope.
+
+### Fixed
+
+- **`session_tools.py` aborted when output was redirected (Windows)** - Piped or redirected stdout fell back to the console code page (cp1252), so the first glyph raised `UnicodeEncodeError` and exited 1 (for example the magnifier in `DRY RUN MODE`). New `enable_utf8_output()`, called at the start of `main()`, reconfigures stdout and stderr with `encoding="utf-8", errors="replace"`.
+- **Trailing whitespace in `session_tools.py`** - Removed from the blank line after the new `--auto` argparse block, so `git diff --check` passes.
 
 ### Removed
 
+- **`library/tools/scripts/setup_workspace.py`** - Replaced by `setup.py` and on-demand runtime-directory creation.
+- **`library/.workspace_setup_required`** - First-run sentinel; the bootstrap step is gone.
+- **`RELEASE_NOTES.md`** - Retired; `CHANGELOG.md` is the sole ongoing release record.
+- **`.cursor/`** - Commands, rules, skills, and `.cursorignore`.
 - **Tracked `session_logs.db` placeholder** - No empty session log database in the repository; created locally via optional ingest.
 
 ### Known issues
+
+- **Project pairing is manual again** - `setup_workspace.py --pair` was removed with the bootstrap script and no replacement command exists in `setup.py`. Pairing an external project now means hand-writing a multi-root `projects/*.code-workspace` file. A portable `--pair` equivalent is the obvious follow-up.
 
 - **`setup_database.py --help` Node install message** - Running `python library/tools/scripts/setup_database.py --help` always prints the Node 18+ install block at the end because it is wired as argparse `epilog` (`_node_install_instructions()`), not because Node failed detection. A successful `--dry-run` or normal run can still find Node. Planned fix: emit install guidance only when `resolve_node_exe()` actually fails.
 - **`session_tools.py` prune collision rename** - `move_old_sessions()` appends `_YYYYMMDD_HHMMSS` to the filename when the same `YYYYMMDD-NN.md` already exists in `recent/` (no content check). Consolidating sessions into `current/` while copies remain in `recent/` produces timestamp-suffixed duplicates (e.g. `20260219-01_20260701_014942.md`). Planned fix: compare content (identical = skip move); on real differences, prompt or renumber per policy.
@@ -227,7 +260,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session lifecycle management (current → recent → archived)
 - Cross-platform Python tooling
 
-[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/ViewtifulSlayer/Resonance7/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v3.0.0...v4.0.0
+[3.0.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/ViewtifulSlayer/Resonance7/compare/v1.2.0...v1.3.0

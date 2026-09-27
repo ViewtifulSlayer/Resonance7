@@ -1,10 +1,10 @@
 # Resonance7 SQLite MCP Server
 
-MCP (Model Context Protocol) server that provides direct database access to SQLite knowledge base databases in Cursor IDE. This bypasses terminal output capture issues by exposing database tools directly through Cursor's MCP system.
+MCP (Model Context Protocol) server that provides direct database access to SQLite knowledge base databases over MCP. This bypasses terminal output capture issues by exposing database tools directly to the agent.
 
 ## Features
 
-- 🔍 **Query Execution**: Execute SQL queries and get results directly in Cursor
+- 🔍 **Query Execution**: Execute SQL queries and get results directly via MCP tools
 - 📋 **Schema Exploration**: List tables and view table schemas
 - 🗄️ **Database Info**: Get database statistics and metadata
 - 🛡️ **Read-Only Mode**: Database opened in read-only mode for safety
@@ -13,7 +13,7 @@ MCP (Model Context Protocol) server that provides direct database access to SQLi
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- Cursor IDE
+- An MCP-capable editor (Freebuff in VS Code)
 - SQLite knowledge base database
 
 ## Installation
@@ -24,24 +24,23 @@ MCP (Model Context Protocol) server that provides direct database access to SQLi
    npm install
    ```
 
-2. **Configure MCP in Cursor:**
-   - Open Cursor Settings (`Ctrl+Shift+J` or `Cmd+,`)
-   - Search for "MCP" or "Model Context Protocol"
-   - Add the MCP server configuration (see Setup below)
+2. **Configure MCP:** run `python library/tools/scripts/setup_database.py` from the workspace root (writes `.agents/mcp.json`). Manual configuration is covered in Setup below.
 
-## Setup with Cursor IDE
+## Setup
 
-### Option 1: Use the provided config file
+### Option 1: Run the setup script (recommended)
 
-1. Open Cursor Settings
-2. Navigate to **Features > MCP**
-3. Click **"Add New MCP Server"**
-4. Copy the contents of `mcp-config.json` into the MCP settings
-5. Adjust the path in `args` if your workspace is in a different location
+From the workspace root:
+
+```bash
+python library/tools/scripts/setup_database.py
+```
+
+This writes `.agents/mcp.json` with absolute paths and runs `npm install` in this folder.
 
 ### Option 2: Manual configuration
 
-In Cursor's MCP settings, add:
+Add to `.agents/mcp.json`:
 
 ```json
 {
@@ -63,7 +62,7 @@ In Cursor's MCP settings, add:
 
 ## Available Tools
 
-Once configured, agents can use these tools directly in Cursor:
+Once configured, agents can use these tools directly via MCP:
 
 ### 0. `list_databases`
 
@@ -168,7 +167,7 @@ You can override per-query using the `database_path` parameter:
 - `<stem>` - any `library/databases/db/<stem>.db` that exists (e.g. `iog_disassembly`)
 - absolute path - full path to a `.db` file
 
-Use `list_databases` to discover aliases after adding files to `db/`. Reload Cursor after `server.js` changes.
+Use `list_databases` to discover aliases after adding files to `db/`. Reload your editor after `server.js` changes.
 
 ## Security Considerations
 
@@ -182,8 +181,8 @@ Use `list_databases` to discover aliases after adding files to `db/`. Reload Cur
 
 1. Check that Node.js is in your PATH
 2. Verify the path in `args` is correct and absolute
-3. Restart Cursor after adding MCP configuration
-4. Check Cursor's developer console for errors
+3. Reload your editor after adding MCP configuration
+4. Check your editor's developer console or MCP output for errors
 
 ### Database Not Found
 
@@ -193,38 +192,22 @@ Use `list_databases` to discover aliases after adding files to `db/`. Reload Cur
 
 ### Tools Not Working
 
-1. Check Cursor's MCP server status (should show as "connected")
+1. Check your editor's MCP server status (should show as "connected")
 2. Verify Node.js version (18+ required)
 3. Check that `better-sqlite3` installed correctly (may need to rebuild native modules)
 
 ### Database Files Not Visible to Agents
 
-If agents cannot see database files (`.db`, `.sqlite`, `.sqlite3`) under `library/databases/db/`, check `.cursorignore` patterns.
+Database files (`.db`, `.sqlite`, `.sqlite3`) under `library/databases/db/` are gitignored by the `library/databases/**` policy, so they never appear in Git. Freebuff/Codebuff file discovery follows `.gitignore`, which is expected: agents reach the databases through the MCP tools (`list_databases`, `execute_query`) rather than by reading the files directly.
 
-**Solution**: Add exceptions to the root-level `.cursorignore` file:
-
-```gitignore
-# Database files (if applicable)
-*.db
-*.sqlite
-*.sqlite3
-
-# Exception: Allow knowledge base databases in library directory
-!library/**/*_knowledge_base.db
-!library/**/*_knowledge_base.sqlite
-!library/**/*_knowledge_base.sqlite3
-```
-
-**Important**: `.cursorignore` patterns are relative to the directory containing the file. If your workspace is at `projects/XMBMGMT/` but the database is at `library/...`, you must add the exception to the root-level `.cursorignore`, not the project-level one.
+You do not need to expose the `.db` files to file discovery. Adding a `.db` under `db/` makes it reachable as an alias at the next server start.
 
 ### Terminal Output Not Captured (Alternative Methods)
 
 If you're using terminal-based queries instead of MCP and experiencing output capture issues:
 
 1. **Use MCP Server** (recommended) - This bypasses all terminal output issues
-2. **Enable Legacy Terminal Tool** in Cursor settings (Agents > Inline Editing & Terminal)
-3. **Update Cursor** to version 1.7.17+ if using older versions
-4. **Use file-based output** - Write results to a file, then read the file
+2. **Use file-based output** - Write results to a file, then read the file
 
 For detailed troubleshooting, see the alternative methods section below.
 
@@ -237,13 +220,13 @@ If MCP server isn't configured, you can use the SQLite command-line tool directl
 sqlite3 -header -column library/databases/db/session_logs.db "SELECT session_id, title FROM sessions LIMIT 10;"
 ```
 
-**Note**: Terminal output capture can be unreliable in Cursor. The MCP server is recommended to avoid these issues.
+**Note**: Terminal output capture can be unreliable in some editors. The MCP server is recommended to avoid these issues.
 
 ## Benefits Over Terminal-Based Queries
 
 - ✅ **No terminal output capture issues** - Results returned directly through MCP
 - ✅ **Structured JSON responses** - Easy for agents to parse
-- ✅ **Native tool integration** - Works seamlessly with Cursor's tool system
+- ✅ **Native tool integration** - Works seamlessly with your editor's tool system
 - ✅ **No file creation needed** - Results returned in tool response
 - ✅ **Type-safe** - Proper error handling and validation
 
