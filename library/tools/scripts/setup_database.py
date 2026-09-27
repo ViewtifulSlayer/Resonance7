@@ -73,6 +73,39 @@ def _node_install_instructions() -> str:
     )
 
 
+def _clean_child_environment(node: Path, npm: Path) -> dict[str, str]:
+    """
+    Build a clean environment for Node/npm child processes.
+
+    This does not modify the user's permanent Windows PATH.
+    """
+    env = os.environ.copy()
+
+    entries = []
+    for entry in env.get("PATH", "").split(os.pathsep):
+        # Remove literal quotes accidentally stored in Windows PATH.
+        entry = entry.strip().strip('"')
+
+        if entry and entry not in entries:
+            entries.append(entry)
+
+    # Ensure the selected Node/npm directory is searched first.
+    node_dir = str(node.parent)
+    entries = [
+        entry for entry in entries
+        if Path(entry).resolve() != node.parent.resolve()
+    ]
+    entries.insert(0, node_dir)
+
+    # npm.cmd may be in a different directory in some installations.
+    npm_dir = str(npm.parent)
+    if Path(npm_dir).resolve() != node.parent.resolve():
+        entries.insert(0, npm_dir)
+
+    env["PATH"] = os.pathsep.join(entries)
+    return env
+
+
 def find_workspace_root(explicit: Optional[Path] = None) -> Path:
     if explicit is not None:
         root = explicit.resolve()
@@ -290,25 +323,28 @@ def count_preserved_servers(existing: dict[str, Any]) -> int:
     return sum(1 for key in servers if key != MANAGED_MCP_SERVER_KEY)
 
 
-def run_npm_install(npm: Path, cwd: Path) -> None:
+def run_npm_install(npm: Path, cwd: Path, env: dict[str, str]) -> None:
     _info(f"Running npm install in {cwd} ...")
     r = subprocess.run(
         [str(npm), "install"],
         cwd=str(cwd),
+        env=env,
         shell=False,
     )
     if r.returncode != 0:
         raise SystemExit(f"npm install failed with exit code {r.returncode}")
 
 
-def run_npm_audit_fix(npm: Path, cwd: Path) -> None:
+def run_npm_audit_fix(npm: Path, cwd: Path, env: dict[str, str]) -> None:
     """Apply compatible security fixes (npm audit fix). Non-zero exit is warning only."""
     _info(f"Running npm audit fix in {cwd} ...")
     r = subprocess.run(
         [str(npm), "audit", "fix"],
         cwd=str(cwd),
+        env=env,
         shell=False,
     )
+
     if r.returncode != 0:
         _warn(
             f"npm audit fix exited with code {r.returncode}. "
@@ -399,6 +435,7 @@ def main() -> None:
 
     node = resolve_node_exe(args.node, required_major=required_major)
     npm = resolve_npm_path(node)
+    child_env = _clean_child_environment(node, npm)
 
     mcp_dir = root / "library" / "tools" / "mcp_sqlite_server"
     agents_out = root / ".agents" / "mcp.json"
@@ -438,9 +475,10 @@ def main() -> None:
         _info(f"Global agents: {Path.home() / '.agents'}")
         copied, conflicts = sync_global_agents(root / ".agents", Path.home() / ".agents", dry_run=False)
         _info(f"Global sync:   copied {copied}, preserved {conflicts} existing file(s)")
-    run_npm_install(npm, mcp_dir)
+    run_npm_install(npm, mcp_dir, child_env)
+
     if not args.skip_audit_fix:
-        run_npm_audit_fix(npm, mcp_dir)
+        run_npm_audit_fix(npm, mcp_dir, child_env)
     else:
         _info("Skipped npm audit fix (--skip-audit-fix).")
     _info("Done. Freebuff reads .agents/mcp.json at the next session start.")

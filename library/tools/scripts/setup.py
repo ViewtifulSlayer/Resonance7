@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -67,24 +68,63 @@ def info(message: str) -> None:
     line("info", message)
 
 
-def which(command: str):
-    """Resolve an executable, honoring the Windows extensions."""
-    return shutil.which(command)
+def which(command: str, env=None):
+    """Resolve an executable using the supplied environment."""
+    return shutil.which(command, path=(env or os.environ).get("PATH"))
 
 
-def run(cmd, dry_run: bool, quiet: bool = False) -> int:
+def clean_path_entries(value: str) -> list[str]:
+    """Return PATH entries without quotes, whitespace, or duplicates."""
+    entries = []
+
+    for entry in value.split(os.pathsep):
+        entry = entry.strip().strip('"')
+
+        if not entry:
+            continue
+
+        if entry not in entries:
+            entries.append(entry)
+
+    return entries
+
+
+def child_environment() -> dict[str, str]:
+    """
+    Build a clean temporary environment for child processes.
+
+    This does not modify the user's Windows PATH. It only cleans the PATH
+    inherited by commands launched from this setup script.
+    """
+    env = os.environ.copy()
+    env["PATH"] = os.pathsep.join(
+        clean_path_entries(env.get("PATH", ""))
+    )
+    return env
+
+
+def run(cmd, dry_run: bool, quiet: bool = False, env=None) -> int:
     if dry_run:
-        info(f"would run: {' '.join(cmd)}")
+        info(f"would run: {' '.join(map(str, cmd))}")
         return 0
+
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(
+            [str(part) for part in cmd],
+            capture_output=True,
+            text=True,
+            env=env or child_environment(),
+        )
     except OSError as exc:
         fail(f"{cmd[0]}: {exc}")
         return 1
+
     if not quiet and proc.stdout.strip():
         print(proc.stdout.strip())
+
     if not quiet and proc.stderr.strip():
         print(proc.stderr.strip())
+
     return proc.returncode
 
 
@@ -126,18 +166,18 @@ def init_dirs(dry_run: bool):
     return created
 
 
-def check_item(item):
+def check_item(item, env=None):
     check = item.get("check")
     if not check:
         return None
-    return which(check[0]) is not None
+    return which(check[0], env=env) is not None
 
 
-def report_items(items):
+def report_items(items, env=None):
     missing = []
     for item in items:
         name = item.get("name", "?")
-        present = check_item(item)
+        present = check_item(item, env=env)
         if present is None:
             info(f"{name}: no check defined")
         elif present:
@@ -149,7 +189,7 @@ def report_items(items):
     return missing
 
 
-def install_missing(items, dry_run: bool, assume_yes: bool):
+def install_missing(items, dry_run: bool, assume_yes: bool, env=None):
     for item in items:
         install = item.get("install")
         name = item.get("name", "?")
@@ -169,7 +209,7 @@ def install_missing(items, dry_run: bool, assume_yes: bool):
         if not proceed:
             warn(f"{name}: skipped")
             continue
-        if run(install, dry_run=False) == 0:
+        if run(install, dry_run=False, env=env) == 0:
             ok(f"{name}: installed")
         else:
             fail(f"{name}: install command failed")
@@ -188,14 +228,17 @@ def report_mcp():
         warn("mcp_sqlite_server/node_modules missing (use --configure-mcp)")
 
 
-def configure_mcp(dry_run: bool) -> int:
+def configure_mcp(dry_run: bool, env=None) -> int:
     if not SETUP_DATABASE.exists():
         fail(f"setup_database.py not found: {SETUP_DATABASE}")
         return 1
+
     cmd = [sys.executable, str(SETUP_DATABASE)]
+
     if dry_run:
         cmd.append("--dry-run")
-    return run(cmd, dry_run=False)
+
+    return run(cmd, dry_run=False, env=env)
 
 
 def parse_args(argv=None):
@@ -214,6 +257,7 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = parse_args(argv)
+    env = child_environment()
     do_dirs = args.init_dirs or args.all
     do_mcp = args.configure_mcp or args.all
     do_install = args.install_missing or args.all
@@ -230,7 +274,7 @@ def main(argv=None) -> int:
 
     print("\nExternal prerequisites")
     items = load_manifest()
-    missing = report_items(items)
+    missing = report_items(items, env=env)
 
     if do_dirs:
         print("\nCreating runtime folders")
